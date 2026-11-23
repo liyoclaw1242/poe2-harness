@@ -136,3 +136,26 @@ def test_scenario_dependent_picks_spread():
             {"name": "flat", "layer": "gear", "mult": {"map": 1.3, "boss": 1.3, "pinnacle": 1.31, "uber": 1.31}}]
     dep = scenario.dependent(rows)
     assert [r["name"] for r in dep] == ["inv"] and dep[0]["favours"] == "pinnacle"
+
+
+def test_threshold_breaks_classifies_cliffs():
+    from pob_agent import thresholds
+    base = {"sharedMindOverMatter": 100, "LifeUnreserved": 91, "MissingFireResist": 0, "FireResist": 75,
+            "SpiritUnreserved": 10, "Str": 100, "ReqStr": 90}
+    new = {"sharedMindOverMatter": 70, "LifeUnreserved": 91, "MissingFireResist": 20, "FireResist": 55,
+           "SpiritUnreserved": -5, "Str": 80, "ReqStr": 90}
+    br = {b["kind"]: b for b in thresholds.breaks(base, new)}
+    assert set(br) == {"mom", "resist", "spirit", "attribute"}
+    assert br["mom"]["cliff"] and br["spirit"]["cliff"] and br["attribute"]["cliff"] and not br["resist"]["cliff"]
+    assert thresholds.breaks(base, base) == []
+
+
+def test_threshold_margins_and_headroom():
+    from pob_agent import thresholds, trade
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        m = thresholds.margins(eng)
+        assert set(m["raw"]["resists"]) == {"Fire", "Cold", "Lightning", "Chaos"}
+        assert all("text" in e for e in m["edges"])
+        rows = trade.slot_headroom(eng)
+        assert rows and all(isinstance(r["breaks"], list) for r in rows)

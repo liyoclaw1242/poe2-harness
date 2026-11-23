@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import analysis, decompose, enablers, scan, scenario, sources, trade
+from . import analysis, decompose, enablers, scan, scenario, sources, thresholds, trade
 from .engine import Engine, EngineError
 
 ENV_STAMP = "PoE2 | PoB-PoE2 {ver} | values are PoB calculations, not in-game measurements"
@@ -203,14 +203,28 @@ def render_scales(r: dict):
         print(f"| {row['probe']} | {fpct(row['dps_pct'])} | {fpct(row['ehp_pct'])} |")
 
 
-def render_headroom(rows):
+def render_headroom(hr):
+    rows, margins = (hr["slots"], hr.get("margins")) if isinstance(hr, dict) else (hr, None)
     print("## Slot headroom (share of stats coming from each item's mods)")
-    print("| slot | item | DPS from item | EHP from item |\n|---|---|---|---|")
+    print("| slot | item | DPS from item | EHP from item | threshold it holds |\n|---|---|---|---|---|")
     for r in sorted(rows, key=lambda r: (r.get("dps_from_item_pct") or 0) + (r.get("ehp_from_item_pct") or 0)):
         if r.get("note"):
-            print(f"| {r['slot']} | {r['item']} | {r['note']} | |")
-        else:
-            print(f"| {r['slot']} | {r['item']} | {fpct(r['dps_from_item_pct'])} | {fpct(r['ehp_from_item_pct'])} |")
+            print(f"| {r['slot']} | {r['item']} | {r['note']} | | |")
+            continue
+        br = r.get("breaks") or []
+        ehp = fpct(r["ehp_from_item_pct"])
+        if any(b.get("cliff") for b in br):
+            ehp += " ⚠"
+        print(f"| {r['slot']} | {r['item']} | {fpct(r['dps_from_item_pct'])} | {ehp} | "
+              f"{'; '.join(b['text'] for b in br)} |")
+    if any(b.get("cliff") for r in rows for b in r.get("breaks") or []):
+        print("⚠ = removing the item crosses a cliff. Mind over Matter: the EHP % is mostly the cliff, not the "
+              "item's own stats. Spirit / attributes: PoB does not switch off the skill or gem, so the real loss is "
+              "larger than the % shown. Replace it only with something that keeps the threshold.")
+    if margins and margins["edges"]:
+        print("\nThresholds at the edge (current build):")
+        for e in margins["edges"]:
+            print(f"- {'NOT MET: ' if e['broken'] else ''}{e['text']}")
 
 
 # ---------------------------------------------------------------------------
@@ -268,7 +282,8 @@ def cmd_scales(args):
 def cmd_headroom(args):
     with Engine(args.verbose) as eng:
         load(eng, args.build)
-        emit(args, trade.slot_headroom(eng, parse_weights(args.weights)), render_headroom)
+        hr = {"slots": trade.slot_headroom(eng, parse_weights(args.weights)), "margins": thresholds.margins(eng)}
+        emit(args, hr, render_headroom)
 
 
 def cmd_diagnose(args):
@@ -280,7 +295,7 @@ def cmd_diagnose(args):
         r = eng.call("ramp")
         r["summary"] = analysis.summarize_ramp(r["ramp"], r["base"])
         el = analysis.elasticity(eng)
-        hr = trade.slot_headroom(eng)
+        hr = {"slots": trade.slot_headroom(eng), "margins": thresholds.margins(eng)}
         sc = _scenario_with_sources(eng)
         data = {"summary": info, "scenarios": sc, "enablers": en, "audit": a, "ramp": r, "scales": el, "headroom": hr}
 

@@ -185,11 +185,20 @@
   - 0.5.5 的熱門 build 普遍帶 Rakiata's Flow，面板數字其實是「打 Boss 的數字」，打圖大約只剩七成。
   - 有一份 Comet 作者手填敵人抗性 −60%：反轉之後變成正抗，DPS 反而變低。打一般怪時 Rakiata's Flow 是 ×0.82，帶著反而掉傷害。
 
+**headroom 門檻警示（已完成，12 個 smoke test 通過）**
+- 程式：`harness/pob_agent/thresholds.py`、`rpc.lua` 的 `thresholds` 指令。`headroom` 和 `diagnose` 都會列出。
+- 逐件檢查：把一件裝備換成白板後，哪些門檻會失守。
+  - **斷崖類，標 ⚠**：MoM 100%、Spirit ≥ 0、屬性需求。
+  - **漸進類，只列說明不標 ⚠**：抗性上限。
+- 整份 build 的門檻餘裕：MoM 封頂前的總和、各抗性溢出多少、未保留的 Spirit、屬性比需求多多少。快失守的會列出來，已經不成立的標「NOT MET」。
+- Arc Gemling：未保留生命只有 91，MoM 是 101%（只多 1%）。三件 EHP 顯示 +663% 到 +1209% 的裝備（兩只戒指和胸甲），現在都改成說明「撐住 MoM 100%」。
+- Oracle：MoM 剛好 100%，未保留生命只有 1。Spirit −276、Str 不足 19，兩項都標為不成立。這類情況 PoB 不會把技能關掉，所以面板偏樂觀。
+- 巫妖：Spirit −29、閃電和混沌抗性各差 4% 才到上限，兩項都標為不成立。
+
 **待做**（照 Fable 的排序）：
 1. 促成者第二版：處理自產條件（從 PoB 的 Shock、Blind 機率驗證）；從 PoB 解析不了的詞綴中初篩更多促成者
-2. headroom 的門檻旗標：MoM 剛好 100%、抗性上限、Spirit 為負
-3. synergy 支援裝備×裝備和 jewel
-4. 資源循環模型
-5. 圖騰與觸發次數建模
+2. synergy 支援裝備×裝備和 jewel
+3. 資源循環模型
+4. 圖騰與觸發次數建模
 
 **待查**：巫妖的 Spirit 仍為 −29（可能是 PoB 少算 Crystalline Phylactery）、Oracle 的 4 組 CoC 何者由護符提供、Arc 未開啟的 Lightning Infused（×3.78）。

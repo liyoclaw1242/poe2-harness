@@ -1277,6 +1277,31 @@ function commands.enablers(req)
 	return { base = base, rows = rows, detected = req.detect and detectEnablers() or nil }
 end
 
+-- Margins on the thresholds where one item can flip a stat from "fine" to "broken":
+-- Mind over Matter at 100% (uncapped sum vs cap), resist caps (over-cap / missing),
+-- Spirit (unreserved), attribute requirements (value - requirement).
+function commands.thresholds()
+	recalc()
+	local env = build.calcsTab.mainEnv
+	local o = build.calcsTab.mainOutput or {}
+	local db = env and env.player and env.player.modDB
+	local res = {
+		mom = db and num(db:Sum("BASE", nil, "DamageTakenFromManaBeforeLife")) or 0,
+		momCapped = num(o.sharedMindOverMatter) or 0,
+		lifeUnreserved = num(o.LifeUnreserved), manaUnreserved = num(o.ManaUnreserved),
+		spiritUnreserved = num(o.SpiritUnreserved), spirit = num(o.Spirit),
+		resists = {}, attributes = {},
+	}
+	for _, elem in ipairs({ "Fire", "Cold", "Lightning", "Chaos" }) do
+		res.resists[elem] = { value = num(o[elem .. "Resist"]), overCap = num(o[elem .. "ResistOverCap"]),
+			missing = num(o["Missing" .. elem .. "Resist"]) }
+	end
+	for _, a in ipairs({ "Str", "Dex", "Int" }) do
+		res.attributes[a] = { value = num(o[a]), req = num(o["Req" .. a]) }
+	end
+	return res
+end
+
 -- Scenarios: the same build against PoB's four enemy tiers, with the enemy each tier assumes.
 -- Author overrides in the Enemy Stats section (e.g. a hand-set enemy resist) are cleared per tier
 -- unless req.keepOverrides, and reported separately. req.sources (synergy format) are measured

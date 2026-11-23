@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from . import thresholds
 from .analysis import DPS_KEYS, dps_of, pct
 from .engine import Engine
 
@@ -65,7 +66,7 @@ def slot_headroom(eng: Engine, weights=None) -> list[dict]:
             continue
         # uniques are measured the same way: a blank of the same base loses the unique's mods
         res = eng.call("try_items", slot=slot, candidates=[{"name": "blank", "raw": blank_item(it["raw"])}],
-                       fields=list(DPS_KEYS) + ["TotalEHP"])
+                       fields=list(DPS_KEYS) + ["TotalEHP"] + thresholds.FIELDS)
         cand = res["candidates"][0]
         if not cand.get("ok"):
             continue
@@ -73,7 +74,9 @@ def slot_headroom(eng: Engine, weights=None) -> list[dict]:
         dps_share = pct(dps_of(base), dps_of(blank))
         ehp_share = pct(base.get("TotalEHP") or 0, blank.get("TotalEHP") or 0)
         rows.append({"slot": slot, "item": it["name"], "rarity": it.get("rarity"),
-                     "dps_from_item_pct": dps_share, "ehp_from_item_pct": ehp_share})
+                     "dps_from_item_pct": dps_share, "ehp_from_item_pct": ehp_share,
+                     # a threshold the item holds: its % deltas are dominated by that, read them as such
+                     "breaks": thresholds.breaks(base, blank)})
     return rows
 
 
