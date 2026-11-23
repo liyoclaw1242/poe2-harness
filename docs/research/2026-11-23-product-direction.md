@@ -134,8 +134,39 @@
 - custom mods 逐行稽核，並納入去水
 - 批次工具每 20 份重啟引擎，逐筆寫出結果，失敗太多時不覆寫舊檔
 
+**第 2 天：促成者表第一版（已完成，8 個 smoke test 通過）**
+- 程式：`harness/pob_agent/enablers.py`（表、量測）、`rpc.lua` 的 `enablers` 指令、CLI 新增 `enablers` 子指令；`diagnose`、`audit`、`decompose` 都已接上。
+- 每個促成者量三個數字：本身（拿掉它，跟原本的 decompose 一樣）、只關條件（只關掉它保證的勾選）、兩者一起（真正的分量）。
+- 去水基準不再扣掉「有促成者撐著」的勾選。巫妖：去水後從 17.3 萬變成 42.6 萬（Low Life 不再被當成水分；面板 144 萬）。decompose 新增 `enabler` 層，被撐著的條件會標上「由 X 撐著」。
+- 自動偵測：已配置節點或裝備的詞綴中，若有無條件的 `Condition:X` 旗標，而且某個玩家端勾選也會設這個旗標，就列出來，代表那個勾選是多餘的。只比對玩家端的效果，不然「敵人被致盲」會誤配。
+- 6 份案例的結果：
+
+  | build | 促成者 | 本身 | 只關條件 | 兩者一起 |
+  |---|---|---|---|---|
+  | 巫妖 Shred | Eternal Life | ×1.00 | ×2.13 | ×2.13 |
+  | Gemling Twister | The Taming | ×1.04 | ×2.00 | ×2.08 |
+  | MA Falling Thunder | Martial Master | ×1.00 | ×1.40 | ×1.40 |
+  | MA Falling Thunder | Way of the Stonefist | ×1.00 | — | ×1.29（含手套，屬於上限值） |
+
+- 125 份樣本（`data/results/enablers_055.json`）的結果：
+  - 表內命中：Stonefist 8 份、The Taming 2 份、Eternal Life 2 份、Martial Master 1 份。
+  - 其中 1 份 Twister 裝了 The Taming 卻沒勾三元素，代表 PoB 低估了它，報告會提示。
+  - 另一份 Abyssal Lich 勾了 Low Life，但這個條件對主技能沒有貢獻（×1.0）。
+  - 自動偵測到的條件：Arcane Surge 13 份（多半是有條件觸發）、Onslaught 5 份（Dusk Fist、Thrillsteel、Torment Clutches 是無條件）。
+- **第二版的候選**：貢獻 ≥20%、卻沒有促成者撐著的勾選。依出現份數：
+  - Rage：36 份
+  - 敵人被 Shock：14 份
+  - Power Charge：12 份
+  - 敵人被 Blind、Daze、Armour Break：各 4–5 份
+  - Withered：4 份
+
+  這些多半不是「件」撐住的，而是「自己的技能產生的」，屬於另一類問題：
+  - Shock、Blind、Daze 可以從 PoB 的施加機率驗證
+  - Rage、Power Charge 要靠資源循環模型
+  - 第二版要把這類「自產條件」分開處理
+
 **待做**（照 Fable 的排序）：
-1. 促成者表第一版：Eternal Life、The Taming、Martial Master、Stonefist 對應的手套
+1. 促成者第二版：處理自產條件（從 PoB 的 Shock、Blind 機率驗證）；從 PoB 解析不了的詞綴中初篩更多促成者
 2. 情境語意：敵人抗性的假設、抗性反轉類的警示
 3. headroom 的門檻旗標：MoM 剛好 100%、抗性上限、Spirit 為負
 4. synergy 支援裝備×裝備和 jewel

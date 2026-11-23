@@ -9,6 +9,7 @@ total exactly (sources interact), so read them as "how much this piece carries".
 
 from __future__ import annotations
 
+from . import enablers as enablers_mod
 from .analysis import DPS_KEYS, audit, dps_of
 from .engine import Engine
 from .trade import active_slots, blank_item
@@ -63,11 +64,19 @@ def decompose(eng: Engine, min_mult: float = 1.01, conditions: bool = True) -> d
     if not conditions:
         out["sources"].sort(key=lambda s: -(s["mult"] if s["mult"] != INF else 1e9))
         return out
+    # enablers: pieces whose weight hides in a config box (leave-one-out reads them ~x1.0)
+    en = enablers_mod.measure(eng)
+    out["enablers"] = en
+    for r in enablers_mod.hidden_weight(en["rows"]):
+        add("enabler", f"{r['name']} (with the conditions it keeps)", r["with"], alone=r["alone"],
+            conditions=r["active"])
+    backed = enablers_mod.backed_vars(en)
     # conditions (config): per-value contribution and the dewatered layer
     a = audit(eng)
     for i in a["items"]:
         if i.dps_delta_pct is not None and i.kind in ("ramp", "enemy_state", "self_condition", "skill_option", "custom_mod"):
-            add("condition", i.label or i.var, 1.0 + i.dps_delta_pct / 100.0, var=i.var, kind=i.kind)
+            add("condition", i.label or i.var, 1.0 + i.dps_delta_pct / 100.0, var=i.var, kind=i.kind,
+                backed_by=backed.get(i.var))
     dw = dps_of(a["dewatered"] or {})
     cfg = dps_of(a["base"])
     out["layers"]["conditions"] = (cfg / dw) if dw > 0 else INF

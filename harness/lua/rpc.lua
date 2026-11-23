@@ -1159,6 +1159,124 @@ function commands.synergy(req)
 	return { base = base, pairs = pairsOut }
 end
 
+-- Enablers: pieces whose value is that they make a config condition permanent (Eternal Life keeps
+-- you on Low Life, The Taming gives Twister all three elements). Leave-one-out reads them ~x1.0
+-- because the config box stays ticked. For each entry measure: removing the piece alone, turning
+-- off only the conditions it guarantees, and both together.
+-- entries: [{id, sources=[{kind="node",name}|{kind="slot",slot,raw}], off={var=value|null},
+--            extra=[sources removed only in the "with" measurement]}]
+-- detect=true also lists pieces whose parsed mods set a Condition flag that a config box also sets.
+local function activeEquipSlots()
+	local set = build.itemsTab.activeItemSet
+	local swap = set and set.useSecondWeaponSet
+	local res = {}
+	for slotName, slot in pairs(build.itemsTab.slots) do
+		if not slot.nodeId and not slotName:match("Flask") and not slotName:match("Charm") then
+			local isSwap = slotName:match("Swap") ~= nil
+			local isWeapon = slotName:match("^Weapon") ~= nil
+			if not isWeapon or (isSwap == (swap and true or false)) then
+				local item = slot.selItemId and build.itemsTab.items[slot.selItemId]
+				if item then res[slotName] = item end
+			end
+		end
+	end
+	return res
+end
+
+local function detectEnablers()
+	-- player-side effects only (getOptionEffects mixes in the enemy mod list: "enemy is Blinded"
+	-- would otherwise match a player Condition:Blinded flag)
+	local function recorder(sink)
+		local r = {}
+		function r:NewMod(name, ...) sink[name] = true end
+		function r:AddMod(mod) if mod and mod.name then sink[mod.name] = true end end
+		function r:ReplaceMod(name, ...) sink[name] = true end
+		return r
+	end
+	local byCond = {}
+	for _, opt in ipairs(configOptions) do
+		local sink = {}
+		if opt.var and opt.type == "check" and opt.apply then
+			pcall(opt.apply, true, recorder(sink), recorder({}))
+			for name in pairs(sink) do
+				if name:match("^Condition:") then
+					byCond[name] = byCond[name] or {}
+					table.insert(byCond[name], opt.var)
+				end
+			end
+		end
+	end
+	local found = {}
+	local function scan(list, kind, name, slot)
+		if not list then return end
+		for _, mod in ipairs(list) do
+			if mod.type == "FLAG" and type(mod.name) == "string" and mod.name:match("^Condition:") and byCond[mod.name] then
+				local tagged = false
+				for _, tag in ipairs(mod) do if type(tag) == "table" then tagged = true end end
+				found[#found + 1] = { kind = kind, name = name, slot = slot, condition = mod.name,
+					vars = byCond[mod.name], conditional = tagged }
+			end
+		end
+	end
+	for _, node in pairs(build.spec.allocNodes) do scan(node.modList, "node", node.dn) end
+	for slotName, item in pairs(activeEquipSlots()) do
+		scan(item.modList or (item.slotModList and item.slotModList[1]), "slot", item.name, slotName)
+	end
+	return found
+end
+
+function commands.enablers(req)
+	recalc()
+	local nodeByName = {}
+	for _, node in pairs(build.spec.allocNodes) do nodeByName[node.dn] = node end
+	local fastOpts = { requirementsGems = true, skipEHP = true }
+	local snap = snapshotConfig()
+	local function eval(sources, off)
+		if off and next(off) then
+			restoreConfig(snap); applyConfig(off); recalc()
+		end
+		local override = { removeNodes = {} }
+		for _, s in ipairs(sources or {}) do
+			if s.kind == "node" then
+				override.removeNodes[nodeByName[s.name]] = true
+			elseif s.kind == "slot" then
+				override.repSlotName = s.slot
+				override.repItem = s.raw and new("Item"):Item(s.raw) or nil
+			end
+		end
+		local v = fastDps(build.calcsTab:GetMiscCalculator(), override, fastOpts)
+		if off and next(off) then restoreConfig(snap); recalc() end
+		return v
+	end
+	local input = build.configTab.input
+	local base = eval({}) or 0
+	local rows = {}
+	for _, e in ipairs(req.entries or {}) do
+		local present, missing = true, nil
+		for _, s in ipairs(e.sources or {}) do
+			if s.kind == "node" and not nodeByName[s.name] then present = false; missing = s.name end
+		end
+		local row = { id = e.id, present = present, missing = missing, active = {} }
+		if present then
+			for var, offv in pairs(e.off or {}) do
+				local cur = input[var]
+				local offval = offv ~= json.null and offv or nil
+				if cur ~= nil and cur ~= offval and cur ~= false then row.active[#row.active + 1] = var end
+			end
+			table.sort(row.active)
+			local function m(v) if not v or v <= 0 then return "inf" end return base / v end
+			row.alone = m(eval(e.sources))
+			row.cond = m(eval(nil, e.off))
+			local all = {}
+			for _, s in ipairs(e.sources or {}) do all[#all + 1] = s end
+			for _, s in ipairs(e.extra or {}) do all[#all + 1] = s end
+			row.with = m(eval(all, e.off))
+		end
+		rows[#rows + 1] = row
+	end
+	return { base = base, rows = rows, detected = req.detect and detectEnablers() or nil }
+end
+
 -- Try every unique from PoB's database in each equipment slot of the current build.
 -- Returns the top uniques per slot by main-skill DPS multiplier (vs the item currently there).
 local SWEEP_SLOTS = { "Weapon 1", "Weapon 2", "Helmet", "Body Armour", "Gloves", "Boots", "Amulet", "Ring 1", "Belt" }

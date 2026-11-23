@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import analysis, decompose, scan, sources, trade
+from . import analysis, decompose, enablers, scan, sources, trade
 from .engine import Engine, EngineError
 
 ENV_STAMP = "PoE2 | PoB-PoE2 {ver} | values are PoB calculations, not in-game measurements"
@@ -98,9 +98,12 @@ def render_audit(a: dict):
     for i in sorted(a["items"], key=lambda i: (i.kind == "permanent", -(abs(i.dps_delta_pct or 0)))):
         if i.kind == "permanent":
             continue
-        print(f"| {i.kind} | {(i.label or i.var).strip()} | {i.value} | {fpct(i.dps_delta_pct)} | {fpct(i.ehp_delta_pct)} |")
+        label = (i.label or i.var).strip()
+        if i.backed_by:
+            label += f" (kept true by {i.backed_by})"
+        print(f"| {i.kind} | {label} | {i.value} | {fpct(i.dps_delta_pct)} | {fpct(i.ehp_delta_pct)} |")
     b = analysis.dps_of(base)
-    rows = [("as configured", base), ("dewatered (all conditions off)", a["dewatered"]),
+    rows = [("as configured", base), ("dewatered (unbacked conditions off)" if a.get("backed") else "dewatered (all conditions off)", a["dewatered"]),
             ("ramp start (stacks = 0)", a["ramp_start"]),
             ("vs normal monsters (mapping)", a["mapping"]), ("vs uber pinnacle", a["uber"])]
     print("\n(PoB default enemy = Guardian/Pinnacle boss)")
@@ -110,6 +113,33 @@ def render_audit(a: dict):
             print(f"| {name} | {fmt(analysis.dps_of(st))} | {fpct(analysis.pct(analysis.dps_of(st), b))} | {fmt(st.get('TotalEHP'))} |")
     if a["kept"]:
         print(f"kept on: {', '.join(a['kept'])}")
+
+
+def render_enablers(e: dict):
+    print("## Enablers (pieces that keep a config condition true)")
+    print("alone = remove the piece only (what decompose shows); cond = turn off only the conditions it "
+          "guarantees; with = both.")
+    if not e["rows"]:
+        print("no enabler from the table in this build")
+    else:
+        print("| piece | alone | cond | with | conditions | confidence |\n|---|---|---|---|---|---|")
+        for r in e["rows"]:
+            mx = lambda v: "∞" if v == decompose.INF else f"x{v:.2f}"
+            conds = ", ".join(r["active"]) or ("credit in gloves" if r["id"] == "way_of_the_stonefist" else "not ticked")
+            cond = mx(r["cond"]) if r.get("guards") else "—"
+            print(f"| {r['name']} | {mx(r['alone'])} | {cond} | {mx(r['with'])} | {conds} | {r['confidence']} |")
+        for r in e["rows"]:
+            if r["relies"] and r["note"]:
+                print(f"- {r['name']}: {r['note']}")
+            elif r.get("guards") and not r["active"]:
+                print(f"- {r['name']} is in the build but {', '.join(r['guards'])} is not ticked: "
+                      "PoB may understate this build (the author left the condition off).")
+    if e["detected"]:
+        print("\nPieces whose parsed mods already set a condition PoB also offers as a config box "
+              "(the box is redundant for these):")
+        for d in e["detected"]:
+            tag = " (conditional)" if d.get("conditional") else ""
+            print(f"- {d['name']}: {d['condition']} → {', '.join(d['vars'])}{tag}")
 
 
 def render_ramp(r: dict):
@@ -155,8 +185,15 @@ def cmd_summary(args):
 def cmd_audit(args):
     with Engine(args.verbose) as eng:
         load(eng, args.build)
-        a = analysis.audit(eng, keep=set(args.keep or []))
+        en = enablers.measure(eng)
+        a = analysis.audit(eng, keep=set(args.keep or []), backed=enablers.backed_vars(en))
         emit(args, a, render_audit)
+
+
+def cmd_enablers(args):
+    with Engine(args.verbose) as eng:
+        load(eng, args.build)
+        emit(args, enablers.measure(eng), render_enablers)
 
 
 def cmd_ramp(args):
@@ -183,15 +220,18 @@ def cmd_diagnose(args):
     """One-shot report: summary + audit + ramp + scaling + slot headroom."""
     with Engine(args.verbose) as eng:
         info = load(eng, args.build)
-        a = analysis.audit(eng, keep=set(args.keep or []))
+        en = enablers.measure(eng)
+        a = analysis.audit(eng, keep=set(args.keep or []), backed=enablers.backed_vars(en))
         r = eng.call("ramp")
         r["summary"] = analysis.summarize_ramp(r["ramp"], r["base"])
         el = analysis.elasticity(eng)
         hr = trade.slot_headroom(eng)
-        data = {"summary": info, "audit": a, "ramp": r, "scales": el, "headroom": hr}
+        data = {"summary": info, "enablers": en, "audit": a, "ramp": r, "scales": el, "headroom": hr}
 
         def render(_):
             render_summary(info, eng.version)
+            print()
+            render_enablers(en)
             print()
             render_audit(a)
             print()
@@ -374,7 +414,13 @@ def cmd_decompose(args):
         print("\n| layer | source | mult |\n|---|---|---|")
         for s in d["sources"][: args.top]:
             m = "∞ (required)" if s["mult"] == decompose.INF else f"x{s['mult']:.2f}"
-            print(f"| {s['layer']} | {s['name']} | {m} |")
+            name = s["name"]
+            if s.get("backed_by"):
+                name += f" — kept true by {s['backed_by']}"
+            if s["layer"] == "enabler" and s.get("alone") is not None:
+                a = "∞" if s["alone"] == decompose.INF else f"x{s['alone']:.2f}"
+                name += f" (alone {a})"
+            print(f"| {s['layer']} | {name} | {m} |")
         if d.get("synergy"):
             print("\n### Engines (pairs worth more together than apart)\n| A | B | together | synergy |\n|---|---|---|---|")
             for p in d["synergy"][:10]:
@@ -431,6 +477,7 @@ def main(argv=None):
     p.add_argument("--keep", nargs="*", help="config vars to keep on when dewatering")
     p = build_cmd("audit", cmd_audit, "attribute DPS/EHP to config conditions; dewatered and boss scenarios")
     p.add_argument("--keep", nargs="*")
+    build_cmd("enablers", cmd_enablers, "pieces that keep a config condition true, and what they really carry")
     build_cmd("ramp", cmd_ramp, "stack/stage/condition curves for the main skill")
     build_cmd("scales", cmd_scales, "stat elasticity: what one unit of each stat is worth")
     p = build_cmd("headroom", cmd_headroom, "how much each equipped item contributes")

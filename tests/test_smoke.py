@@ -75,3 +75,34 @@ def test_decompose_node_baseline_consistent():
         d = eng.call("decompose")
         for s in d["tree"] + d["ascendancy"]:
             assert s["mult"] == "inf" or s["mult"] > 0.5
+
+
+def test_enabler_measures_piece_and_its_condition():
+    """A table entry tying a node to a ticked config box reports alone / cond / with consistently,
+    and the box it keeps true survives dewatering."""
+    from pob_agent import enablers
+    fake = enablers.Enabler(id="t", kind="node", name="Mystical Rage", off={"multiplierRage": None},
+                            text="test", confidence="high")
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        dec = {t["name"]: t["mult"] for t in eng.call("decompose")["tree"]}
+        en = enablers.measure(eng, table=[fake], detect=True)
+        assert isinstance(en["detected"], list)
+        (row,) = en["rows"]
+        assert row["active"] == ["multiplierRage"] and row["relies"]
+        assert abs(row["alone"] - dec["Mystical Rage"]) < 0.01      # same path as decompose
+        assert row["cond"] > 1.05 and row["with"] >= row["cond"] - 1e-6
+        backed = enablers.backed_vars(en)
+        assert backed == {"multiplierRage": "Mystical Rage"}
+        a = analysis.audit(eng, backed=backed)
+        plain = analysis.audit(eng)
+        assert analysis.dps_of(a["dewatered"]) > analysis.dps_of(plain["dewatered"]) * 1.05
+        assert next(i for i in a["items"] if i.var == "multiplierRage").backed_by == "Mystical Rage"
+
+
+def test_enabler_absent_piece_is_skipped():
+    from pob_agent import enablers
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        en = enablers.measure(eng, detect=False)   # no table piece in this Sunder build
+        assert en["rows"] == []

@@ -44,6 +44,7 @@ class ConfigItem:
     kind: str = "other"
     dps_delta_pct: float | None = None
     ehp_delta_pct: float | None = None
+    backed_by: str | None = None   # an equipped piece / allocated node keeps this condition true
 
 
 def classify(item: dict, section: str | None) -> str:
@@ -62,20 +63,22 @@ def classify(item: dict, section: str | None) -> str:
     return "skill_option"
 
 
-def audit(eng: Engine, keep: set[str] | None = None) -> dict:
+def audit(eng: Engine, keep: set[str] | None = None, backed: dict[str, str] | None = None) -> dict:
     """Attribute DPS/EHP to every non-default config value and build a dewatered baseline.
 
     Each conditional value is reset to its default on its own (others untouched);
-    the dewatered baseline resets all of them except `keep`.
+    the dewatered baseline resets all of them except `keep` and the vars in `backed`
+    (var -> the enabler that keeps that condition true, see enablers.backed_vars).
     """
-    keep = keep or set()
+    backed = backed or {}
+    keep = set(keep or set()) | set(backed)
     catalog = {o["var"]: o for o in eng.call("config", catalog=True)["options"]}
     state = eng.call("config")
     items: list[ConfigItem] = []
     for v in state["values"]:
         sec = catalog.get(v["var"], {}).get("section")
         items.append(ConfigItem(var=v["var"], value=v["value"], label=v.get("label"), type=v.get("type"),
-                                section=sec, kind=classify(v, sec)))
+                                section=sec, kind=classify(v, sec), backed_by=backed.get(v["var"])))
 
     # custom modifier lines are author claims (buffs, mantras, manual numbers): audit each line
     custom = [l for l in (state.get("customMods") or "").splitlines() if l.strip()]
@@ -130,6 +133,7 @@ def audit(eng: Engine, keep: set[str] | None = None) -> dict:
         "mapping": scen("__mapping__"),
         "uber": scen("__uber__"),
         "kept": sorted(keep),
+        "backed": dict(backed),
     }
 
 

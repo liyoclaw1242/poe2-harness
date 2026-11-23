@@ -1,0 +1,2491 @@
+{
+ "summary": {
+  "builds": 125,
+  "errors": [
+   {
+    "build": "pobb_in_zQr35maMZ6GM",
+    "error": "engine exited unexpectedly (run with --verbose for PoB output)"
+   }
+  ],
+  "table_hits": [
+   [
+    "way_of_the_stonefist",
+    8
+   ],
+   [
+    "the_taming",
+    2
+   ],
+   [
+    "eternal_life",
+    2
+   ],
+   [
+    "martial_master",
+    1
+   ]
+  ],
+  "detected": [
+   [
+    "Condition:ArcaneSurge",
+    13
+   ],
+   [
+    "Condition:Blinded",
+    5
+   ],
+   [
+    "Condition:Onslaught",
+    5
+   ],
+   [
+    "Condition:OnConsecratedGround",
+    1
+   ]
+  ],
+  "unbacked_big_conditions": [
+   [
+    "Rage:",
+    36
+   ],
+   [
+    "Is the enemy Shocked?",
+    14
+   ],
+   [
+    "Do you use Power Charges?",
+    12
+   ],
+   [
+    "Is the enemy Blinded?",
+    5
+   ],
+   [
+    "Is Banner Planted?",
+    4
+   ],
+   [
+    "Is the enemy Dazed?",
+    4
+   ],
+   [
+    "Is enemy Armour Broken?",
+    4
+   ],
+   [
+    "# of Withered Stacks:",
+    4
+   ],
+   [
+    "Is the enemy Frozen?",
+    3
+   ],
+   [
+    "Total Resonance Count:",
+    3
+   ],
+   [
+    "Are you always on Full Mana?",
+    3
+   ],
+   [
+    "Have you Crit Recently?",
+    2
+   ],
+   [
+    "Is the enemy Heavy Stunned?",
+    2
+   ],
+   [
+    "# of Whirlwind Stages:",
+    2
+   ],
+   [
+    "Currently Shapeshifted?",
+    2
+   ],
+   [
+    "Are you surrounded?",
+    1
+   ],
+   [
+    "# of Scavenged Plating Stacks:",
+    1
+   ],
+   [
+    "Are you Leeching?",
+    1
+   ],
+   [
+    "Is the enemy Ignited?",
+    1
+   ],
+   [
+    "Is the enemy Stunned?",
+    1
+   ],
+   [
+    "Channeling for # seconds:",
+    1
+   ],
+   [
+    "Is the enemy on Low Life?",
+    1
+   ],
+   [
+    "Stages:",
+    1
+   ],
+   [
+    "Distance to enemy:",
+    1
+   ],
+   [
+    "Seconds building Stoicism:",
+    1
+   ],
+   [
+    "Do you use Frenzy Charges?",
+    1
+   ],
+   [
+    "Are you always on Low Life?",
+    1
+   ],
+   [
+    "Have you Melee Hit Recently?",
+    1
+   ],
+   [
+    "Is the enemy Critically Weak",
+    1
+   ],
+   [
+    "Is the enemy Isolated?",
+    1
+   ],
+   [
+    "Demonflame Stacks",
+    1
+   ],
+   [
+    "Enemy Life % higher than Player?",
+    1
+   ],
+   [
+    "# of Power Charges (if not maximum):",
+    1
+   ]
+  ]
+ },
+ "builds": [
+  {
+   "build": "pobb_in_1tN3LRMBktGA",
+   "skill": "Flameblast",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_2dy0Qt13nETL",
+   "skill": "Whirling Assault",
+   "ascendancy": "Smith of Kitava",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionSurrounded",
+     "label": "Are you surrounded?",
+     "kind": "self_condition",
+     "dps_pct": 87.26940332101181
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 43.994565217390736
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_3qPJf5HpcT8V",
+   "skill": "Skeletal Cleric Minion",
+   "ascendancy": "Disciple of Varashta",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_6DPWD6-3huZ5",
+   "skill": "Earthquake",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_75QQe3094dgJ",
+   "skill": "",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Blinded",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Decree of Acuity, Ancient Visor",
+     "slot": "Helmet",
+     "vars": [
+      "conditionBlinded",
+      "conditionEnemyBlinded"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_7LD6rVqDEgJR",
+   "skill": "Thorns",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.1630171676379,
+     "active": []
+    }
+   ],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyFrozen",
+     "label": "Is the enemy Frozen?",
+     "kind": "enemy_state",
+     "dps_pct": 73.48492940443731
+    },
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 25.066157261405685
+    },
+    {
+     "var": "scavengedPlatingStacks",
+     "label": "# of Scavenged Plating Stacks:",
+     "kind": "ramp",
+     "dps_pct": 67.60162770215913
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_83YN06BdkIkK",
+   "skill": "Fury of the Mountain",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 64.03724477188139
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 21.435584857148093
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_8HP1yUwtHRiI",
+   "skill": "Punch",
+   "ascendancy": "None",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_8i_ttPjEAMkX",
+   "skill": "Shred",
+   "ascendancy": "Amazon",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Blinded",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Decree of Acuity, Ancient Visor",
+     "slot": "Helmet",
+     "vars": [
+      "conditionBlinded",
+      "conditionEnemyBlinded"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "bannerPlanted",
+     "label": "Is Banner Planted?",
+     "kind": "skill_option",
+     "dps_pct": 31.205317404027877
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 21.845008434569802
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_8yp3_Zgboq1e",
+   "skill": "Embrace The Fall",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.2588063960506,
+     "active": []
+    }
+   ],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyBlinded",
+     "label": "Is the enemy Blinded?",
+     "kind": "enemy_state",
+     "dps_pct": 23.812164809818515
+    },
+    {
+     "var": "conditionEnemyDazed",
+     "label": "Is the enemy Dazed?",
+     "kind": "enemy_state",
+     "dps_pct": 22.143920201491362
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.714196376866987
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_9B1nYQ1d4Qe6",
+   "skill": "Molten Shower",
+   "ascendancy": "Ritualist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_9sM9nvjIZG9u",
+   "skill": "Spear Stab",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_AXInuo8fAYKk",
+   "skill": "Spiraling Conspiracy",
+   "ascendancy": "Disciple of Varashta",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_AlCBdiZHlnak",
+   "skill": "Profane Ritual",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_AqV-HjS-IHp7",
+   "skill": "Snipe",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Blinded",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Decree of Acuity, Ancient Visor",
+     "slot": "Helmet",
+     "vars": [
+      "conditionBlinded",
+      "conditionEnemyBlinded"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_B-EjSJntFuNn",
+   "skill": "Earthshatter",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_B4TJk8jxrqoh",
+   "skill": "Navira, the Last Mirage",
+   "ascendancy": "Disciple of Varashta",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_CNshgAiNqFBK",
+   "skill": "Virtuous Barrier",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_Dh9Tdsb3gmZq",
+   "skill": "Virtuous Barrier",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_ETf4XZzcWC-z",
+   "skill": "High Velocity Rounds",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_J1frR1zQT3iX",
+   "skill": "Hexblast",
+   "ascendancy": "Pathfinder",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_KRKgNBgLvBsa",
+   "skill": "Whirling Assault",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.0,
+     "active": []
+    }
+   ],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyBlinded",
+     "label": "Is the enemy Blinded?",
+     "kind": "enemy_state",
+     "dps_pct": 24.64913751364124
+    },
+    {
+     "var": "conditionEnemyDazed",
+     "label": "Is the enemy Dazed?",
+     "kind": "enemy_state",
+     "dps_pct": 31.99138672524997
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 35.28411484110157
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_MsLgx4zHJTDM",
+   "skill": "Explosive Grenade",
+   "ascendancy": "Amazon",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_N5UaTPkEBx1I",
+   "skill": "Rend",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.0704225352113,
+     "active": []
+    }
+   ],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionCritRecently",
+     "label": "Have you Crit Recently?",
+     "kind": "self_condition",
+     "dps_pct": 70.15689879352804
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_N8QDjRxUVPS1",
+   "skill": "Comet",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 45.99999999999904
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_NYGrJHqBp7HQ",
+   "skill": "Grim Pillars",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "node",
+     "name": "Arcane Surge on Critical Hit",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_OiV7ryKuC0SX",
+   "skill": "Archmage",
+   "ascendancy": "Shaman",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Tempest Caress, Runeforged Sirenscale Gloves",
+     "slot": "Gloves",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_UafSNrqsnmu7",
+   "skill": "Armour Piercing Rounds",
+   "ascendancy": "Tactician",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyArmourBroken",
+     "label": "Is enemy Armour Broken?",
+     "kind": "enemy_state",
+     "dps_pct": 36.305290143365674
+    },
+    {
+     "var": "conditionEnemyHeavyStunned",
+     "label": "Is the enemy Heavy Stunned?",
+     "kind": "enemy_state",
+     "dps_pct": 29.12776822358707
+    },
+    {
+     "var": "conditionLeeching",
+     "label": "Are you Leeching?",
+     "kind": "self_condition",
+     "dps_pct": 31.097809068588788
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 57.00087144384969
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_UkJMeB5VfsGI",
+   "skill": "Arc",
+   "ascendancy": "Blood Mage",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_X04vA8o6Af2x",
+   "skill": "Armour Breaker",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_Xii_bN-QbdZn",
+   "skill": "Ember Fusillade",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_YmiPEBJjM5PT",
+   "skill": "Earthshatter",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_aLbZBKHA-Wki",
+   "skill": "Meteors",
+   "ascendancy": "Spirit Walker",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "bannerPlanted",
+     "label": "Is Banner Planted?",
+     "kind": "skill_option",
+     "dps_pct": 25.384406481565303
+    },
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 31.604394529740976
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.400749584186993
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_bs0S33Pt9LOT",
+   "skill": "Herald of Thunder",
+   "ascendancy": "Amazon",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_ddX-XSNYBeXq",
+   "skill": "Whirling Assault",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "bannerPlanted",
+     "label": "Is Banner Planted?",
+     "kind": "skill_option",
+     "dps_pct": 42.53141919789698
+    },
+    {
+     "var": "conditionEnemyArmourBroken",
+     "label": "Is enemy Armour Broken?",
+     "kind": "enemy_state",
+     "dps_pct": 81.83890078168817
+    },
+    {
+     "var": "conditionEnemyBlinded",
+     "label": "Is the enemy Blinded?",
+     "kind": "enemy_state",
+     "dps_pct": 23.247906962657773
+    },
+    {
+     "var": "conditionEnemyHeavyStunned",
+     "label": "Is the enemy Heavy Stunned?",
+     "kind": "enemy_state",
+     "dps_pct": 58.59361700523862
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.000185388545543
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_gp7sjfD0eZh4",
+   "skill": "Incendiary Shot",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_hAO3Uq6PNC-4",
+   "skill": "Berserk",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_hnCl-dtjpNee",
+   "skill": "Explosive Grenade",
+   "ascendancy": "None",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_hzKQsR2Y5Ht2",
+   "skill": "Thrashing Vines",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_ipb-4JtdiX7H",
+   "skill": "Reap",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Chimeric Grasp, Sirenscale Gloves",
+     "slot": "Gloves",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_jZ5a7PF_RpC9",
+   "skill": "Twister",
+   "ascendancy": "Acolyte of Chayula",
+   "rows": [
+    {
+     "id": "the_taming",
+     "alone": 1.0833924879836,
+     "cond": 1.142555793161,
+     "with": 1.2361015498146,
+     "active": [
+      "twisterCold",
+      "twisterFire",
+      "twisterLightning"
+     ]
+    }
+   ],
+   "detected": [],
+   "backed": {
+    "twisterCold": "The Taming",
+    "twisterFire": "The Taming",
+    "twisterLightning": "The Taming"
+   },
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 21.860394104054514
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.080381200465457
+    },
+    {
+     "var": "whirlwindStages",
+     "label": "# of Whirlwind Stages:",
+     "kind": "ramp",
+     "dps_pct": 241.72813216148913
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_kid8DI3He1g4",
+   "skill": "Ice Shot",
+   "ascendancy": "Pathfinder",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.015422078980247
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_lEVQqs8NuUXb",
+   "skill": "Shield Wall",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.23733095550092
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_m_dy7i9UT8tW",
+   "skill": "Detonating Arrow",
+   "ascendancy": "Blood Mage",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyIgnited",
+     "label": "Is the enemy Ignited?",
+     "kind": "enemy_state",
+     "dps_pct": 31.69702960865015
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_n355Bbcv-B6t",
+   "skill": "Boneshatter",
+   "ascendancy": "None",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Onslaught",
+     "conditional": false,
+     "kind": "slot",
+     "name": "Thrillsteel, Spired Greathelm",
+     "slot": "Helmet",
+     "vars": [
+      "buffOnslaught"
+     ]
+    }
+   ],
+   "backed": {
+    "buffOnslaught": "Thrillsteel"
+   },
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_oygEGFjN9hiS",
+   "skill": "Elemental Storm",
+   "ascendancy": "Stormweaver",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": false,
+     "kind": "node",
+     "name": "Constant Gale",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {
+    "buffArcaneSurge": "Constant Gale"
+   },
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_rCf36iaXrzZo",
+   "skill": "Harbinger of Madness",
+   "ascendancy": "Tactician",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_rWQ_ZtdsWXfH",
+   "skill": "Supercharged Slam",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyArmourBroken",
+     "label": "Is enemy Armour Broken?",
+     "kind": "enemy_state",
+     "dps_pct": 34.05775975302176
+    },
+    {
+     "var": "conditionEnemyBlinded",
+     "label": "Is the enemy Blinded?",
+     "kind": "enemy_state",
+     "dps_pct": 30.114754122186294
+    },
+    {
+     "var": "conditionEnemyStunned",
+     "label": "Is the enemy Stunned?",
+     "kind": "enemy_state",
+     "dps_pct": 20.590480654220844
+    },
+    {
+     "var": "multiplierChannelling",
+     "label": "Channeling for # seconds:",
+     "kind": "ramp",
+     "dps_pct": 40.028148287629946
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 51.03768351487381
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_tPyKCG3i6454",
+   "skill": "Primal Strikes",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Blinded",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Decree of Acuity, Ancient Visor",
+     "slot": "Helmet",
+     "vars": [
+      "conditionBlinded",
+      "conditionEnemyBlinded"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 22.20384748856301
+    },
+    {
+     "var": "configResonanceCount",
+     "label": "Total Resonance Count:",
+     "kind": "ramp",
+     "dps_pct": 79.2421050210257
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.029840655003692
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_uVqTr6Y13l7_",
+   "skill": "Supporting Fire",
+   "ascendancy": "Tactician",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_vwFD6Z6m3AZm",
+   "skill": "Coiling Bolts",
+   "ascendancy": "Blood Mage",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionFullMana",
+     "label": "Are you always on Full Mana?",
+     "kind": "self_condition",
+     "dps_pct": 30.050979169246084
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_wz2rv-wGHgIh",
+   "skill": "Entangle",
+   "ascendancy": "Blood Mage",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "node",
+     "name": "Aspiring Genius",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    },
+    {
+     "condition": "Condition:OnConsecratedGround",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Gifts from Above, Prismatic Ring",
+     "slot": "Ring 2",
+     "vars": [
+      "conditionOnConsecratedGround",
+      "conditionEnemyOnConsecratedGround"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyArmourBroken",
+     "label": "Is enemy Armour Broken?",
+     "kind": "enemy_state",
+     "dps_pct": 43.54686554261282
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_xNKlha9elpvO",
+   "skill": "Comet",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Cataclysm Hold, Sirenscale Gloves",
+     "slot": "Gloves",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyLowLife",
+     "label": "Is the enemy on Low Life?",
+     "kind": "enemy_state",
+     "dps_pct": 29.999990601299498
+    },
+    {
+     "var": "conditionFullMana",
+     "label": "Are you always on Full Mana?",
+     "kind": "self_condition",
+     "dps_pct": 29.999990601299498
+    },
+    {
+     "var": "sigilOfPowerStages",
+     "label": "Stages:",
+     "kind": "skill_option",
+     "dps_pct": 41.37933393474065
+    }
+   ]
+  },
+  {
+   "build": "pobb_in_yWjj1ouYW0Qr",
+   "skill": "Ember Fusillade",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "node",
+     "name": "Arcane Surge on Critical Hit",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "pobb_in_zqICcfQBNI6W",
+   "skill": "Volcano",
+   "ascendancy": "None",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_24ade",
+   "skill": "Twister",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [
+    {
+     "id": "the_taming",
+     "alone": 1.2369356413376,
+     "cond": 1.0,
+     "with": 1.2369356413376,
+     "active": []
+    }
+   ],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_25481",
+   "skill": "Shred",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "node",
+     "name": "Arcane Surge on Critical Hit",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 150.04672236132478
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_27c9b",
+   "skill": "Hollow Form",
+   "ascendancy": "Martial Artist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_27d89",
+   "skill": "Skeletal Sniper Minion",
+   "ascendancy": "Tactician",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_27e63",
+   "skill": "Virtuous Barrier",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_27e69",
+   "skill": "On Kill Monster Explosion",
+   "ascendancy": "Witchhunter",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_27e8a",
+   "skill": "Falling Thunder",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "martial_master",
+     "alone": 1.0,
+     "cond": 1.4001121430023,
+     "with": 1.4001121430023,
+     "active": [
+      "multiplierCombo"
+     ]
+    },
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.2868878845819,
+     "active": []
+    }
+   ],
+   "detected": [
+    {
+     "condition": "Condition:Onslaught",
+     "conditional": false,
+     "kind": "slot",
+     "name": "Dusk Fist, Fists of Stone",
+     "slot": "Gloves",
+     "vars": [
+      "buffOnslaught"
+     ]
+    }
+   ],
+   "backed": {
+    "multiplierCombo": "Martial Master",
+    "buffOnslaught": "Dusk Fist"
+   },
+   "unbacked": [
+    {
+     "var": "conditionEnemyDazed",
+     "label": "Is the enemy Dazed?",
+     "kind": "enemy_state",
+     "dps_pct": 23.687716598055154
+    },
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 20.000000000000018
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 51.99996858849061
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 1914.873274398211
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_28107",
+   "skill": "Glacial Cascade",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.1510803447833,
+     "active": []
+    }
+   ],
+   "detected": [
+    {
+     "condition": "Condition:Onslaught",
+     "conditional": false,
+     "kind": "slot",
+     "name": "Torment Clutches, Fists of Stone",
+     "slot": "Gloves",
+     "vars": [
+      "buffOnslaught"
+     ]
+    }
+   ],
+   "backed": {
+    "buffOnslaught": "Torment Clutches"
+   },
+   "unbacked": [
+    {
+     "var": "conditionEnemyFrozen",
+     "label": "Is the enemy Frozen?",
+     "kind": "enemy_state",
+     "dps_pct": 538.8768808505337
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.001040227471343
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2819a",
+   "skill": "Shield Wall",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 85.7581030532631
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_282d2",
+   "skill": "Companion: Diretusk Boar",
+   "ascendancy": "Spirit Walker",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2835c",
+   "skill": "Lightning Rod",
+   "ascendancy": "Deadeye",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 40.5301267758976
+    },
+    {
+     "var": "enemyDistance",
+     "label": "Distance to enemy:",
+     "kind": "enemy_state",
+     "dps_pct": 98.55583869865443
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.05869541704311
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_283fd",
+   "skill": "Meteors",
+   "ascendancy": "Shaman",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2854e",
+   "skill": "Wardbound Minions",
+   "ascendancy": "Lich",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_28599",
+   "skill": "Cluster Grenade",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 33.64613307678701
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2870d",
+   "skill": "Orb of Storms",
+   "ascendancy": "Stormweaver",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": false,
+     "kind": "node",
+     "name": "Constant Gale",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {
+    "buffArcaneSurge": "Constant Gale"
+   },
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_28751",
+   "skill": "Meteors",
+   "ascendancy": "Shaman",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionShapeshifted",
+     "label": "Currently Shapeshifted?",
+     "kind": "self_condition",
+     "dps_pct": 96.43287357569979
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 61.00024771536574
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_288a4",
+   "skill": "Spectre: Powered Zealot",
+   "ascendancy": "Lich",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_288c2",
+   "skill": "Kelari, the Tainted Sands",
+   "ascendancy": "Disciple of Varashta",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_288f3",
+   "skill": "Arc",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2894a",
+   "skill": "Glacial Bolt",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 34.9397267620464
+    },
+    {
+     "var": "configResonanceCount",
+     "label": "Total Resonance Count:",
+     "kind": "ramp",
+     "dps_pct": 30.356863607383367
+    },
+    {
+     "var": "stoicismSeconds",
+     "label": "Seconds building Stoicism:",
+     "kind": "ramp",
+     "dps_pct": 20.024559569086577
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_28965",
+   "skill": "Oil Barrage",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.4460478460975,
+     "active": []
+    },
+    {
+     "id": "martial_master",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.0,
+     "active": []
+    }
+   ],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.273713452727335
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 30.54105456294931
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_28af2",
+   "skill": "Kelari, the Tainted Sands",
+   "ascendancy": "Disciple of Varashta",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_28b5d",
+   "skill": "Berserk",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_28df3",
+   "skill": "Spark",
+   "ascendancy": "Stormweaver",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": false,
+     "kind": "node",
+     "name": "Constant Gale",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {
+    "buffArcaneSurge": "Constant Gale"
+   },
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 41.99999999999997
+    },
+    {
+     "var": "conditionFullMana",
+     "label": "Are you always on Full Mana?",
+     "kind": "self_condition",
+     "dps_pct": 30.3714392080632
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_28fda",
+   "skill": "Ancestral Warrior Totem",
+   "ascendancy": "Shaman",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2900a",
+   "skill": "Flicker Strike",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 76.05863926423211
+    },
+    {
+     "var": "useFrenzyCharges",
+     "label": "Do you use Frenzy Charges?",
+     "kind": "self_condition",
+     "dps_pct": 20.454396148805955
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 61.54827578204909
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2926d",
+   "skill": "Supporting Fire",
+   "ascendancy": "Tactician",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2929b",
+   "skill": "Meteors",
+   "ascendancy": "Shaman",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionShapeshifted",
+     "label": "Currently Shapeshifted?",
+     "kind": "self_condition",
+     "dps_pct": 73.81193203419782
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 74.45356027781922
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2937a",
+   "skill": "Sorcery Ward",
+   "ascendancy": "Witchhunter",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Blinded",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Decree of Acuity, Ancient Visor",
+     "slot": "Helmet",
+     "vars": [
+      "conditionBlinded",
+      "conditionEnemyBlinded"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_29480",
+   "skill": "Spear Throw",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2969d",
+   "skill": "Virtuous Barrier",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2977e",
+   "skill": "Boneshatter",
+   "ascendancy": "Martial Artist",
+   "rows": [
+    {
+     "id": "way_of_the_stonefist",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.1101917320246,
+     "active": []
+    }
+   ],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_29ca8",
+   "skill": "Virtuous Barrier",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_29cb0",
+   "skill": "Tornado",
+   "ascendancy": "Ritualist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 24.693877551020414
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_29cd6",
+   "skill": "Earthshatter",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionLowLife",
+     "label": "Are you always on Low Life?",
+     "kind": "self_condition",
+     "dps_pct": 32.43990521749232
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 196.98432804667476
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_29e06",
+   "skill": "Primal Bounty",
+   "ascendancy": "Spirit Walker",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_29f21",
+   "skill": "Doom Blast",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 21.63806422899601
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_29fee",
+   "skill": "Twister",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [
+    {
+     "id": "the_taming",
+     "alone": 1.042501638215,
+     "cond": 1.9984487608121,
+     "with": 2.0833439252182,
+     "active": [
+      "twisterCold",
+      "twisterFire",
+      "twisterLightning"
+     ]
+    }
+   ],
+   "detected": [],
+   "backed": {
+    "twisterCold": "The Taming",
+    "twisterFire": "The Taming",
+    "twisterLightning": "The Taming"
+   },
+   "unbacked": [
+    {
+     "var": "conditionHitMeleeRecently",
+     "label": "Have you Melee Hit Recently?",
+     "kind": "self_condition",
+     "dps_pct": 25.008084211500538
+    },
+    {
+     "var": "whirlwindStages",
+     "label": "# of Whirlwind Stages:",
+     "kind": "ramp",
+     "dps_pct": 240.2009532642222
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2a145",
+   "skill": "Skeletal Storm Mage Minion",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2a2ef",
+   "skill": "Dark Consequences",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyCriticalWeakness",
+     "label": "Is the enemy Critically Weak",
+     "kind": "enemy_state",
+     "dps_pct": 42.295131911189586
+    },
+    {
+     "var": "conditionEnemyIsolated",
+     "label": "Is the enemy Isolated?",
+     "kind": "enemy_state",
+     "dps_pct": 20.003740835659567
+    },
+    {
+     "var": "demonFormStacks",
+     "label": "Demonflame Stacks",
+     "kind": "ramp",
+     "dps_pct": 207.77418781272954
+    },
+    {
+     "var": "multiplierWitheredStackCount",
+     "label": "# of Withered Stacks:",
+     "kind": "enemy_state",
+     "dps_pct": 44.876890596999374
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2a357",
+   "skill": "Living Bomb",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierWitheredStackCount",
+     "label": "# of Withered Stacks:",
+     "kind": "enemy_state",
+     "dps_pct": 67.87505564421514
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2a46a",
+   "skill": "Voltaic Barrier",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "bannerPlanted",
+     "label": "Is Banner Planted?",
+     "kind": "skill_option",
+     "dps_pct": 27.116375380819946
+    },
+    {
+     "var": "conditionEnemyBlinded",
+     "label": "Is the enemy Blinded?",
+     "kind": "enemy_state",
+     "dps_pct": 26.068154257930143
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 49.338404085965884
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2a52f",
+   "skill": "Void Illusion",
+   "ascendancy": "Acolyte of Chayula",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.042205374193244
+    },
+    {
+     "var": "multiplierWitheredStackCount",
+     "label": "# of Withered Stacks:",
+     "kind": "enemy_state",
+     "dps_pct": 28.476421008751007
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2a7c3",
+   "skill": "Arc",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2a9f0",
+   "skill": "Arc",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 26.16361541309027
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2aa5a",
+   "skill": "Living Bomb",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2ab11",
+   "skill": "Iron Ward",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2abaf",
+   "skill": "Skeletal Warrior Minion",
+   "ascendancy": "Shaman",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2b0f9",
+   "skill": "Comet",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "node",
+     "name": "Aspiring Genius",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 80.02300454334836
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2b12d",
+   "skill": "Flicker Strike",
+   "ascendancy": "Invoker",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 54.686287816718114
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2b37b",
+   "skill": "Shred",
+   "ascendancy": "Deadeye",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyDazed",
+     "label": "Is the enemy Dazed?",
+     "kind": "enemy_state",
+     "dps_pct": 23.40709218129229
+    },
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 25.000000000000533
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 49.761703150388016
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2b483",
+   "skill": "Volcanic Fissure",
+   "ascendancy": "Acolyte of Chayula",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 20.000000000000483
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.127236231442357
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2b4c1",
+   "skill": "Rend",
+   "ascendancy": "Abyssal Lich",
+   "rows": [
+    {
+     "id": "eternal_life",
+     "alone": 1.0,
+     "cond": 1.0,
+     "with": 1.0,
+     "active": [
+      "conditionLowLife"
+     ]
+    }
+   ],
+   "detected": [],
+   "backed": {
+    "conditionLowLife": "Eternal Life"
+   },
+   "unbacked": [
+    {
+     "var": "clashCondition",
+     "label": "Enemy Life % higher than Player?",
+     "kind": "skill_option",
+     "dps_pct": 78.84797291815242
+    },
+    {
+     "var": "conditionCritRecently",
+     "label": "Have you Crit Recently?",
+     "kind": "self_condition",
+     "dps_pct": 27.82922923376563
+    },
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 25.99999999999889
+    },
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 87.90707369736461
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2b787",
+   "skill": "Shred",
+   "ascendancy": "Pathfinder",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 70.06150756003886
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2b88d",
+   "skill": "Whirling Assault",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2b8cd",
+   "skill": "Raise Shield",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 55.707220444818596
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2ba05",
+   "skill": "Hammer of the Gods",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Onslaught",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Loreweave, Runemastered Ornate Ringmail",
+     "slot": "Body Armour",
+     "vars": [
+      "buffOnslaught"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 123.5373959017724
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2ba0a",
+   "skill": "Shred",
+   "ascendancy": "Blood Mage",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 179.62953220901792
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2ba48",
+   "skill": "Comet",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Dragon Claw, Runeforged Sirenscale Gloves",
+     "slot": "Gloves",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyFrozen",
+     "label": "Is the enemy Frozen?",
+     "kind": "enemy_state",
+     "dps_pct": 113.8207887082904
+    },
+    {
+     "var": "configResonanceCount",
+     "label": "Total Resonance Count:",
+     "kind": "ramp",
+     "dps_pct": 74.71749826372456
+    },
+    {
+     "var": "overridePowerCharges",
+     "label": "# of Power Charges (if not maximum):",
+     "kind": "ramp",
+     "dps_pct": 43.50266156441451
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 154.42644434578548
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2ba76",
+   "skill": "Earthshatter",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 30.658873192230374
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2baca",
+   "skill": "Mace Strike",
+   "ascendancy": "Spirit Walker",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2bbe2",
+   "skill": "Ember Fusillade",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:Onslaught",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Loreweave, Ornate Ringmail",
+     "slot": "Body Armour",
+     "vars": [
+      "buffOnslaught"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierWitheredStackCount",
+     "label": "# of Withered Stacks:",
+     "kind": "enemy_state",
+     "dps_pct": 100.0000000000064
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 24.1516964501586
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2bbee",
+   "skill": "Earthshatter",
+   "ascendancy": "Titan",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 57.16261017161281
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2bcc9",
+   "skill": "Shield Wall",
+   "ascendancy": "Acolyte of Chayula",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 76.75938523154717
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2bd34",
+   "skill": "Flicker Strike",
+   "ascendancy": "Acolyte of Chayula",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": [
+    {
+     "var": "conditionEnemyShocked",
+     "label": "Is the enemy Shocked?",
+     "kind": "enemy_state",
+     "dps_pct": 28.867298967445553
+    },
+    {
+     "var": "usePowerCharges",
+     "label": "Do you use Power Charges?",
+     "kind": "self_condition",
+     "dps_pct": 38.4322775867695
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2bd4e",
+   "skill": "Shred",
+   "ascendancy": "Lich",
+   "rows": [
+    {
+     "id": "eternal_life",
+     "alone": 1.0,
+     "cond": 2.1282269020445,
+     "with": 2.1282269020445,
+     "active": [
+      "conditionLowLife"
+     ]
+    }
+   ],
+   "detected": [],
+   "backed": {
+    "conditionLowLife": "Eternal Life"
+   },
+   "unbacked": [
+    {
+     "var": "multiplierRage",
+     "label": "Rage:",
+     "kind": "ramp",
+     "dps_pct": 164.69571031194158
+    }
+   ]
+  },
+  {
+   "build": "poe_ninja_2bd8c",
+   "skill": "Mace Strike",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2c0b6",
+   "skill": "Cast on Critical",
+   "ascendancy": "Oracle",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2c0bf",
+   "skill": "Comet",
+   "ascendancy": "Infernalist",
+   "rows": [],
+   "detected": [],
+   "backed": {},
+   "unbacked": []
+  },
+  {
+   "build": "poe_ninja_2c166",
+   "skill": "Virtuous Barrier",
+   "ascendancy": "Gemling Legionnaire",
+   "rows": [],
+   "detected": [
+    {
+     "condition": "Condition:ArcaneSurge",
+     "conditional": true,
+     "kind": "slot",
+     "name": "Pandemonium Paw, Runeforged Sirenscale Gloves",
+     "slot": "Gloves",
+     "vars": [
+      "buffArcaneSurge"
+     ]
+    }
+   ],
+   "backed": {},
+   "unbacked": []
+  }
+ ]
+}
