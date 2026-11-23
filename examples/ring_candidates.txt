@@ -1,0 +1,36 @@
+slot: Ring 1
+price: 1
+name: life+res ring
+Rarity: RARE
+Candidate A
+Sapphire Ring
+Implicits: 1
++20% to Cold Resistance
++80 to maximum Life
++35% to Fire Resistance
++30% to Lightning Resistance
+---
+slot: Ring 1
+price: 4
+name: attack ring
+Rarity: RARE
+Candidate B
+Amethyst Ring
+Implicits: 1
++12% to Chaos Resistance
+Adds 12 to 22 Physical Damage to Attacks
++60 to maximum Life
++25% to Fire Resistance
++25% to Lightning Resistance
+15% increased Critical Damage Bonus
+---
+slot: Ring 1
+price: 0.5
+name: cheap res ring
+Rarity: RARE
+Candidate C
+Ruby Ring
+Implicits: 1
++20% to Fire Resistance
++40% to Cold Resistance
++40% to Lightning Resistance

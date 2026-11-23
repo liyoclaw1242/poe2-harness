@@ -1,0 +1,737 @@
+[
+ {
+  "skill": "Earthshatter",
+  "asc": "Titan",
+  "n": 3,
+  "layers": {
+   "ascendancy": 1,
+   "classBase": 0.61243321277361,
+   "supports": 7.8256764116917,
+   "tree": 10.043103998133
+  },
+  "bare": 167.3667259653,
+  "final": 8055.9674225827,
+  "supports": {
+   "opt": [
+    "Bleed III",
+    "Zerphi's Infamy",
+    "Brutality III",
+    "Concentrated Area",
+    "Heavy Swing"
+   ],
+   "hit": [
+    "Concentrated Area"
+   ],
+   "precision": 0.2,
+   "real_top": [
+    "Branching Fissures II",
+    "Aftershock II",
+    "Rapid Attacks II",
+    "Stoicism II",
+    "Dialla's Desire"
+   ],
+   "recall_top": 0.0
+  },
+  "ascendancy": {
+   "opt": [],
+   "hit": [],
+   "precision": null,
+   "real_top": [
+    "Hulking Form"
+   ],
+   "recall_top": 0.0
+  },
+  "tree": {
+   "opt": [
+    "Smash",
+    "Blood Rush",
+    "Reaving",
+    "Impair",
+    "Strike True",
+    "Blurred Motion",
+    "Cruel Methods",
+    "Devastation"
+   ],
+   "hit": [
+    "Smash"
+   ],
+   "precision": 0.125,
+   "real_top": [
+    "Sand in the Eyes",
+    "Dance with Death",
+    "Brutal",
+    "Versatile Arms",
+    "Acceleration",
+    "Greatest Defence",
+    "Brute Strength",
+    "Battle Fever"
+   ],
+   "recall_top": 0.0
+  },
+  "real_conditions": [
+   [
+    "multiplierRage",
+    1
+   ]
+  ],
+  "real_gear": [
+   [
+    "Mageblood, Utility Belt",
+    2
+   ],
+   [
+    "Skull Blow, Flanged Mace",
+    1
+   ],
+   [
+    "Foe Clutches, Ornate Mitts",
+    1
+   ],
+   [
+    "Victory Gyre, Prismatic Ring",
+    1
+   ],
+   [
+    "Grim Blunt, Massive Greathammer",
+    1
+   ]
+  ]
+ },
+ {
+  "skill": "Ember Fusillade",
+  "asc": "Oracle",
+  "n": 3,
+  "layers": {
+   "ascendancy": 1.2142797203223,
+   "classBase": 1,
+   "supports": 3.8672261025781,
+   "tree": 2.3856121958216
+  },
+  "bare": 1255.531040931,
+  "final": 14065.190125095,
+  "supports": {
+   "opt": [
+    "Rakiata's Flow",
+    "Uhtred's Omen"
+   ],
+   "hit": [],
+   "precision": 0.0,
+   "real_top": [
+    "Compressed Duration II",
+    "Swift Affliction III"
+   ],
+   "recall_top": 0.0
+  },
+  "ascendancy": {
+   "opt": [
+    "Spell Damage",
+    "Forced Outcome",
+    "The Lesser Harm"
+   ],
+   "hit": [
+    "Forced Outcome"
+   ],
+   "precision": 0.3333333333333333,
+   "real_top": [
+    "Forced Outcome"
+   ],
+   "recall_top": 1.0
+  },
+  "tree": {
+   "opt": [
+    "Guardian of the Wilds",
+    "Harbinger of Disaster",
+    "Lasting Incantations",
+    "Sling Shots",
+    "Wasting Casts",
+    "Total Incineration",
+    "Desensitisation",
+    "Rhythm of Fire",
+    "Enhancing Attacks"
+   ],
+   "hit": [
+    "Guardian of the Wilds",
+    "Harbinger of Disaster",
+    "Sling Shots",
+    "Desensitisation"
+   ],
+   "precision": 0.4444444444444444,
+   "real_top": [
+    "Eldritch Battery",
+    "Arcane Intensity",
+    "Mental Alacrity",
+    "Blackflame Covenant",
+    "Sacrificial Blood",
+    "Turn the Clock Forward",
+    "Night's Bite",
+    "Raw Mana",
+    "Guardian of the Wilds"
+   ],
+   "recall_top": 0.1111111111111111
+  },
+  "real_conditions": [],
+  "real_gear": [
+   [
+    "Dream Fragments, Sapphire Ring",
+    2
+   ],
+   [
+    "Runeseeker's Call, Runic Fork",
+    1
+   ],
+   [
+    "Woe Noose, Absent Amulet",
+    1
+   ],
+   [
+    "Miracle Anthem, Sacred Focus",
+    1
+   ],
+   [
+    "Gloom Fist, Runeforged Sirenscale Gloves",
+    1
+   ]
+  ]
+ },
+ {
+  "skill": "Meteors",
+  "asc": "Shaman",
+  "error": "build_up failed: harness/lua/rpc.lua:780: gem not found: Meteors\nstack traceback:\n\t[C]: in function 'error'\n\tharness/lua/rpc.lua:7"
+ },
+ {
+  "skill": "Arc",
+  "asc": "Gemling Legionnaire",
+  "n": 3,
+  "layers": {
+   "ascendancy": 1.7533923303835,
+   "classBase": 1,
+   "supports": 3.8728103579589,
+   "tree": 2.1100959151817
+  },
+  "bare": 394.4252,
+  "final": 5651.61,
+  "supports": {
+   "opt": [
+    "Rakiata's Flow",
+    "Uhtred's Omen"
+   ],
+   "hit": [
+    "Rakiata's Flow"
+   ],
+   "precision": 0.5,
+   "real_top": [
+    "SupportMetaTotemSpellTotemPlayer",
+    "Urgent Totems III"
+   ],
+   "recall_top": 0.0
+  },
+  "ascendancy": {
+   "opt": [
+    "Advanced Thaumaturgy",
+    "Essence of Virtue",
+    "Neurological Implants",
+    "Implanted Gems"
+   ],
+   "hit": [
+    "Advanced Thaumaturgy",
+    "Essence of Virtue",
+    "Neurological Implants",
+    "Implanted Gems"
+   ],
+   "precision": 1.0,
+   "real_top": [
+    "Skill Gem Quality",
+    "Advanced Thaumaturgy",
+    "Neurological Implants",
+    "Implanted Gems"
+   ],
+   "recall_top": 0.75
+  },
+  "tree": {
+   "opt": [
+    "Remorseless",
+    "Ricochet",
+    "Heavy Ammunition",
+    "Careful Aim",
+    "Spreading Shocks",
+    "Dispatch Foes",
+    "Short Shot",
+    "Bond of the Owl"
+   ],
+   "hit": [],
+   "precision": 0.0,
+   "real_top": [
+    "Eldritch Battery",
+    "Arcane Intensity",
+    "Pure Power",
+    "Raw Mana",
+    "Efficient Inscriptions",
+    "Ancestral Bond",
+    "Supportive Ancestors",
+    "Ancestral Conduits"
+   ],
+   "recall_top": 0.0
+  },
+  "real_conditions": [
+   [
+    "usePowerCharges",
+    1
+   ],
+   [
+    "useFrenzyCharges",
+    1
+   ]
+  ],
+  "real_gear": [
+   [
+    "Runeseeker's Call, Runemastered Runic Fork",
+    2
+   ],
+   [
+    "Kalandra's Touch, Ring",
+    2
+   ],
+   [
+    "Phoenix Song, Attuned Wand",
+    1
+   ],
+   [
+    "Havoc Rosary, Bloodstone Amulet",
+    1
+   ],
+   [
+    "Behemoth Hand, Vaal Gloves",
+    1
+   ]
+  ]
+ },
+ {
+  "skill": "Comet",
+  "asc": "Infernalist",
+  "n": 2,
+  "layers": {
+   "ascendancy": 1.7291812669982,
+   "classBase": 1,
+   "supports": 3.9568965517241,
+   "tree": 3.0497464877831
+  },
+  "bare": 1098.3808,
+  "final": 22919.856321366,
+  "supports": {
+   "opt": [
+    "Rakiata's Flow",
+    "Uhtred's Omen"
+   ],
+   "hit": [
+    "Rakiata's Flow"
+   ],
+   "precision": 0.5,
+   "real_top": [
+    "SupportMetaCastOnCritPlayer",
+    "Rakiata's Flow"
+   ],
+   "recall_top": 0.5
+  },
+  "ascendancy": {
+   "opt": [
+    "Grinning Immolation",
+    "Spell Damage",
+    "Spell Damage",
+    "Demonic Possession",
+    "Bringer of Flame"
+   ],
+   "hit": [
+    "Grinning Immolation",
+    "Bringer of Flame"
+   ],
+   "precision": 0.4,
+   "real_top": [
+    "Bringer of Flame",
+    "Grinning Immolation",
+    "Critical Chance",
+    "Flammability Magnitude",
+    "Loyal Hellhound"
+   ],
+   "recall_top": 0.4
+  },
+  "tree": {
+   "opt": [
+    "Raw Destruction",
+    "Critical Overload",
+    "Potent Incantation",
+    "Jagged Shards",
+    "Sudden Escalation",
+    "Ice Storm",
+    "Endless Blizzard",
+    "Glaciation",
+    "Inescapable Cold"
+   ],
+   "hit": [
+    "Critical Overload"
+   ],
+   "precision": 0.1111111111111111,
+   "real_top": [
+    "Invocated Efficiency",
+    "Turn the Clock Forward",
+    "Turn the Clock Back",
+    "Brain Freeze",
+    "Brain Storm",
+    "Mental Alacrity",
+    "Chakra of Elements",
+    "Rupturing Pins",
+    "Energise"
+   ],
+   "recall_top": 0.0
+  },
+  "real_conditions": [
+   [
+    "conditionEnemyShocked",
+    1
+   ],
+   [
+    "usePowerCharges",
+    1
+   ],
+   [
+    "arcLightningInfused",
+    1
+   ],
+   [
+    "conditionEnemyImmobilised",
+    1
+   ],
+   [
+    "conditionEnemyDazed",
+    1
+   ]
+  ],
+  "real_gear": [
+   [
+    "Runeseeker's Call, Runemastered Runic Fork",
+    2
+   ],
+   [
+    "Carrion Charm, Absent Amulet",
+    1
+   ],
+   [
+    "Sacred Flame, Shrine Sceptre",
+    1
+   ],
+   [
+    "Dusk Palm, Runeforged Vaal Mitts",
+    1
+   ],
+   [
+    "Phoenix Knuckle, Amethyst Ring",
+    1
+   ]
+  ]
+ },
+ {
+  "skill": "Twister",
+  "asc": "Gemling Legionnaire",
+  "n": 2,
+  "layers": {
+   "ascendancy": 1.8013541200307,
+   "classBase": 0.81082917600324,
+   "supports": 6.7338247385242,
+   "tree": 5.1669921936388
+  },
+  "bare": 333.19643566393,
+  "final": 16932.786238594,
+  "supports": {
+   "opt": [
+    "Zerphi's Infamy",
+    "Bleed III",
+    "Brutality III",
+    "Concentrated Area",
+    "Heightened Accuracy I"
+   ],
+   "hit": [],
+   "precision": 0.0,
+   "real_top": [
+    "Projectile Acceleration III",
+    "Retreat II",
+    "Garukhan's Resolve",
+    "Rakiata's Flow",
+    "Execute III"
+   ],
+   "recall_top": 0.0
+  },
+  "ascendancy": {
+   "opt": [
+    "Enhanced Effectiveness",
+    "Adaptive Capability",
+    "Integrated Efficiency",
+    "Gem Studded"
+   ],
+   "hit": [
+    "Integrated Efficiency"
+   ],
+   "precision": 0.25,
+   "real_top": [
+    "Integrated Efficiency",
+    "Advanced Thaumaturgy"
+   ],
+   "recall_top": 0.5
+  },
+  "tree": {
+   "opt": [
+    "Remorseless",
+    "Battle-hardened",
+    "Ricochet",
+    "Blur",
+    "Honed Instincts",
+    "Careful Aim",
+    "Heavy Ammunition",
+    "Clean Shot",
+    "Crimson Assault",
+    "Prolonged Assault"
+   ],
+   "hit": [],
+   "precision": 0.0,
+   "real_top": [
+    "Struck Through",
+    "Dance with Death",
+    "Heartstopping",
+    "Heartbreaking",
+    "Dizzying Sweep",
+    "Stimulants",
+    "Chakra of Thought",
+    "Dizzying Hits",
+    "The Fabled Stag",
+    "Stupefy"
+   ],
+   "recall_top": 0.0
+  },
+  "real_conditions": [
+   [
+    "conditionEnemyChilled",
+    1
+   ],
+   [
+    "conditionEnemyIgnited",
+    1
+   ],
+   [
+    "whirlwindStages",
+    1
+   ],
+   [
+    "conditionHitMeleeRecently",
+    1
+   ],
+   [
+    "twisterLightning",
+    1
+   ]
+  ],
+  "real_gear": [
+   [
+    "The Taming, Prismatic Ring",
+    2
+   ],
+   [
+    "Skysliver, Winged Spear",
+    1
+   ],
+   [
+    "Spirit Paw, Runeforged Secured Wraps",
+    1
+   ],
+   [
+    "Spirit Spiral, Gold Ring",
+    1
+   ],
+   [
+    "Woe Medallion, Absent Amulet",
+    1
+   ]
+  ]
+ },
+ {
+  "skill": "Living Bomb",
+  "asc": "Gemling Legionnaire",
+  "n": 2,
+  "layers": {
+   "ascendancy": 2.2181644097935,
+   "classBase": 1,
+   "supports": 5.4383833374659,
+   "tree": 1
+  },
+  "bare": 1166.3436,
+  "final": 14069.8692,
+  "supports": {
+   "opt": [
+    "Rakiata's Flow",
+    "Considered Casting",
+    "Uhtred's Augury"
+   ],
+   "hit": [
+    "Uhtred's Augury"
+   ],
+   "precision": 0.3333333333333333,
+   "real_top": [
+    "SupportMetaCastOnElementalAilmentPlayer",
+    "Overabundance II",
+    "Withering Touch"
+   ],
+   "recall_top": 0.0
+  },
+  "ascendancy": {
+   "opt": [
+    "Advanced Thaumaturgy",
+    "Essence of Virtue",
+    "Neurological Implants",
+    "Implanted Gems"
+   ],
+   "hit": [
+    "Advanced Thaumaturgy",
+    "Neurological Implants"
+   ],
+   "precision": 0.5,
+   "real_top": [
+    "Enhanced Effectiveness",
+    "Neurological Implants",
+    "Advanced Thaumaturgy"
+   ],
+   "recall_top": 0.6666666666666666
+  },
+  "tree": {
+   "opt": [],
+   "hit": [],
+   "precision": null,
+   "real_top": [
+    "Throatseeker"
+   ],
+   "recall_top": 0.0
+  },
+  "real_conditions": [
+   [
+    "multiplierWitheredStackCount",
+    1
+   ]
+  ],
+  "real_gear": [
+   [
+    "Rathpith Globe, Sacred Focus",
+    2
+   ],
+   [
+    "Runeseeker's Call, Runemastered Runic Fork",
+    2
+   ],
+   [
+    "Kaom's Heart, Conqueror Plate",
+    2
+   ],
+   [
+    "Veil of the Night, Martyr Crown",
+    2
+   ],
+   [
+    "Corruption Fingers, Massive Mitts",
+    2
+   ]
+  ]
+ },
+ {
+  "skill": "Comet",
+  "asc": "Gemling Legionnaire",
+  "n": 2,
+  "layers": {
+   "ascendancy": 1.3197945845005,
+   "classBase": 1,
+   "supports": 3.9568965517241,
+   "tree": 1
+  },
+  "bare": 1098.3808,
+  "final": 5736.0637714286,
+  "supports": {
+   "opt": [
+    "Rakiata's Flow",
+    "Uhtred's Omen"
+   ],
+   "hit": [],
+   "precision": 0.0,
+   "real_top": [
+    "Zenith II",
+    "Execute III"
+   ],
+   "recall_top": 0.0
+  },
+  "ascendancy": {
+   "opt": [
+    "Neurological Implants",
+    "Implanted Gems",
+    "Essence of Virtue"
+   ],
+   "hit": [
+    "Neurological Implants",
+    "Implanted Gems",
+    "Essence of Virtue"
+   ],
+   "precision": 1.0,
+   "real_top": [
+    "Skill Gem Quality",
+    "Neurological Implants",
+    "Advanced Thaumaturgy"
+   ],
+   "recall_top": 0.3333333333333333
+  },
+  "tree": {
+   "opt": [],
+   "hit": [],
+   "precision": null,
+   "real_top": [
+    "Arcane Intensity"
+   ],
+   "recall_top": 0.0
+  },
+  "real_conditions": [
+   [
+    "usePowerCharges",
+    2
+   ],
+   [
+    "conditionCritRecently",
+    1
+   ],
+   [
+    "configResonanceCount",
+    1
+   ],
+   [
+    "conditionEnemyFrozen",
+    1
+   ],
+   [
+    "overridePowerCharges",
+    1
+   ]
+  ],
+  "real_gear": [
+   [
+    "Adonia's Ego, Siphoning Wand",
+    2
+   ],
+   [
+    "Dusk Gorget, Absent Amulet",
+    2
+   ],
+   [
+    "Tempest Halo, Runeforged Ancestral Tiara",
+    2
+   ],
+   [
+    "Maligaro's Virtuosity, Runemastered Fine Bracers",
+    1
+   ],
+   [
+    "Sacred Flame, Shrine Sceptre",
+    1
+   ]
+  ]
+ }
+]

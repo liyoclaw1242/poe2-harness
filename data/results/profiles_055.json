@@ -1,0 +1,8047 @@
+[
+ {
+  "file": "pobb_in_1tN3LRMBktGA.code",
+  "title": "Chaos Ignite Flameblast Oil Grenade might feel really good in 0.5.5 -  POE2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 73,
+  "main_skill": "Flameblast",
+  "supports": [
+   "Considered Casting",
+   "Searing Flame II",
+   "Concentrated Area",
+   "Controlled Destruction",
+   "Deliberation"
+  ],
+  "dps": 1221701.6358731,
+  "ehp": 6232.3581971442,
+  "dewatered_dps": 1221701.6358731,
+  "conditional": [
+   {
+    "var": "enemyIsBoss",
+    "kind": "scenario",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_2dy0Qt13nETL.code",
+  "title": "SPIN 2 WIN ⚔️ Whirling Assault Smith of Kitava Build Guide/Update⚔️ PoE2 0.5.5",
+  "ascendancy": "Smith of Kitava",
+  "class": "Warrior",
+  "level": 90,
+  "main_skill": "Whirling Assault",
+  "supports": [
+   "Armour Break III",
+   "Ancestral Call II",
+   "Heft",
+   "Heavy Swing",
+   "Defy II"
+  ],
+  "dps": 49416.349539757,
+  "ehp": 19942.618819943,
+  "dewatered_dps": 12344.353270166,
+  "conditional": [
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 19.283351069843157
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 16.666666666665098
+   },
+   {
+    "var": "conditionSurrounded",
+    "kind": "self_condition",
+    "dps_pct": 87.26940332101181
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 43.994565217390736
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionSurrounded",
+    "label": "Are you surrounded?",
+    "ratio": 1.872694033210118,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.1999505928853698,
+    "capped": false,
+    "cap_value": 20,
+    "current": 45
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_3qPJf5HpcT8V.code",
+  "title": "The BEST Varashta League Starter for PoE 0.5.5",
+  "ascendancy": "Disciple of Varashta",
+  "class": "Sorceress",
+  "level": 85,
+  "main_skill": "Skeletal Cleric Minion",
+  "supports": [
+   "Rapid Casting II",
+   "Minion Mastery",
+   "Brutus' Brain"
+  ],
+  "dps": 34842.904931541,
+  "ehp": 12632.000394859,
+  "dewatered_dps": 34842.904931541,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_6DPWD6-3huZ5.code",
+  "title": "Reverie Earthquake Titan | Build Guide for Path of Exile 0.5.5",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 80,
+  "main_skill": "Earthquake",
+  "supports": [
+   "Compressed Duration II",
+   "Rageforged II",
+   "Overabundance I",
+   "Aftershock II"
+  ],
+  "dps": 62178.115133757,
+  "ehp": 11286.405314863,
+  "dewatered_dps": 62178.115133757,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_75QQe3094dgJ.code",
+  "title": "Gemling Snipe Mirage archer Mid Buddget - Poe 2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 92,
+  "main_skill": "",
+  "supports": [
+   "Prolonged Duration II",
+   "Cooldown Recovery II"
+  ],
+  "dps": 0.0,
+  "ehp": 18519.800267766,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_7LD6rVqDEgJR.code",
+  "title": "PoE2 0.5.5 | Thorns Ice Shot Martial Artist | Lag Machine Deluxe™ | Pure Glass Cannon™ | Fun.",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 95,
+  "main_skill": "Thorns",
+  "supports": [],
+  "dps": 112541.13326438,
+  "ehp": 8336.4677131987,
+  "dewatered_dps": 14294.189473908,
+  "conditional": [
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 8.23666566060246
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 5.581587618584871
+   },
+   {
+    "var": "conditionEnemyCrushed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 17.892661517125852
+   },
+   {
+    "var": "conditionEnemyFrozen",
+    "kind": "enemy_state",
+    "dps_pct": 73.48492940443731
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 25.066157261405685
+   },
+   {
+    "var": "conditionNonCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 5.060728744943943
+   },
+   {
+    "var": "conditionShockEffect",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyCritDamage",
+    "kind": "scenario",
+    "dps_pct": null
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": 67.60162770215913
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "scavengedPlatingStacks",
+    "label": "# of Scavenged Plating Stacks:",
+    "ratio": 1.6760162770215914,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_83YN06BdkIkK.code",
+  "title": "Gemling Fury of the Mountain Build - Path of Exile 2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Fury of the Mountain",
+  "supports": [
+   "Rapid Attacks II",
+   "Branching Fissures II",
+   "Concentrated Area",
+   "Rakiata's Flow",
+   "Garukhan's Resolve"
+  ],
+  "dps": 1563263.8571905,
+  "ehp": 12611.627906977,
+  "dewatered_dps": 611784.02085535,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 11.009711941525758
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 64.03724477188139
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 1.63302594660788
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 13.351274719120854
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 21.435584857148093
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.4140677786233715,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_8HP1yUwtHRiI.code",
+  "title": "PoE 0.5.5 - Chronomancer Grim Pillars - HCSSF - League starter guide",
+  "ascendancy": "None",
+  "class": "Sorceress",
+  "level": 13,
+  "main_skill": "Punch",
+  "supports": [],
+  "dps": 0.45449971875,
+  "ehp": 251.44349389112,
+  "dewatered_dps": 0.45449971875,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_8i_ttPjEAMkX.code",
+  "title": "Everything Was Fine Until This Boss Showed Up - Level 52-75 Amazon Werewolf - Forbidden Rites EP 2",
+  "ascendancy": "Amazon",
+  "class": "Huntress",
+  "level": 75,
+  "main_skill": "Shred",
+  "supports": [
+   "Crescendo II",
+   "Rage III",
+   "Rapid Attacks II",
+   "Close Combat II"
+  ],
+  "dps": 34454.677163369,
+  "ehp": 9678.5395517156,
+  "dewatered_dps": 17916.766669221,
+  "conditional": [
+   {
+    "var": "bannerPlanted",
+    "kind": "skill_option",
+    "dps_pct": 31.205317404027877
+   },
+   {
+    "var": "conditionEnemyFrozen",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionFrozenEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 19.3681820551852
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 21.845008434569802
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2186225057567341,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_8yp3_Zgboq1e.code",
+  "title": "Bells and Shields Nightfall Martial Artist is 10/10 FUN [PoE2 0.5.5]",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 94,
+  "main_skill": "Embrace The Fall",
+  "supports": [
+   "Ice Bite II",
+   "Magnified Area II",
+   "Blindside",
+   "Fist of War II"
+  ],
+  "dps": 482920.07977261,
+  "ehp": 50025.903338932,
+  "dewatered_dps": 111054.30187473,
+  "conditional": [
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 15.349981476456186
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 2.773680004301826
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 23.812164809818515
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 22.143920201491362
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 19.39992058759621
+   },
+   {
+    "var": "conditionFrozenEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 16.906928211584905
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 11.921976058546345
+   },
+   {
+    "var": "conditionHaveEnergyShield",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionNonCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 5.89718889020483
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.714196376866987
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyBlinded",
+    "label": "Is the enemy Blinded?",
+    "ratio": 1.2381216480981851,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2044096021485293,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_9B1nYQ1d4Qe6.code",
+  "title": "[POE2] Repulsion Autobomber Ritualist 1Div budget - Late start day 1",
+  "ascendancy": "Ritualist",
+  "class": "Huntress",
+  "level": 78,
+  "main_skill": "Molten Shower",
+  "supports": [
+   "Cooldown Recovery II",
+   "Elemental Armament II",
+   "Close Combat II",
+   "Concentrated Area"
+  ],
+  "dps": 10970.696312349,
+  "ehp": 9443.2421731445,
+  "dewatered_dps": 10970.696312349,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_9sM9nvjIZG9u.code",
+  "title": "You Thought It Was Tanky BEFORE!? -Primal Strikes Oracle 3.0 - Path of Exiles 2",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 97,
+  "main_skill": "Spear Stab",
+  "supports": [
+   "Magnified Area II",
+   "Cold Exposure",
+   "Bhatair's Vengeance",
+   "Ambrosia II",
+   "Excise"
+  ],
+  "dps": 27901.067375975,
+  "ehp": 39091.726389923,
+  "dewatered_dps": 27901.067375975,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_AXInuo8fAYKk.code",
+  "title": "Raven's Flock Made Me Build THIS | Disciple of Varashta SSF PoE 2 0.5.5",
+  "ascendancy": "Disciple of Varashta",
+  "class": "Sorceress",
+  "level": 89,
+  "main_skill": "Spiraling Conspiracy",
+  "supports": [
+   "Muster",
+   "Hulking Minions",
+   "Swift Affliction II",
+   "Magnified Area II"
+  ],
+  "dps": 0.0,
+  "ehp": 23839.99108158,
+  "dewatered_dps": 0.0,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_AlCBdiZHlnak.code",
+  "title": "Gemling Tempest Flurry Build - Path of Exile 2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 95,
+  "main_skill": "Profane Ritual",
+  "supports": [
+   "Compressed Duration II",
+   "Swift Affliction III",
+   "Magnified Area II",
+   "Rapid Casting II",
+   "Spell Cascade"
+  ],
+  "dps": 1252.2734,
+  "ehp": 29582.28261148,
+  "dewatered_dps": 811.22113333333,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 6.711409395970125
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 16.483516483516468
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 6.711409395970125
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 2.9126213592232997
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 2.9126213592232997
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 2.9126213592232997
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_AqV-HjS-IHp7.code",
+  "title": "Gemling Instant Snipe + Mirage archer High Buddget - Poe 2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Snipe",
+  "supports": [
+   "Window of Opportunity II",
+   "Rigwald's Ferocity",
+   "Rapid Attacks II",
+   "Garukhan's Resolve",
+   "Verglas"
+  ],
+  "dps": 156932.3821067,
+  "ehp": 21876.742707968,
+  "dewatered_dps": 105095.77835393,
+  "conditional": [
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 8.008647493892628
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 5.336768541047809
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 18.248762888921142
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 9.493392080503993
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_B-EjSJntFuNn.code",
+  "title": "The Ultimate Earthshatter Warrior Starter for POE2 0.5.5!",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 97,
+  "main_skill": "Earthshatter",
+  "supports": [
+   "Branching Fissures II",
+   "Aftershock II",
+   "Stoicism II",
+   "Rapid Attacks II",
+   "Dialla's Desire"
+  ],
+  "dps": 6963.1235550936,
+  "ehp": 30269.107492417,
+  "dewatered_dps": 6963.1235550936,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "stoicismSeconds",
+    "label": "Seconds building Stoicism:",
+    "ratio": 1.234155070651189,
+    "capped": true,
+    "cap_value": 10,
+    "current": null
+   },
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.1248445790717432,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_B4TJk8jxrqoh.code",
+  "title": "[0.5.5] Djinn Varashta Sand and Ice | Build Guide",
+  "ascendancy": "Disciple of Varashta",
+  "class": "Sorceress",
+  "level": 80,
+  "main_skill": "Navira, the Last Mirage",
+  "supports": [
+   "Bidding II",
+   "Muster",
+   "Encroaching Ground",
+   "Magnified Area II"
+  ],
+  "dps": 2007.8073075833,
+  "ehp": 5678.7519323663,
+  "dewatered_dps": 2007.8073075833,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_CNshgAiNqFBK.code",
+  "title": "PoE2 - Gemling Siege Cascade with Herald of Blood Build",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 91,
+  "main_skill": "Virtuous Barrier",
+  "supports": [],
+  "dps": 0.0,
+  "ehp": 22825.991295443,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_Dh9Tdsb3gmZq.code",
+  "title": "[POE2 0.5.5] 2nd Best Build in History, But You Can't Actually Play it. Cast on Block Mana Flask",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 100,
+  "main_skill": "Virtuous Barrier",
+  "supports": [],
+  "dps": 0.0,
+  "ehp": 33155.738392378,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_ETf4XZzcWC-z.code",
+  "title": "(Ethical) STRIKE MY \"DRUM\" Titan - PoE2 Build Template (Patch 0.5.5)",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 92,
+  "main_skill": "High Velocity Rounds",
+  "supports": [
+   "Brutality III",
+   "Hourglass",
+   "Inexorable Critical I",
+   "Heft",
+   "Supercritical"
+  ],
+  "dps": 1014.3896305742,
+  "ehp": 1759.2816977211,
+  "dewatered_dps": 1014.3896305742,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.1712198294617742,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_J1frR1zQT3iX.code",
+  "title": "Path of Exile 2, But a Mystery Box Chooses My Build! | Episode 1",
+  "ascendancy": "Pathfinder",
+  "class": "Ranger",
+  "level": 88,
+  "main_skill": "Hexblast",
+  "supports": [
+   "Considered Casting",
+   "Chaos Attunement",
+   "Controlled Destruction",
+   "Poison III",
+   "Efficiency II"
+  ],
+  "dps": 291655.62617049,
+  "ehp": 15167.313883225,
+  "dewatered_dps": 255561.51596884,
+  "conditional": [
+   {
+    "var": "conditionDodgeRolledRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyCursed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyPoisoned",
+    "kind": "enemy_state",
+    "dps_pct": 12.232417099982683
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierPoisonAppliedRecently",
+    "kind": "ramp",
+    "dps_pct": 1.684927757615995
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyBleeding",
+    "label": "Is the enemy Bleeding?",
+    "ratio": 1.1404823825004806,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "multiplierPoisonAppliedRecently",
+    "label": "# of Poisons applied Recently:",
+    "ratio": 1.036174057095186,
+    "capped": true,
+    "cap_value": 10,
+    "current": 4
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_KRKgNBgLvBsa.code",
+  "title": "I Took a Martial Artist From ZERO to HERO in PoE 2 SSF | 0.5.5",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 89,
+  "main_skill": "Whirling Assault",
+  "supports": [
+   "SupportHollowFormPlayer",
+   "Blindside",
+   "Heavy Swing"
+  ],
+  "dps": 6853.02886451,
+  "ehp": 34373.563325639,
+  "dewatered_dps": 3175.3792052367,
+  "conditional": [
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 24.64913751364124
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 31.99138672524997
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 35.28411484110157
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyBlinded",
+    "label": "Is the enemy Blinded?",
+    "ratio": 1.2464913751364124,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.104255160154529,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_MsLgx4zHJTDM.code",
+  "title": "Zero to Hero Grenade Amazon | Path of Exile 2 0.5 5 Forbidden Rites",
+  "ascendancy": "Amazon",
+  "class": "Huntress",
+  "level": 96,
+  "main_skill": "Explosive Grenade",
+  "supports": [
+   "Multishot II",
+   "Short Fuse I",
+   "Elemental Armament II",
+   "Rageforged II",
+   "Rakiata's Flow"
+  ],
+  "dps": 42100.131853207,
+  "ehp": 191807.35873885,
+  "dewatered_dps": 42100.131853207,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.1490995367807342,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_N5UaTPkEBx1I.code",
+  "title": "CYCLONE IN POE 2 ALREADY???",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 95,
+  "main_skill": "Rend",
+  "supports": [
+   "Prolonged Duration II",
+   "Hit and Run",
+   "Rapid Attacks III",
+   "Rage III",
+   "Blazing Critical"
+  ],
+  "dps": 1406.2774052973,
+  "ehp": 82780.541758345,
+  "dewatered_dps": 624.80849628586,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 70.15689879352804
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 13.011152416349026
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 17.439050605657116
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_N8QDjRxUVPS1.code",
+  "title": "Path of Exile 2 0.5.5 Forbidden Rites Coc Infernalist",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 97,
+  "main_skill": "Comet",
+  "supports": [
+   "SupportMetaCastOnCritPlayer",
+   "Rakiata's Flow",
+   "Dialla's Desire"
+  ],
+  "dps": 13344724.305593,
+  "ehp": 38034.962753036,
+  "dewatered_dps": 6505457.3698833,
+  "conditional": [
+   {
+    "var": "arcLightningInfused",
+    "kind": "skill_option",
+    "dps_pct": 13.471913732675155
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyImmobilised",
+    "kind": "enemy_state",
+    "dps_pct": 3.969973382376746
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 47.19934009208671
+   },
+   {
+    "var": "conditionInfusionConsumedRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionShockEffect",
+    "kind": "enemy_state",
+    "dps_pct": 1.7178769089599921
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 2.798691479728155
+   },
+   {
+    "var": "enemyColdResist",
+    "kind": "scenario",
+    "dps_pct": null
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyFireResist",
+    "kind": "scenario",
+    "dps_pct": null
+   },
+   {
+    "var": "sigilOfPowerStages",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 15.876243115387933
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_NYGrJHqBp7HQ.code",
+  "title": "Grim Pillars Spell Totem 0.5.5 League Start Build Guide - Forbidden Rites Ritual Event",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 90,
+  "main_skill": "Grim Pillars",
+  "supports": [
+   "SupportMetaTotemSpellTotemPlayer",
+   "Urgent Totems III",
+   "Efficiency II",
+   "Magnified Area II",
+   "Cold Mastery"
+  ],
+  "dps": 300.969,
+  "ehp": 1092.15095641,
+  "dewatered_dps": 300.969,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_OiV7ryKuC0SX.code",
+  "title": "Just Drop Totems & Watch Everything DIE!!! - Path of Exiles 2",
+  "ascendancy": "Shaman",
+  "class": "Druid",
+  "level": 96,
+  "main_skill": "Archmage",
+  "supports": [],
+  "dps": 0.0,
+  "ehp": 16582.991629464,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_UafSNrqsnmu7.code",
+  "title": "Path of Exile 2: Armour Piercing Rounds + Supporting Fire Hybrid Tactician Build",
+  "ascendancy": "Tactician",
+  "class": "Mercenary",
+  "level": 93,
+  "main_skill": "Armour Piercing Rounds",
+  "supports": [
+   "Fresh Clip II",
+   "Rapid Attacks II",
+   "Uruk's Smelting",
+   "Brutality III",
+   "Pierce III"
+  ],
+  "dps": 483556.08047964,
+  "ehp": 10073.991618649,
+  "dewatered_dps": 125284.38731387,
+  "conditional": [
+   {
+    "var": "conditionBleedAggravated",
+    "kind": "enemy_state",
+    "dps_pct": 1.473594065143824
+   },
+   {
+    "var": "conditionEmpowered",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 36.305290143365674
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyHeavyStunned",
+    "kind": "enemy_state",
+    "dps_pct": 29.12776822358707
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyPinned",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionLeeching",
+    "kind": "self_condition",
+    "dps_pct": 31.097809068588788
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 57.00087144384969
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.3300260334282465,
+    "capped": false,
+    "cap_value": 20,
+    "current": 34
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_UkJMeB5VfsGI.code",
+  "title": "This is my Leaguestart build for 0.5.5! | Arc Bloodmage | Path of Exile 2 Forbidden Rites",
+  "ascendancy": "Blood Mage",
+  "class": "Witch",
+  "level": 92,
+  "main_skill": "Arc",
+  "supports": [
+   "Ambush",
+   "Considered Casting",
+   "Deliberation",
+   "Efficiency II",
+   "Lightning Mastery"
+  ],
+  "dps": 231364.80423266,
+  "ehp": 17402.054314437,
+  "dewatered_dps": 209378.45888809,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 10.500767586756087
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyColdExposure",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "arcLightningInfused",
+    "label": "Lightning Infused?",
+    "ratio": 3.0256595340002104,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyFullLife",
+    "label": "Is the enemy on Full Life?",
+    "ratio": 1.2239902817478514,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_X04vA8o6Af2x.code",
+  "title": "How I Became the UNDISPUTED #1 Mace Strike Build in PoE 2 SSFHC (0.5.5 ritual league)",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 93,
+  "main_skill": "Armour Breaker",
+  "supports": [
+   "Volcanic Eruption",
+   "Fire Attunement",
+   "Rapid Attacks II",
+   "Fire Penetration II"
+  ],
+  "dps": 11185.91453517,
+  "ehp": 36281.631770429,
+  "dewatered_dps": 11185.91453517,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_Xii_bN-QbdZn.code",
+  "title": "PoE2 [0.5.5] - CoC Comet Oracle - Ember Fusillade + Orb of Storms - Minmax Build Guide",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 99,
+  "main_skill": "Ember Fusillade",
+  "supports": [
+   "Compressed Duration II",
+   "Swift Affliction III",
+   "Sione's Temper",
+   "Efficiency II",
+   "Execute III"
+  ],
+  "dps": 2182982.0630456,
+  "ehp": 18342.7634411,
+  "dewatered_dps": 2182982.0630456,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.3003011405994345,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_YmiPEBJjM5PT.code",
+  "title": "Path Of Exile 2: 0.5.5 Warrior Titan Earthshatter - Boneshatter Build Endgame All Content Guide",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 96,
+  "main_skill": "Earthshatter",
+  "supports": [
+   "Rapid Attacks II",
+   "Concentrated Area",
+   "Uul-Netol's Embrace",
+   "Aftershock II",
+   "Branching Fissures II"
+  ],
+  "dps": 21958.458893569,
+  "ehp": 32529.581961549,
+  "dewatered_dps": 21958.458893569,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_aLbZBKHA-Wki.code",
+  "title": "Path of Exile 0.5.5 | Walking Calamity Spirit Walker",
+  "ascendancy": "Spirit Walker",
+  "class": "Huntress",
+  "level": 94,
+  "main_skill": "Meteors",
+  "supports": [
+   "Elemental Armament II",
+   "Pinpoint Critical",
+   "Embitter",
+   "Efficiency II"
+  ],
+  "dps": 914361.73720887,
+  "ehp": 46301.599327376,
+  "dewatered_dps": 208226.20780456,
+  "conditional": [
+   {
+    "var": "bannerPlanted",
+    "kind": "skill_option",
+    "dps_pct": 23.39655013285129
+   },
+   {
+    "var": "conditionCorruptingCryStages",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 8.357597485635647
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 0.546710867309308
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBurning",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 14.537614025095102
+   },
+   {
+    "var": "conditionEnemyColdExposure",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyCursed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 11.969698953109798
+   },
+   {
+    "var": "conditionEnemyFireExposure",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 14.537614025095102
+   },
+   {
+    "var": "conditionEnemyLightningExposure",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 31.585165121728153
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 13.104606679308684
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsingCharm",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsingFlask",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierBeenHitRecently",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 27.599079450258657
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.1837300227995913,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_bs0S33Pt9LOT.code",
+  "title": "MummaBear: Level 1 Ranger to One-Roar Screen Wipe | PoE2 Pathfinder Build Journey",
+  "ascendancy": "Amazon",
+  "class": "Huntress",
+  "level": 77,
+  "main_skill": "Herald of Thunder",
+  "supports": [
+   "Culling Strike I",
+   "Blind II",
+   "Neural Overload",
+   "Living Lightning II"
+  ],
+  "dps": 0.00084509620544496,
+  "ehp": 6573.9639510882,
+  "dewatered_dps": 0.00084509620544496,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_ddX-XSNYBeXq.code",
+  "title": "The Best Cyclone at Home You'll Ever See! | Spin 2 Win Titan [PoE 2 0.5.5]",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 99,
+  "main_skill": "Whirling Assault",
+  "supports": [
+   "Garukhan's Resolve",
+   "Blindside",
+   "Close Combat II",
+   "Vorana's Siege",
+   "Atalui's Bloodletting"
+  ],
+  "dps": 3743646.9320772,
+  "ehp": 47081.123449917,
+  "dewatered_dps": 210119.79207065,
+  "conditional": [
+   {
+    "var": "bannerPlanted",
+    "kind": "skill_option",
+    "dps_pct": 42.53141919789698
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 6.539092247392575
+   },
+   {
+    "var": "conditionEmpowered",
+    "kind": "self_condition",
+    "dps_pct": 0.849227291308341
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 81.83890078168817
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 23.247906962657773
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyHeavyStunned",
+    "kind": "enemy_state",
+    "dps_pct": 58.59361700523862
+   },
+   {
+    "var": "conditionEnemyImmobilised",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "kind": "enemy_state",
+    "dps_pct": 19.999755992374112
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 14.057945640465652
+   },
+   {
+    "var": "conditionEnemyStunned",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionHitMeleeRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionHitsAlwaysHeavyStun",
+    "kind": "self_condition",
+    "dps_pct": 5.263157894738035
+   },
+   {
+    "var": "conditionShockEffect",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionStunnedEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 9.859170666267069
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.000185388545543
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyBlinded",
+    "label": "Is the enemy Blinded?",
+    "ratio": 1.2324790696265777,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.199999945840336,
+    "capped": false,
+    "cap_value": 20,
+    "current": 666
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "label": "Is the enemy Isolated?",
+    "ratio": 1.1999975599237411,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "enemyDistance",
+    "label": "Distance to enemy:",
+    "ratio": 1.0985917066626707,
+    "capped": true,
+    "cap_value": 0,
+    "current": 1
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_gp7sjfD0eZh4.code",
+  "title": "[PATH OF EXILE 2] – CHAOS IGNITE X-BOW GEMLING – CONTAGION SPREADS EVERYWHERE!",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 82,
+  "main_skill": "Incendiary Shot",
+  "supports": [
+   "Fire Attunement",
+   "Ignite III",
+   "Searing Flame II",
+   "Elemental Armament II",
+   "Close Combat II"
+  ],
+  "dps": 371.3219940612,
+  "ehp": 6543.1707716673,
+  "dewatered_dps": 371.3219940612,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_hAO3Uq6PNC-4.code",
+  "title": "This Gemling Build MELTS Juiced Content - High End Version 0.5.5 PoE2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Berserk",
+  "supports": [
+   "Cannibalism II"
+  ],
+  "dps": 0.0,
+  "ehp": 21619.806521886,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_hnCl-dtjpNee.code",
+  "title": "Flameblast Oil Grenade Leaguestarter - Gemling Legionnaire - 0.5.5 POE2",
+  "ascendancy": "None",
+  "class": "Mercenary",
+  "level": 14,
+  "main_skill": "Explosive Grenade",
+  "supports": [
+   "Multishot I",
+   "Elemental Armament I"
+  ],
+  "dps": 26.392995071959,
+  "ehp": 185.86994515243,
+  "dewatered_dps": 26.392995071959,
+  "conditional": [
+   {
+    "var": "enemyIsBoss",
+    "kind": "scenario",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_hzKQsR2Y5Ht2.code",
+  "title": "2 Buttons to Do EVERYTHING | Oracle Entangle ultimate Build Guide | Path of Exile 2 FR 0.5.5",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 36,
+  "main_skill": "Thrashing Vines",
+  "supports": [
+   "Rapid Casting I",
+   "Accelerated Growth",
+   "Concentrated Area"
+  ],
+  "dps": 1050.1345013793,
+  "ehp": 754.29174660556,
+  "dewatered_dps": 1050.1345013793,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_ipb-4JtdiX7H.code",
+  "title": "It's Weird. It's Different... Maybe That's Why I Love It!! | Reap Oracle Build - Path of Exile 2",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 97,
+  "main_skill": "Reap",
+  "supports": [
+   "Uul-Netol's Embrace",
+   "Armour Break III",
+   "Execute III",
+   "Heft",
+   "Zenith II"
+  ],
+  "dps": 624477.70053616,
+  "ehp": 32377.250226869,
+  "dewatered_dps": 624477.70053616,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.30109276135413,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.30109276135413,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.068403908794781,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_jZ5a7PF_RpC9.code",
+  "title": "A Storm is Approaching - Twister Acolyte of Chayula [PoE2 0.5.5]",
+  "ascendancy": "Acolyte of Chayula",
+  "class": "Monk",
+  "level": 98,
+  "main_skill": "Twister",
+  "supports": [
+   "Garukhan's Resolve",
+   "Salvo",
+   "Deliberation",
+   "Prolonged Duration II",
+   "Projectile Acceleration III"
+  ],
+  "dps": 3320133.9101508,
+  "ehp": 68697.497923083,
+  "dewatered_dps": 238923.33088635,
+  "conditional": [
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.2445282984944646
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 15.512661360766721
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 4.002946129242102
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 12.049676775022622
+   },
+   {
+    "var": "conditionEnemyIntimidated",
+    "kind": "enemy_state",
+    "dps_pct": 7.906781363496673
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 21.860394104054514
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 7.524232070794401
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierPoisonOnEnemy",
+    "kind": "enemy_state",
+    "dps_pct": 2.3477959088163747
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.080381200465457
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": 4.979779530350292
+   },
+   {
+    "var": "twisterCold",
+    "kind": "skill_option",
+    "dps_pct": 4.026080172582014
+   },
+   {
+    "var": "twisterFire",
+    "kind": "skill_option",
+    "dps_pct": 4.971783678808728
+   },
+   {
+    "var": "twisterLightning",
+    "kind": "skill_option",
+    "dps_pct": 4.0261842835878525
+   },
+   {
+    "var": "whirlwindStages",
+    "kind": "ramp",
+    "dps_pct": 241.72813216148913
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "voltaxicBurstSpellsQueued",
+    "label": "# of Casts currently waiting:",
+    "ratio": 5.714123905697018,
+    "capped": false,
+    "cap_value": 20,
+    "current": null
+   },
+   {
+    "var": "whirlwindStages",
+    "label": "# of Whirlwind Stages:",
+    "ratio": 4.2231773334583735,
+    "capped": true,
+    "cap_value": 5,
+    "current": 3
+   },
+   {
+    "var": "purpleFlameStacks",
+    "label": "Purple Flames collected:",
+    "ratio": 2.1088020321431573,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "label": "# of Withered Stacks:",
+    "ratio": 1.4979779530351565,
+    "capped": true,
+    "cap_value": 10,
+    "current": 1
+   },
+   {
+    "var": "multiplierPoisonOnEnemy",
+    "label": "# of Poisons on enemy (if not average):",
+    "ratio": 1.2080496779272092,
+    "capped": false,
+    "cap_value": 20,
+    "current": 2
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2005260709659107,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "twisterFire",
+    "label": "Twister gained Fire Element:",
+    "ratio": 1.0497178367880873,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "twisterLightning",
+    "label": "Twister gained Lightning Element:",
+    "ratio": 1.0402618428358785,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "twisterCold",
+    "label": "Twister gained Cold Element:",
+    "ratio": 1.0402608017258201,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_kid8DI3He1g4.code",
+  "title": "Pathfinder - The Most Well Rounded End-League Ascendancy",
+  "ascendancy": "Pathfinder",
+  "class": "Ranger",
+  "level": 99,
+  "main_skill": "Ice Shot",
+  "supports": [
+   "Execute III",
+   "Garukhan's Resolve",
+   "Elemental Armament II",
+   "Fork",
+   "Rakiata's Flow"
+  ],
+  "dps": 3634116.7274559,
+  "ehp": 300776.44027466,
+  "dewatered_dps": 2601888.7596075,
+  "conditional": [
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 7.415475138074434
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.015422078980247
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.3001379155838455,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2001046410211047,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_lEVQqs8NuUXb.code",
+  "title": "TANK AND POISON! Gemling Poison Shield Wall Build - My League Starter Plan 0.5.5 - Path of Exile 2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 100,
+  "main_skill": "Shield Wall",
+  "supports": [
+   "Atalui's Bloodletting",
+   "Heft",
+   "Bleed III",
+   "Close Combat II",
+   "Poison III"
+  ],
+  "dps": 754126.76883946,
+  "ehp": 961149.41366371,
+  "dewatered_dps": 447488.2199265,
+  "conditional": [
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 10.925269310967177
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 10.403809688134501
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.23733095550092
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2014638940430384,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "label": "Is the enemy Bleeding?",
+    "ratio": 1.104038096881345,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_m_dy7i9UT8tW.code",
+  "title": "My league starter for 0.5.5 | Fairgraves' Curse Blood Mage",
+  "ascendancy": "Blood Mage",
+  "class": "Witch",
+  "level": 90,
+  "main_skill": "Detonating Arrow",
+  "supports": [
+   "Searing Flame II",
+   "Ignite III",
+   "Elemental Armament II",
+   "Eternal Flame II"
+  ],
+  "dps": 5650.4519385701,
+  "ehp": 22838.200632735,
+  "dewatered_dps": 4290.4930774528,
+  "conditional": [
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 31.69702960865015
+   },
+   {
+    "var": "enemyIsBoss",
+    "kind": "scenario",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_n355Bbcv-B6t.code",
+  "title": "PoE 2 Starter Shield Wall Warrior Leveling Guide 0.5.5!",
+  "ascendancy": "None",
+  "class": "Warrior",
+  "level": 14,
+  "main_skill": "Boneshatter",
+  "supports": [
+   "Impact Shockwave",
+   "Magnified Area I"
+  ],
+  "dps": 149.52113745341,
+  "ehp": 806.73968890143,
+  "dewatered_dps": 149.52113745341,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_oygEGFjN9hiS.code",
+  "title": "All The Orbs And They Frequently Touch, Stormweaver Solar/Storm Orb League Starter Went Well",
+  "ascendancy": "Stormweaver",
+  "class": "Sorceress",
+  "level": 89,
+  "main_skill": "Elemental Storm",
+  "supports": [
+   "Elemental Focus",
+   "Controlled Destruction",
+   "Zenith II",
+   "Blind II"
+  ],
+  "dps": 0.0,
+  "ehp": 5579.1414723334,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_rCf36iaXrzZo.code",
+  "title": "POE2 (0.5.5) The Sadistic Bodach Bannerman| Mercenary Tactician",
+  "ascendancy": "Tactician",
+  "class": "Mercenary",
+  "level": 91,
+  "main_skill": "Harbinger of Madness",
+  "supports": [
+   "Heft",
+   "Brutality II",
+   "Pin II",
+   "Concentrated Area",
+   "Physical Mastery"
+  ],
+  "dps": 0.0,
+  "ehp": 14399.310494848,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_rWQ_ZtdsWXfH.code",
+  "title": "PoE2 0.5.5 | Crit Supercharged Slam Titan ft. Reverie | Face tank almost everything",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 97,
+  "main_skill": "Supercharged Slam",
+  "supports": [
+   "Burgeon II",
+   "Fist of War III",
+   "Aftershock II",
+   "Blindside",
+   "Armour Break III"
+  ],
+  "dps": 1952093.0172213,
+  "ehp": 56813.36,
+  "dewatered_dps": 355010.62511523,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionChannelling",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEmpowered",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 34.05775975302176
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 30.114754122186294
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyImmobilised",
+    "kind": "enemy_state",
+    "dps_pct": 8.202517003794929
+   },
+   {
+    "var": "conditionEnemyStunned",
+    "kind": "enemy_state",
+    "dps_pct": 20.590480654220844
+   },
+   {
+    "var": "conditionHitMeleeRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionNonCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 5.699376792231203
+   },
+   {
+    "var": "conditionStunnedEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierBeenHitRecently",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierChannelling",
+    "kind": "ramp",
+    "dps_pct": 40.028148287629946
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 51.03768351487381
+   },
+   {
+    "var": "multiplierWarcryPower",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierChannelling",
+    "label": "Channeling for # seconds:",
+    "ratio": 1.4002814828762995,
+    "capped": true,
+    "cap_value": 2,
+    "current": 2
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.3402478023372362,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "multiplierWarcryPower",
+    "label": "Warcry Power:",
+    "ratio": 1.03590969425111,
+    "capped": true,
+    "cap_value": 0,
+    "current": 20
+   },
+   {
+    "var": "conditionBlinded",
+    "label": "Are you Blinded?",
+    "ratio": 1.0184154452527883,
+    "capped": true,
+    "cap_value": false,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_tPyKCG3i6454.code",
+  "title": "Gemling Primal Strike still really fun to play - Poe 2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 98,
+  "main_skill": "Primal Strikes",
+  "supports": [
+   "Garukhan's Resolve",
+   "Rakiata's Flow",
+   "Crescendo II",
+   "Elemental Armament II",
+   "Close Combat II"
+  ],
+  "dps": 4241418.3689061,
+  "ehp": 85034.471642994,
+  "dewatered_dps": 993040.007629,
+  "conditional": [
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 3.4032555672467657
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 15.748300872997456
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 3.4032555672467657
+   },
+   {
+    "var": "conditionEnemyIntimidated",
+    "kind": "enemy_state",
+    "dps_pct": 8.333333333332927
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 22.20384748856301
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 7.046121780675296
+   },
+   {
+    "var": "conditionHaveEnergyShield",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "configResonanceCount",
+    "kind": "ramp",
+    "dps_pct": 79.2421050210257
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.029840655003692
+   },
+   {
+    "var": "whirlwindStages",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2001976811201593,
+    "capped": false,
+    "cap_value": 20,
+    "current": 99
+   },
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.0637711802827785,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_uVqTr6Y13l7_.code",
+  "title": "0.5.5 Tactician into Gemling starter build - Powered Zealot Spark Spectre",
+  "ascendancy": "Tactician",
+  "class": "Mercenary",
+  "level": 95,
+  "main_skill": "Supporting Fire",
+  "supports": [],
+  "dps": 0.0,
+  "ehp": 10596.344522878,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_vwFD6Z6m3AZm.code",
+  "title": "[0.5.5] Coiling Bolts Build | Blood Mage | Forbidden Rites | Path of Exile 2",
+  "ascendancy": "Blood Mage",
+  "class": "Witch",
+  "level": 96,
+  "main_skill": "Coiling Bolts",
+  "supports": [
+   "Zenith I",
+   "Rapid Casting II",
+   "Trickster's Shard",
+   "Chaos Mastery",
+   "Deliberation"
+  ],
+  "dps": 2399352.1550471,
+  "ehp": 236425,
+  "dewatered_dps": 1150203.5600682,
+  "conditional": [
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 6.721706882189005
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 13.443959176101838
+   },
+   {
+    "var": "conditionFullMana",
+    "kind": "self_condition",
+    "dps_pct": 30.045610538306033
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": 15.999978013043714
+   },
+   {
+    "var": "sigilOfPowerStages",
+    "kind": "skill_option",
+    "dps_pct": 13.811217514608987
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierWitheredStackCount",
+    "label": "# of Withered Stacks:",
+    "ratio": 1.319999560260874,
+    "capped": true,
+    "cap_value": 10,
+    "current": 5
+   },
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.3004561053830603,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_wz2rv-wGHgIh.code",
+  "title": "POE 5.5 PLANTS AND BONES EASY MODE ON A BUDGET",
+  "ascendancy": "Blood Mage",
+  "class": "Witch",
+  "level": 90,
+  "main_skill": "Entangle",
+  "supports": [
+   "Considered Casting",
+   "Branching Fissures II",
+   "Accelerated Growth II",
+   "Physical Mastery",
+   "Heft"
+  ],
+  "dps": 20884.30100704,
+  "ehp": 9392.022058231,
+  "dewatered_dps": 8021.4567866292,
+  "conditional": [
+   {
+    "var": "buffArcaneSurge",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 8.732001546975221
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 43.54686554261282
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyPinned",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 17.492477880218416
+   },
+   {
+    "var": "conditionOnConsecratedGround",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionSummonedTotemRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "pobb_in_xNKlha9elpvO.code",
+  "title": "ManaWardLoop CoC Comet Oracle | PoE 2 0.5.5 Build Guide | OP at EVERYTHING",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 99,
+  "main_skill": "Comet",
+  "supports": [
+   "SupportMetaCastOnCritPlayer",
+   "Rakiata's Flow",
+   "Execute III",
+   "Zenith II",
+   "Concentrated Area"
+  ],
+  "dps": 259659790.82996,
+  "ehp": 17195.654652448,
+  "dewatered_dps": 69012895.578726,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "buffArcaneSurge",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEmpowered",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBurning",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIntimidated",
+    "kind": "enemy_state",
+    "dps_pct": 7.696634074791642
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "kind": "enemy_state",
+    "dps_pct": 24.396561541194117
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 16.676822123747147
+   },
+   {
+    "var": "conditionEnemyUnnerved",
+    "kind": "enemy_state",
+    "dps_pct": 7.636096334981235
+   },
+   {
+    "var": "conditionFullMana",
+    "kind": "self_condition",
+    "dps_pct": 28.87667468866013
+   },
+   {
+    "var": "conditionInfusionConsumedRecently",
+    "kind": "self_condition",
+    "dps_pct": 2.3666412920446023
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "cooldownMode",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNonInstantSpellCastRecently",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "sigilOfPowerStages",
+    "kind": "skill_option",
+    "dps_pct": 41.37920620914268
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 14.351949529830588
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.2887667468866013,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.2439656154119412,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_yWjj1ouYW0Qr.code",
+  "title": "PoE2 [0.5.5] - Ember Fusillade is a Powerhouse on Any Class - Campaign Levelling and Endgame Setup",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 97,
+  "main_skill": "Ember Fusillade",
+  "supports": [
+   "Compressed Duration II",
+   "Swift Affliction III",
+   "Rapid Casting II",
+   "Pinpoint Critical",
+   "Efficiency II"
+  ],
+  "dps": 88772.9013059,
+  "ehp": 9077.6960818002,
+  "dewatered_dps": 88772.9013059,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.173907462300029,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_zQr35maMZ6GM.code",
+  "title": "PoE2 [0.5.5] - CoC Comet Oracle - Build Update",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 96,
+  "main_skill": "Ember Fusillade",
+  "supports": [
+   "Compressed Duration II",
+   "Swift Affliction III",
+   "Sione's Temper",
+   "Efficiency II",
+   "Fork"
+  ],
+  "dps": 198127.23165659,
+  "ehp": 11914.784557025,
+  "dewatered_dps": 198127.23165659,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.1784932172394977,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "pobb_in_zqICcfQBNI6W.code",
+  "title": "The Best Starter Build I've Made - Oil Barrage Ice Nova Druid Shaman Leveling Guide - PoE2 0.5.5",
+  "ascendancy": "None",
+  "class": "Druid",
+  "level": 15,
+  "main_skill": "Volcano",
+  "supports": [
+   "Concentrated Area",
+   "Burgeon I"
+  ],
+  "dps": 276.352,
+  "ehp": 4683.4542266209,
+  "dewatered_dps": 276.352,
+  "conditional": [
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionFullMana",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionInfusionConsumedRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionShapeshiftToAnimal",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionShapeshiftToHuman",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyIsBoss",
+    "kind": "scenario",
+    "dps_pct": null
+   },
+   {
+    "var": "resistancePenalty",
+    "kind": "scenario",
+    "dps_pct": null
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierChannelling",
+    "label": "Channeling for # seconds:",
+    "ratio": 1.4000000000000001,
+    "capped": true,
+    "cap_value": 5,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_24ade.code",
+  "title": "Whirling Slash Twister Gemling Build | Budget, All Content Viable | PoE2 0.55 Forbidden Rites",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Twister",
+  "supports": [
+   "Projectile Acceleration III",
+   "Execute III",
+   "Retreat II",
+   "Garukhan's Resolve",
+   "Rakiata's Flow"
+  ],
+  "dps": 13239.089906943,
+  "ehp": 32409.397430706,
+  "dewatered_dps": 10485.970537169,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 2.071005917158253
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 10.703201102642934
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 10.703201102642934
+   },
+   {
+    "var": "flameWallAddedDamage",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "voltaxicBurstSpellsQueued",
+    "label": "# of Casts currently waiting:",
+    "ratio": 18.613372531726473,
+    "capped": false,
+    "cap_value": 20,
+    "current": null
+   },
+   {
+    "var": "whirlwindStages",
+    "label": "# of Whirlwind Stages:",
+    "ratio": 4.434807224470629,
+    "capped": true,
+    "cap_value": 5,
+    "current": null
+   },
+   {
+    "var": "twisterCold",
+    "label": "Twister gained Cold Element:",
+    "ratio": 1.6977084550439385,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "twisterFire",
+    "label": "Twister gained Fire Element:",
+    "ratio": 1.6070542921841795,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "twisterLightning",
+    "label": "Twister gained Lightning Element:",
+    "ratio": 1.6051215510570438,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionLowLife",
+    "label": "Are you always on Low Life?",
+    "ratio": 1.3102452164951284,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionHitMeleeRecently",
+    "label": "Have you Melee Hit Recently?",
+    "ratio": 1.2579464253941715,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_25481.code",
+  "title": "The BEST Way to League Start Werewolf Oracle | PoE 2 0.5.5",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 95,
+  "main_skill": "Shred",
+  "supports": [
+   "Rapid Attacks II",
+   "Elemental Armament II",
+   "Close Combat II",
+   "Crescendo II"
+  ],
+  "dps": 483063.24661056,
+  "ehp": 41359.418995128,
+  "dewatered_dps": 130228.80762615,
+  "conditional": [
+   {
+    "var": "buffArcaneSurge",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "buffOnslaught",
+    "kind": "self_condition",
+    "dps_pct": 12.182217132481732
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 7.848561164732271
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 15.624999999998579
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 10.313617519070295
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierMinionsInPresence",
+    "kind": "ramp",
+    "dps_pct": -3.897942604701865
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 150.04672236132478
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierMinionsInPresence",
+    "label": "# of Minions in your Presence:",
+    "ratio": 1.762634813375768,
+    "capped": false,
+    "cap_value": 20,
+    "current": 7
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.3628777666630698,
+    "capped": false,
+    "cap_value": 20,
+    "current": 100
+   },
+   {
+    "var": "enemyDistance",
+    "label": "Distance to enemy:",
+    "ratio": 1.103136175190703,
+    "capped": true,
+    "cap_value": 0,
+    "current": 1
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_27c9b.code",
+  "title": "MY FOOLPROOF 0.5.5 STARTER & TRIAL OF CHAOS PLANS",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 59,
+  "main_skill": "Hollow Form",
+  "supports": [
+   "Heavy Swing",
+   "Armour Break III"
+  ],
+  "dps": 116.6165,
+  "ehp": 1301.5057894554,
+  "dewatered_dps": 116.6165,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_27d89.code",
+  "title": "Lazy and overpowered one-button builds for 0.5.5 Forbidden Rites | My plans for the league",
+  "ascendancy": "Tactician",
+  "class": "Mercenary",
+  "level": 61,
+  "main_skill": "Skeletal Sniper Minion",
+  "supports": [
+   "Multishot II"
+  ],
+  "dps": 0.0,
+  "ehp": 2316.0336514595,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_27e63.code",
+  "title": "Rage on Ignite - Mercenary Minion Leveling Guide 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 57,
+  "main_skill": "Virtuous Barrier",
+  "supports": [
+   "Upwelling I"
+  ],
+  "dps": 0.0,
+  "ehp": 1596.3994433617,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_27e69.code",
+  "title": "Glacial Bolt Gemling is looking incredible | Path of exile 2: Return of the Ancients 0.5.5",
+  "ascendancy": "Witchhunter",
+  "class": "Mercenary",
+  "level": 62,
+  "main_skill": "On Kill Monster Explosion",
+  "supports": [],
+  "dps": 4399.45248012,
+  "ehp": 791.81212313551,
+  "dewatered_dps": 4399.45248012,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_27e8a.code",
+  "title": "PoE 2 - My Martial Artist 0.5.5 League Starter - Giga Bonk - Monk Build Guide - Path of Exile 2",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 98,
+  "main_skill": "Falling Thunder",
+  "supports": [
+   "Nova Projectiles I",
+   "Culmination II",
+   "Ricochet II",
+   "Minion Pact II",
+   "Rakiata's Flow"
+  ],
+  "dps": 49969379.359432,
+  "ehp": 151573.24753838,
+  "dewatered_dps": 477502.86465162,
+  "conditional": [
+   {
+    "var": "buffOnslaught",
+    "kind": "self_condition",
+    "dps_pct": 10.003048076680887
+   },
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 12.233848512864132
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 23.693855658261832
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 20.000000000000952
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionGainedPowerChargeRecently",
+    "kind": "self_condition",
+    "dps_pct": 2.547803766685819
+   },
+   {
+    "var": "conditionHaveEnergyShield",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionNonCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.205169909937755
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 39.821786954555805
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 52.00065858635896
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 12.824724830505186
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 1835.1562951648748
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierCombo",
+    "label": "Combo:",
+    "ratio": 1.398217869545558,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.3500040502753476,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_28107.code",
+  "title": "Shattering Palm/Glacial Cascade Martial Artist - 0.5.5 League Starter & Leveling Build Guide",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 78,
+  "main_skill": "Glacial Cascade",
+  "supports": [
+   "Concentrated Area",
+   "Cold Attunement",
+   "Elemental Armament II"
+  ],
+  "dps": 338418.34281673,
+  "ehp": 8168.1491307225,
+  "dewatered_dps": 29196.823735824,
+  "conditional": [
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 4.225352112674696
+   },
+   {
+    "var": "conditionChilledEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.874680898866223
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 2.5503323936372446
+   },
+   {
+    "var": "conditionEnemyFrozen",
+    "kind": "enemy_state",
+    "dps_pct": 538.8768808505337
+   },
+   {
+    "var": "conditionFrozenEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 18.76494236007391
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 5.233914918021809
+   },
+   {
+    "var": "conditionHaveEnergyShield",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.001040227471343
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyFrozen",
+    "label": "Is the enemy Frozen?",
+    "ratio": 6.388768808505336,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "conditionFrozen",
+    "label": "Are you Frozen?",
+    "ratio": 3.3333333333333,
+    "capped": true,
+    "cap_value": false,
+    "current": null
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2000103491574776,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2819a.code",
+  "title": "[PoE 2] Shield Wall Titan - League Starter You Cant Go Wrong With And My Plans For 0.5.5",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 97,
+  "main_skill": "Shield Wall",
+  "supports": [
+   "Garukhan's Resolve",
+   "Armour Break III",
+   "Vorana's Siege",
+   "Ahn's Citadel",
+   "Kaom's Madness"
+  ],
+  "dps": 69654.899192796,
+  "ehp": 77164.937004631,
+  "dewatered_dps": 37497.637006351,
+  "conditional": [
+   {
+    "var": "conditionSurrounded",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 85.7581030532631
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.3426424252572737,
+    "capped": false,
+    "cap_value": 20,
+    "current": 1111
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "label": "Is the enemy Isolated?",
+    "ratio": 1.2084676980246323,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_282d2.code",
+  "title": "(POE 2) I tested every Monke build variation... this one is the best - 0.5.5 FULL BUILD GUIDE",
+  "ascendancy": "Spirit Walker",
+  "class": "Huntress",
+  "level": 88,
+  "main_skill": "Companion: Diretusk Boar",
+  "supports": [
+   "Rapid Attacks II",
+   "Rage III",
+   "Muster",
+   "Feeding Frenzy II",
+   "Hulking Minions"
+  ],
+  "dps": 254192.11450725,
+  "ehp": 55884.522311973,
+  "dewatered_dps": 254192.11450725,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "conditionEnemyHeavyStunned",
+    "label": "Is the enemy Heavy Stunned?",
+    "ratio": 1.1452402923012666,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyPinned",
+    "label": "Is the enemy Pinned?",
+    "ratio": 1.1452402923012666,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyImmobilised",
+    "label": "Is the enemy Immobilised?",
+    "ratio": 1.1452402923012666,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyFrozen",
+    "label": "Is the enemy Frozen?",
+    "ratio": 1.1452402923012666,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyElectrocuted",
+    "label": "Is the enemy Electrocuted?",
+    "ratio": 1.1452402923012666,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2835c.code",
+  "title": "Path of Exile 2 [0.5.5] Lightning Arrow Herald Stacker Build (All content!)",
+  "ascendancy": "Deadeye",
+  "class": "Ranger",
+  "level": 97,
+  "main_skill": "Lightning Rod",
+  "supports": [
+   "Rakiata's Flow",
+   "Garukhan's Resolve",
+   "Rigwald's Ferocity",
+   "Elemental Armament II",
+   "Longshot II"
+  ],
+  "dps": 6028603.9702343,
+  "ehp": 11786.54491085,
+  "dewatered_dps": 966064.89925024,
+  "conditional": [
+   {
+    "var": "buffOnslaught",
+    "kind": "self_condition",
+    "dps_pct": 10.002479632540906
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 3.328589119447467
+   },
+   {
+    "var": "conditionEnemyFrozen",
+    "kind": "enemy_state",
+    "dps_pct": 3.328589119447467
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 3.328589119447467
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 40.52688120245038
+   },
+   {
+    "var": "conditionFrozenEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 17.389781503996392
+   },
+   {
+    "var": "conditionKilledRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.7757273157934534
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 92.09917983341329
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.011410598211153
+   },
+   {
+    "var": "multiplierTailwind",
+    "kind": "ramp",
+    "dps_pct": 10.002479632540906
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2000820576251237,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "multiplierTailwind",
+    "label": "# of Tailwind Stacks:",
+    "ratio": 1.100024796325409,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_283fd.code",
+  "title": "Bear-ly into Maps after a smooth campaign | Walking Calamity Shaman Day 1 Update | POE 2 0.5.5",
+  "ascendancy": "Shaman",
+  "class": "Druid",
+  "level": 62,
+  "main_skill": "Meteors",
+  "supports": [
+   "Fire Penetration I",
+   "Elemental Armament II",
+   "Concentrated Area"
+  ],
+  "dps": 3819.7053289826,
+  "ehp": 3345.2323497532,
+  "dewatered_dps": 3819.7053289826,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2854e.code",
+  "title": "[0.5.5] Wardbound Minions Lich vs. T15 Map (Day 2)",
+  "ascendancy": "Lich",
+  "class": "Witch",
+  "level": 91,
+  "main_skill": "Wardbound Minions",
+  "supports": [
+   "Unleash",
+   "Feeding Frenzy II",
+   "Muster",
+   "Controlled Destruction",
+   "Cold Attunement"
+  ],
+  "dps": 0.0,
+  "ehp": 9983.5196008681,
+  "dewatered_dps": 0.0,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_28599.code",
+  "title": "Low Investment, Easy Mapping: Gemling Totems | PoE2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 84,
+  "main_skill": "Cluster Grenade",
+  "supports": [
+   "SupportMortarCannonPlayer",
+   "Multishot II",
+   "Payload",
+   "Short Fuse I",
+   "Elemental Armament II"
+  ],
+  "dps": 5431.4831525003,
+  "ehp": 4958.7520938023,
+  "dewatered_dps": 3892.772949475,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 4.3118406839532275
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 33.64613307678701
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.223861047066892,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2870d.code",
+  "title": "PoE 2 Stormweaver Build - Cold Spark - Sorceress Build | 0.5.5 Path of Exile 2",
+  "ascendancy": "Stormweaver",
+  "class": "Sorceress",
+  "level": 93,
+  "main_skill": "Orb of Storms",
+  "supports": [
+   "Overabundance I",
+   "Unleash",
+   "Considered Casting",
+   "Zenith II"
+  ],
+  "dps": 42612.747473483,
+  "ehp": 19135.332961534,
+  "dewatered_dps": 41157.678047559,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.5353535353540355
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.3040989502938714,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_28751.code",
+  "title": "T15s & Farming Uhtred for Runeseekers | Walking Calamity Shaman til 10k Mana | Path of Exile 2 0.5.5",
+  "ascendancy": "Shaman",
+  "class": "Druid",
+  "level": 88,
+  "main_skill": "Meteors",
+  "supports": [
+   "Fire Penetration II",
+   "Elemental Armament II",
+   "Concentrated Area",
+   "Elemental Focus"
+  ],
+  "dps": 100832.15854,
+  "ehp": 13712.843167201,
+  "dewatered_dps": 35896.3446,
+  "conditional": [
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 96.43287357569979
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 61.00024771536574
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2000020966787615,
+    "capped": false,
+    "cap_value": 20,
+    "current": 61
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_288a4.code",
+  "title": "PoE 2: The Easiest Lich Levelling Build | Forbidden Rites",
+  "ascendancy": "Lich",
+  "class": "Witch",
+  "level": 68,
+  "main_skill": "Spectre: Powered Zealot",
+  "supports": [
+   "Feeding Frenzy II",
+   "Pierce II",
+   "Wildshards II",
+   "Tecrod's Revenge",
+   "Projectile Acceleration III"
+  ],
+  "dps": 0.0,
+  "ehp": 8965.9194219866,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_288c2.code",
+  "title": "How I was First to 100% Achievements in Forbidden Rites 0.5.5 on Hardcore Path of Exile 2",
+  "ascendancy": "Disciple of Varashta",
+  "class": "Sorceress",
+  "level": 96,
+  "main_skill": "Kelari, the Tainted Sands",
+  "supports": [
+   "Bidding II",
+   "Kurgal's Leash",
+   "Muster",
+   "Lightning Attunement",
+   "Hulking Minions"
+  ],
+  "dps": 0.0,
+  "ehp": 70576.095119472,
+  "dewatered_dps": 0.0,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_288f3.code",
+  "title": "THIS ARC TOTEM BUILD IS BROKEN! | Gemling Legionnaire | PoE 2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 94,
+  "main_skill": "Arc",
+  "supports": [
+   "SupportMetaTotemSpellTotemPlayer",
+   "Deliberation",
+   "Urgent Totems III",
+   "Dominus' Grasp",
+   "Zenith II"
+  ],
+  "dps": 458502.0905465,
+  "ehp": 15573.110285006,
+  "dewatered_dps": 458502.0905465,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyColdExposure",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyFireExposure",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyLightningExposure",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "arcLightningInfused",
+    "label": "Lightning Infused?",
+    "ratio": 3.6850491350827226,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.3031541896282877,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2894a.code",
+  "title": "Glacial Bolt Gemling Day 3-5 | Path of exile 2: Return of the Ancients 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 89,
+  "main_skill": "Glacial Bolt",
+  "supports": [
+   "Deliberation",
+   "Elemental Armament II",
+   "Stoicism II",
+   "Ahn's Citadel",
+   "Kaom's Madness"
+  ],
+  "dps": 78773.278140671,
+  "ehp": 7637.8584203065,
+  "dewatered_dps": 25870.505777804,
+  "conditional": [
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBurning",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 2.959791517862187
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 34.9397267620464
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 13.334951299999975
+   },
+   {
+    "var": "conditionReloadedRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsingFlask",
+    "kind": "self_condition",
+    "dps_pct": 6.094879728588065
+   },
+   {
+    "var": "configResonanceCount",
+    "kind": "ramp",
+    "dps_pct": 30.356863607383367
+   },
+   {
+    "var": "multiplierNearbyAlly",
+    "kind": "ramp",
+    "dps_pct": 10.639535468134476
+   },
+   {
+    "var": "stoicismSeconds",
+    "kind": "ramp",
+    "dps_pct": 20.024559569086577
+   }
+  ],
+  "ramp": [
+   {
+    "var": "stoicismSeconds",
+    "label": "Seconds building Stoicism:",
+    "ratio": 1.2002455956908658,
+    "capped": true,
+    "cap_value": 10,
+    "current": 20
+   },
+   {
+    "var": "conditionDodgeRolledRecently",
+    "label": "Have you Dodge Rolled Recently?",
+    "ratio": 1.2002455956908658,
+    "capped": true,
+    "cap_value": false,
+    "current": null
+   },
+   {
+    "var": "conditionUsedTravelSkillRecently",
+    "label": "Have you used a Travel Skill Recently?",
+    "ratio": 1.2002455956908658,
+    "capped": true,
+    "cap_value": false,
+    "current": null
+   },
+   {
+    "var": "conditionUsedDashRecently",
+    "label": "Have you cast Dash Recently?",
+    "ratio": 1.2002455956908658,
+    "capped": true,
+    "cap_value": false,
+    "current": null
+   },
+   {
+    "var": "multiplierNearbyAlly",
+    "label": "# of Nearby Allies:",
+    "ratio": 1.1063953546813448,
+    "capped": true,
+    "cap_value": 1,
+    "current": 5
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_28965.code",
+  "title": "BROKEN AUTOBOMBER TECH! Infinite Power Charges Oil Barrage Martial Artist Monk Guide - POE 2 0.5.5",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 94,
+  "main_skill": "Oil Barrage",
+  "supports": [
+   "Nova Projectiles I",
+   "Rakiata's Flow",
+   "Salvo",
+   "Ricochet II",
+   "Pinpoint Critical"
+  ],
+  "dps": 1539418.6090555,
+  "ehp": 42242.097584659,
+  "dewatered_dps": 663932.17069946,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 2.7003541277746512
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 17.651179820527553
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.273713452727335
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 12.304084429727746
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 30.54105456294931
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2017858590530905,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_28af2.code",
+  "title": "Varashta Is Ridiculously Strong From Level 20 | PoE2 0.5.5",
+  "ascendancy": "Disciple of Varashta",
+  "class": "Sorceress",
+  "level": 93,
+  "main_skill": "Kelari, the Tainted Sands",
+  "supports": [
+   "Bidding III",
+   "Muster",
+   "Concentrated Area",
+   "Kurgal's Leash",
+   "Hulking Minions"
+  ],
+  "dps": 0.0,
+  "ehp": 20999.59736468,
+  "dewatered_dps": 0.0,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_28b5d.code",
+  "title": "The STRONGEST Build I've Ever Played - Full Build Guide for Path of Exile 2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Berserk",
+  "supports": [
+   "Cannibalism II"
+  ],
+  "dps": 0.0,
+  "ehp": 21619.806521886,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_28df3.code",
+  "title": "[0.5.5] Spark + Arc Stormweaver (Cast on Crit) - Path of Exile 2 Strongest Caster Build!",
+  "ascendancy": "Stormweaver",
+  "class": "Sorceress",
+  "level": 97,
+  "main_skill": "Spark",
+  "supports": [
+   "Vilenta's Propulsion",
+   "Considered Casting",
+   "Zenith II",
+   "Pinpoint Critical",
+   "Efficiency II"
+  ],
+  "dps": 6224404.9765142,
+  "ehp": 21601.54780459,
+  "dewatered_dps": 3093944.0001278,
+  "conditional": [
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 43.88545490253062
+   },
+   {
+    "var": "conditionFullMana",
+    "kind": "self_condition",
+    "dps_pct": 30.2160256479429
+   },
+   {
+    "var": "conditionNonCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 4.0880357289795555
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.2056142775993557
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.302160256479429,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.0369733081405126,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_28fda.code",
+  "title": "Lazy 1-button build destroys and tanks everything | Week 1 build update | 0.5.5 Forbidden Rites",
+  "ascendancy": "Shaman",
+  "class": "Druid",
+  "level": 97,
+  "main_skill": "Ancestral Warrior Totem",
+  "supports": [
+   "Urgent Totems III",
+   "Heavy Swing"
+  ],
+  "dps": 0.0,
+  "ehp": 60657.142857143,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2900a.code",
+  "title": "INSANE Flicker Strike Build | Gemling Legionnaire + Budget Version | PoE 2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Flicker Strike",
+  "supports": [
+   "Hit and Run",
+   "Rakiata's Flow",
+   "Elemental Armament II",
+   "Rageforged II",
+   "Concentrated Area"
+  ],
+  "dps": 14764350.042028,
+  "ehp": 48419.954050495,
+  "dewatered_dps": 3750425.1028543,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.562752447046136
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 6.73584393211506
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 76.05863926423211
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 2.3248781585587963
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 20.454396148805955
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 61.54827578204909
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.6250975166253936,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2926d.code",
+  "title": "UP TO 20x PARTY DPS! -200% Ele Res Banner Aura Bot | Path of Exile 2 Tactician",
+  "ascendancy": "Tactician",
+  "class": "Mercenary",
+  "level": 95,
+  "main_skill": "Supporting Fire",
+  "supports": [
+   "Muster",
+   "Bidding III",
+   "Hulking Minions",
+   "Lightning Attunement",
+   "Kurgal's Leash"
+  ],
+  "dps": 0.0,
+  "ehp": 23106.971680655,
+  "dewatered_dps": 0.0,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "bannerPlanted",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "bannerValour",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2929b.code",
+  "title": "Done With Walking Calamity, now Its Mana Time! | Walking Calamity Shaman 'til 10k Mana | PoE 2 0.5.5",
+  "ascendancy": "Shaman",
+  "class": "Druid",
+  "level": 93,
+  "main_skill": "Meteors",
+  "supports": [
+   "Fire Penetration II",
+   "Elemental Armament II",
+   "Concentrated Area",
+   "Elemental Focus"
+  ],
+  "dps": 222398.412912,
+  "ehp": 14308.184448837,
+  "dewatered_dps": 82702.688,
+  "conditional": [
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 73.81193203419782
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 74.45356027781922
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2328824452503007,
+    "capped": false,
+    "cap_value": 20,
+    "current": 61
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2937a.code",
+  "title": "[PoE 2] The 0-Button AFK Infinite Loop Immortal Witchhunter | 0.5.5 Forbidden Rites",
+  "ascendancy": "Witchhunter",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Sorcery Ward",
+  "supports": [
+   "Cold Mastery",
+   "Vitality I"
+  ],
+  "dps": 642.50854316716,
+  "ehp": 54425.177386752,
+  "dewatered_dps": 642.50854316716,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_29480.code",
+  "title": "Infernal Cry Gemling Is Ridiculously Good for Mapping | PoE2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Spear Throw",
+  "supports": [
+   "Magnified Area II",
+   "Concentrated Area",
+   "Perpetual Charge",
+   "Ambush",
+   "Multishot II"
+  ],
+  "dps": 650.96587869426,
+  "ehp": 20327.342893679,
+  "dewatered_dps": 620.70316487911,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 2.2028242573613133
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsedWarcryRecently",
+    "kind": "self_condition",
+    "dps_pct": 2.614545803491475
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyFullLife",
+    "label": "Is the enemy on Full Life?",
+    "ratio": 1.0792580498665159,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2969d.code",
+  "title": "[PoE2]0.5.5 InstaSnipe Gemling legionnaire CritBow+Cadiro",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 97,
+  "main_skill": "Virtuous Barrier",
+  "supports": [],
+  "dps": 0.0,
+  "ehp": 24085.322613342,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2977e.code",
+  "title": "THE FINAL MARTIAL ARTIST BUILD UPDATE (POE2 0.5.5)",
+  "ascendancy": "Martial Artist",
+  "class": "Monk",
+  "level": 96,
+  "main_skill": "Boneshatter",
+  "supports": [
+   "Rapid Attacks III",
+   "Rigwald's Ferocity",
+   "Knockback",
+   "Medved's Felling",
+   "Heightened Accuracy II"
+  ],
+  "dps": 860.72968206364,
+  "ehp": 24798.322258227,
+  "dewatered_dps": 860.72968206364,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_29ca8.code",
+  "title": "PoE2 build idea: Raging lunar wolf build",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 85,
+  "main_skill": "Virtuous Barrier",
+  "supports": [],
+  "dps": 0.0,
+  "ehp": 9159.7269034656,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_29cb0.code",
+  "title": "Tornado Ritualist Magnitude/Rage/Spirit Scaling [POE2 0.5.5c]",
+  "ascendancy": "Ritualist",
+  "class": "Huntress",
+  "level": 95,
+  "main_skill": "Tornado",
+  "supports": [
+   "Catalysing Elements",
+   "Swift Affliction II",
+   "Deliberation",
+   "Physical Mastery",
+   "Zenith II"
+  ],
+  "dps": 19007.535456,
+  "ehp": 19595.756951556,
+  "dewatered_dps": 13661.99016,
+  "conditional": [
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 3.911564625850361
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 3.911564625850361
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 24.693877551020414
+   },
+   {
+    "var": "conditionFullEnergyShield",
+    "kind": "self_condition",
+    "dps_pct": 2.5167785234899487
+   },
+   {
+    "var": "conditionShockedEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "configResonanceCount",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.301282051282051,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_29cd6.code",
+  "title": "[PoE 2] Gemling Earthshatter | Reverie Snapshot with 3000+/s Regen | Build Showcase (Patch 0.5.5)",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 98,
+  "main_skill": "Earthshatter",
+  "supports": [
+   "Rakiata's Flow",
+   "Medved's Felling",
+   "Aftershock II",
+   "Branching Fissures II",
+   "Verglas"
+  ],
+  "dps": 301121.59766012,
+  "ehp": 41253.207786907,
+  "dewatered_dps": 51705.734899712,
+  "conditional": [
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 6.030427908850067
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 5.363807958858047
+   },
+   {
+    "var": "conditionKilledRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 32.43990521749232
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 196.98432804667476
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 1.8693091866920808
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 12.22177119483192
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 3.476846442624315
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.5079443882967125,
+    "capped": false,
+    "cap_value": 20,
+    "current": 81
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_29e06.code",
+  "title": "Freezing Shards Spirit Walker | Path of Exile 2 | 0.5.5 Off-Meta Build Guide",
+  "ascendancy": "Spirit Walker",
+  "class": "Huntress",
+  "level": 92,
+  "main_skill": "Primal Bounty",
+  "supports": [
+   "Olroth's Conviction"
+  ],
+  "dps": 0.0,
+  "ehp": 19277.957630118,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_29f21.code",
+  "title": "Despair Gemling Makes Mapping Feel Effortless | PoE2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Doom Blast",
+  "supports": [
+   "Execute III",
+   "Zenith II"
+  ],
+  "dps": 1040435.914625,
+  "ehp": 20481.294661623,
+  "dewatered_dps": 660194.25495408,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 9.328230144748172
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 2.8057616783057737
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 13.989652070089997
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 21.63806422899601
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.2999958840031953,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.2999958840031953,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_29fee.code",
+  "title": "THE FASTEST GEMLING TWISTER OF ALL TIME (POE2 BUILD GUIDE)",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 95,
+  "main_skill": "Twister",
+  "supports": [
+   "Projectile Acceleration III",
+   "Retreat II",
+   "Rakiata's Flow",
+   "Garukhan's Resolve",
+   "Armour Break III"
+  ],
+  "dps": 12210968.538764,
+  "ehp": 23708.426714478,
+  "dewatered_dps": 1081735.7895907,
+  "conditional": [
+   {
+    "var": "conditionHitMeleeRecently",
+    "kind": "self_condition",
+    "dps_pct": 25.008084211500538
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 13.576848923161444
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overrideFrenzyCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "twisterCold",
+    "kind": "skill_option",
+    "dps_pct": 19.275019307960118
+   },
+   {
+    "var": "twisterFire",
+    "kind": "skill_option",
+    "dps_pct": 20.038433011680713
+   },
+   {
+    "var": "twisterLightning",
+    "kind": "skill_option",
+    "dps_pct": 20.638457547355713
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 16.59214891549883
+   },
+   {
+    "var": "whirlwindStages",
+    "kind": "ramp",
+    "dps_pct": 240.2009532642222
+   }
+  ],
+  "ramp": [
+   {
+    "var": "voltaxicBurstSpellsQueued",
+    "label": "# of Casts currently waiting:",
+    "ratio": 5.707493542180436,
+    "capped": false,
+    "cap_value": 20,
+    "current": null
+   },
+   {
+    "var": "whirlwindStages",
+    "label": "# of Whirlwind Stages:",
+    "ratio": 4.202690888762981,
+    "capped": true,
+    "cap_value": 5,
+    "current": 3
+   },
+   {
+    "var": "conditionHitMeleeRecently",
+    "label": "Have you Melee Hit Recently?",
+    "ratio": 1.2500808421150054,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "overrideFrenzyCharges",
+    "label": "# of Frenzy Charges (if not maximum):",
+    "ratio": 1.2316571926395399,
+    "capped": false,
+    "cap_value": 20,
+    "current": 5
+   },
+   {
+    "var": "twisterLightning",
+    "label": "Twister gained Lightning Element:",
+    "ratio": 1.2063845754735572,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "twisterFire",
+    "label": "Twister gained Fire Element:",
+    "ratio": 1.2003843301168071,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "twisterCold",
+    "label": "Twister gained Cold Element:",
+    "ratio": 1.1927501930796012,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2a145.code",
+  "title": "Is Gemling Legionnaire the BEST Minion Build? | PoE 2",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 96,
+  "main_skill": "Skeletal Storm Mage Minion",
+  "supports": [
+   "Esh's Radiance",
+   "Rakiata's Flow",
+   "Muster",
+   "Shock",
+   "Feeding Frenzy II"
+  ],
+  "dps": 0.0,
+  "ehp": 23305.053126657,
+  "dewatered_dps": 0.0,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "buffArcaneSurge",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyCriticalWeakness",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "flameWallAddedDamage",
+    "kind": "skill_option",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2a2ef.code",
+  "title": "Path of Exile 2 - Infernalist Frogs",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 92,
+  "main_skill": "Dark Consequences",
+  "supports": [
+   "Vorana's Siege"
+  ],
+  "dps": 6650929.4131279,
+  "ehp": 21243.193520581,
+  "dewatered_dps": 738235.79520526,
+  "conditional": [
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.7165684742411553
+   },
+   {
+    "var": "conditionEnemyCriticalWeakness",
+    "kind": "enemy_state",
+    "dps_pct": 42.33720808284105
+   },
+   {
+    "var": "conditionEnemyCursed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "kind": "enemy_state",
+    "dps_pct": 20.00783120747527
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "demonFormStacks",
+    "kind": "ramp",
+    "dps_pct": 207.8349139022975
+   },
+   {
+    "var": "enemyCriticalWeaknessStacks",
+    "kind": "enemy_state",
+    "dps_pct": -22.915363564265046
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": 44.88773876318937
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 17.27140895318413
+   }
+  ],
+  "ramp": [
+   {
+    "var": "enemyCriticalWeaknessStacks",
+    "label": "Critical weakness stacks:",
+    "ratio": 1.7716118045377522,
+    "capped": true,
+    "cap_value": 0,
+    "current": 10
+   },
+   {
+    "var": "demonFormStacks",
+    "label": "Demonflame Stacks",
+    "ratio": 1.5535771169720913,
+    "capped": false,
+    "cap_value": 20,
+    "current": 100
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "label": "# of Withered Stacks:",
+    "ratio": 1.4488773876318937,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "label": "Is the enemy Isolated?",
+    "ratio": 1.2000783120747527,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2a357.code",
+  "title": "PoE 2 0.5.5 Go Balls or No Balls! | Life Stacking Fire Infused Ball Lightning Gemling Build Guide",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 97,
+  "main_skill": "Living Bomb",
+  "supports": [
+   "SupportMetaCastOnElementalAilmentPlayer",
+   "Overabundance II",
+   "Withering Touch",
+   "Esh's Radiance"
+  ],
+  "dps": 1465231.7085,
+  "ehp": 17878.260014987,
+  "dewatered_dps": 872810.855,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsedWarcryRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": 67.87505564421514
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierWitheredStackCount",
+    "label": "# of Withered Stacks:",
+    "ratio": 1.6787505564421514,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2a46a.code",
+  "title": "Path of Exile 2: Hogfather and Eventide Petals vs 200% Deli Expedition",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 96,
+  "main_skill": "Voltaic Barrier",
+  "supports": [
+   "Ahn's Citadel",
+   "Kaom's Madness",
+   "Lightning Attunement",
+   "Elemental Armament II",
+   "Blindside"
+  ],
+  "dps": 72757.437591981,
+  "ehp": 15448.672623787,
+  "dewatered_dps": 25781.507297047,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "bannerPlanted",
+    "kind": "skill_option",
+    "dps_pct": 27.116375380819946
+   },
+   {
+    "var": "bannerValour",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 4.020184679451999
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 5.4064040592952
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 26.068154257930143
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 49.338404085965884
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.3340281106813785,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "label": "Is the enemy Blinded?",
+    "ratio": 1.2606815425793014,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2a52f.code",
+  "title": "POE2 0.5.5-ROLLING THUNDER-Mirage Archer+Void Illusion-Build Guide",
+  "ascendancy": "Acolyte of Chayula",
+  "class": "Monk",
+  "level": 97,
+  "main_skill": "Void Illusion",
+  "supports": [
+   "Heft",
+   "Cooldown Recovery II",
+   "Shock",
+   "Magnified Area II",
+   "Esh's Radiance"
+  ],
+  "dps": 524662.37522419,
+  "ehp": 51164.25377624,
+  "dewatered_dps": 178517.32579703,
+  "conditional": [
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 7.382530383480979
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 2.9821463355073075
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 16.319256150800964
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 12.358494093954553
+   },
+   {
+    "var": "conditionNonCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyIsBoss",
+    "kind": "scenario",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.042205374193244
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": 28.476421008751007
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 12.916624417098888
+   }
+  ],
+  "ramp": [
+   {
+    "var": "purpleFlameStacks",
+    "label": "Purple Flames collected:",
+    "ratio": 3.216782990824381,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "label": "# of Withered Stacks:",
+    "ratio": 1.28476421008751,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2002596779510177,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2a7c3.code",
+  "title": "Arc Totem Gemling Does Everything For You | PoE2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 97,
+  "main_skill": "Arc",
+  "supports": [
+   "SupportMetaTotemSpellTotemPlayer",
+   "Dominus' Grasp",
+   "Sione's Temper",
+   "Urgent Totems III",
+   "Execute III"
+  ],
+  "dps": 1260525.2350374,
+  "ehp": 14625.283381991,
+  "dewatered_dps": 1260525.2350374,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "arcLightningInfused",
+    "label": "Lightning Infused?",
+    "ratio": 3.7526831830198546,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.2983857470271434,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2a9f0.code",
+  "title": "#1 Arc Totem DPS (No MoM) | 6-Totems | 60% Evasion 80% Block | 122% MS |  POE2 Build Guide",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 98,
+  "main_skill": "Arc",
+  "supports": [
+   "SupportMetaTotemSpellTotemPlayer",
+   "Rakiata's Flow",
+   "Dominus' Grasp",
+   "Urgent Totems III",
+   "Dialla's Desire"
+  ],
+  "dps": 18125509.076912,
+  "ehp": 18743.389347569,
+  "dewatered_dps": 13055826.376593,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 1.233370368356712
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 8.649734497906692
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 26.16361541309027
+   }
+  ],
+  "ramp": [
+   {
+    "var": "arcLightningInfused",
+    "label": "Lightning Infused?",
+    "ratio": 3.7777779046727757,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2aa5a.code",
+  "title": "PoE 2 0.5.5 Life Stacking Ignite ARC Gemling Build Guide | Jewel Craft",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 98,
+  "main_skill": "Living Bomb",
+  "supports": [
+   "SupportMetaCastOnElementalAilmentPlayer",
+   "Uhtred's Augury",
+   "Overabundance II",
+   "Fire Mastery"
+  ],
+  "dps": 3882972.525,
+  "ehp": 20839.272212076,
+  "dewatered_dps": 3882972.525,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsedWarcryRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2ab11.code",
+  "title": "Path of Exile 2 - Iron Ward Ignite Infernalist",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 93,
+  "main_skill": "Iron Ward",
+  "supports": [
+   "Searing Flame II",
+   "Ignite III",
+   "Armour Break III",
+   "Commiserate",
+   "Eternal Flame II"
+  ],
+  "dps": 0.0,
+  "ehp": 23095.795789879,
+  "dewatered_dps": 0.0,
+  "conditional": [
+   {
+    "var": "conditionEnemyBurning",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "conditionIgnited",
+    "kind": "self_condition",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": null
+   },
+   {
+    "var": "scavengedPlatingStacks",
+    "kind": "ramp",
+    "dps_pct": null
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": null
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2abaf.code",
+  "title": "Melting Maelstrom Shaman | Path of Exile 2 | 0.5.5 Off-Meta Build Guide",
+  "ascendancy": "Shaman",
+  "class": "Druid",
+  "level": 92,
+  "main_skill": "Skeletal Warrior Minion",
+  "supports": [
+   "Essence Harvest",
+   "Meat Shield II",
+   "Last Gasp",
+   "Minion Mastery",
+   "Hulking Minions"
+  ],
+  "dps": 0.0,
+  "ehp": 15815.950091262,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2b0f9.code",
+  "title": "POE2 0.5.5 - Adonia Gemling -  Full Build Guide Showcase (Pretty Much)",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 98,
+  "main_skill": "Comet",
+  "supports": [
+   "SupportMetaCastOnElementalAilmentPlayer",
+   "Zenith II",
+   "Execute III",
+   "Efficiency II"
+  ],
+  "dps": 281837.61530733,
+  "ehp": 8190.1313651766,
+  "dewatered_dps": 150313.5958345,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 4.053223888277557
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 80.02300454334836
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyFrozen",
+    "label": "Is the enemy Frozen?",
+    "ratio": 1.6216229232048627,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionFullMana",
+    "label": "Are you always on Full Mana?",
+    "ratio": 1.2990694283092306,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.2990694283092306,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2b12d.code",
+  "title": "30M+ DPS Flicker Strike… #1 Invoker Monk | PoE 2",
+  "ascendancy": "Invoker",
+  "class": "Monk",
+  "level": 96,
+  "main_skill": "Flicker Strike",
+  "supports": [
+   "Close Combat II",
+   "Rigwald's Ferocity",
+   "Hit and Run",
+   "Concentrated Area",
+   "Rakiata's Flow"
+  ],
+  "dps": 70254569.080319,
+  "ehp": 127411.90776218,
+  "dewatered_dps": 18365724.331915,
+  "conditional": [
+   {
+    "var": "buffOnslaught",
+    "kind": "self_condition",
+    "dps_pct": 9.661475722187118
+   },
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 5.931036977356996
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 0.3482648575653613
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyCoveredInAsh",
+    "kind": "enemy_state",
+    "dps_pct": 1.9523120845491126
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 8.107944473581297
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyOnChilledGround",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyOnShockedGround",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionFullLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionGainedPowerChargeRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.070985347217259
+   },
+   {
+    "var": "conditionKilledShockedLast3Seconds",
+    "kind": "self_condition",
+    "dps_pct": 8.726348280588581
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overrideEnduranceCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overrideFrenzyCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overridePowerCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 12.997056710242116
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 54.72712260103354
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "overridePowerCharges",
+    "label": "# of Power Charges (if not maximum):",
+    "ratio": 1.450437146407884,
+    "capped": false,
+    "cap_value": 20,
+    "current": 9
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2b37b.code",
+  "title": "This Shouldn't Work, But It Does | PoE 2 Werewolf Deadeye",
+  "ascendancy": "Deadeye",
+  "class": "Ranger",
+  "level": 93,
+  "main_skill": "Shred",
+  "supports": [
+   "Elemental Armament II",
+   "Rapid Attacks II",
+   "Close Combat II",
+   "Crescendo II"
+  ],
+  "dps": 599901.93815104,
+  "ehp": 60657.142857143,
+  "dewatered_dps": 156630.5279003,
+  "conditional": [
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 23.40709218129229
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 25.000000000000533
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 10.290347254377474
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierMinionsInPresence",
+    "kind": "ramp",
+    "dps_pct": -1.2712187990394197
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 49.761703150388016
+   },
+   {
+    "var": "multiplierTailwind",
+    "kind": "ramp",
+    "dps_pct": 11.140006062054276
+   },
+   {
+    "var": "overrideFrenzyCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overridePowerCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 13.898943482340908
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 18.183785210027835
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.335045961654804,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "multiplierMinionsInPresence",
+    "label": "# of Minions in your Presence:",
+    "ratio": 1.2092648421548147,
+    "capped": false,
+    "cap_value": 20,
+    "current": 7
+   },
+   {
+    "var": "multiplierTailwind",
+    "label": "# of Tailwind Stacks:",
+    "ratio": 1.1114000606205428,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "enemyDistance",
+    "label": "Distance to enemy:",
+    "ratio": 1.1029034725437747,
+    "capped": true,
+    "cap_value": 0,
+    "current": 1
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2b483.code",
+  "title": "POE2-0.5.5-FIRE AND ICE-Twisted Empyrean-Build Guide",
+  "ascendancy": "Acolyte of Chayula",
+  "class": "Monk",
+  "level": 97,
+  "main_skill": "Volcanic Fissure",
+  "supports": [
+   "Kaom's Madness",
+   "Rapid Attacks II",
+   "Execute III",
+   "Pinpoint Critical",
+   "Tul's Stillness"
+  ],
+  "dps": 994159.44712636,
+  "ehp": 17967.35269178,
+  "dewatered_dps": 471083.04893884,
+  "conditional": [
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 20.000000000000483
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.127236231442357
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 13.207547169811495
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 19.38064720380521
+   }
+  ],
+  "ramp": [
+   {
+    "var": "purpleFlameStacks",
+    "label": "Purple Flames collected:",
+    "ratio": 2.941426682774774,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.2994943893810786,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.2008088005383295,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2b4c1.code",
+  "title": "Why you should play melee on Lich in Path of Exile 2",
+  "ascendancy": "Abyssal Lich",
+  "class": "Witch",
+  "level": 96,
+  "main_skill": "Rend",
+  "supports": [
+   "Medved's Felling",
+   "Execute III",
+   "Clash",
+   "Rapid Attacks II",
+   "Elemental Armament II"
+  ],
+  "dps": 294769.76286493,
+  "ehp": 37646.200083849,
+  "dewatered_dps": 48502.569870911,
+  "conditional": [
+   {
+    "var": "clashCondition",
+    "kind": "skill_option",
+    "dps_pct": 78.84797291815242
+   },
+   {
+    "var": "conditionChilledEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 4.204340778121307
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 27.82922923376563
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 25.99999999999889
+   },
+   {
+    "var": "conditionHaveEnergyShield",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionIgnitedEnemyRecently",
+    "kind": "self_condition",
+    "dps_pct": 4.204340778121307
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionNonCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 5.050872512125304
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionShockEffect",
+    "kind": "enemy_state",
+    "dps_pct": 0.7999999999999563
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 87.90707369736461
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "clashCondition",
+    "label": "Enemy Life % higher than Player?",
+    "ratio": 1.7884797291815242,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.5087638399583176,
+    "capped": false,
+    "cap_value": 20,
+    "current": 34
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.311470640108227,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2b787.code",
+  "title": "This Werewolf Pathfinder Build Is INSANE | PoE 2",
+  "ascendancy": "Pathfinder",
+  "class": "Ranger",
+  "level": 93,
+  "main_skill": "Shred",
+  "supports": [
+   "Elemental Armament II",
+   "Rapid Attacks II",
+   "Close Combat II",
+   "Crescendo II"
+  ],
+  "dps": 732650.15257918,
+  "ehp": 56992.434283346,
+  "dewatered_dps": 290634.61753382,
+  "conditional": [
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 16.85733397365652
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 19.531249999999957
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 10.27359874134206
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierMinionsInPresence",
+    "kind": "ramp",
+    "dps_pct": -3.3846171761421684
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 70.06150756003886
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierMinionsInPresence",
+    "label": "# of Minions in your Presence:",
+    "ratio": 1.6310637436023683,
+    "capped": false,
+    "cap_value": 20,
+    "current": 7
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.3349727124748578,
+    "capped": false,
+    "cap_value": 20,
+    "current": 100
+   },
+   {
+    "var": "enemyDistance",
+    "label": "Distance to enemy:",
+    "ratio": 1.1027359874134206,
+    "capped": true,
+    "cap_value": 0,
+    "current": 1
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2b88d.code",
+  "title": "Infernalist Martial Weapon LeagueStart? - Whirling Assault - PoE2 1.0 Sword Potential?",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 71,
+  "main_skill": "Whirling Assault",
+  "supports": [
+   "Magnified Area II",
+   "Ancestral Call II",
+   "Heavy Swing",
+   "Execute III"
+  ],
+  "dps": 4426.2182700757,
+  "ehp": 4085.5381598537,
+  "dewatered_dps": 4426.2182700757,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.3391544927386796,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.0581974010955393,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2b8cd.code",
+  "title": "PoE 2 0.5.5 Chaos Ignite Nightfall Shield Titan Build Guide",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 94,
+  "main_skill": "Raise Shield",
+  "supports": [
+   "Embitter",
+   "Concentrated Area",
+   "Chaos Attunement",
+   "Magnified Area II",
+   "Elemental Focus"
+  ],
+  "dps": 18919.975991521,
+  "ehp": 42682.513233853,
+  "dewatered_dps": 12150.994627912,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "buffLifetap",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsedWarcryRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 55.707220444818596
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.367681142822686,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2ba05.code",
+  "title": "Poe 2 0.5.5 100+ Rage Triple DOT Earthquake Gemling Build Guide",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 98,
+  "main_skill": "Hammer of the Gods",
+  "supports": [
+   "Zerphi's Infamy",
+   "Bleed III",
+   "Poison III",
+   "Vorana's Siege",
+   "Admixture"
+  ],
+  "dps": 1160457.9662646,
+  "ehp": 18945.668929548,
+  "dewatered_dps": 385441.36231289,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 12.737028250784533
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyColdExposure",
+    "kind": "enemy_state",
+    "dps_pct": 2.231483869396267
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsedWarcryRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 123.5373959017724
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": 19.224206003751988
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.7718570880079751,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "label": "Is the enemy Isolated?",
+    "ratio": 1.2008879179285545,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "label": "# of Withered Stacks:",
+    "ratio": 1.1922420600375199,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "label": "Is the enemy Bleeding?",
+    "ratio": 1.1273702825078453,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "conditionEnemyPoisoned",
+    "label": "Is the enemy Poisoned?",
+    "ratio": 1.0199888088899647,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2ba0a.code",
+  "title": "This Werewolf Blood Mage Hits HARD | PoE 2",
+  "ascendancy": "Blood Mage",
+  "class": "Witch",
+  "level": 91,
+  "main_skill": "Shred",
+  "supports": [
+   "Close Combat II",
+   "Rapid Attacks II",
+   "Crescendo II",
+   "Elemental Armament II"
+  ],
+  "dps": 883137.54099712,
+  "ehp": 27152.416958553,
+  "dewatered_dps": 248304.45084695,
+  "conditional": [
+   {
+    "var": "conditionBleedAggravated",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyCursed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 15.151515151515627
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 10.270537605452024
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 179.62953220901792
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.5633495826362613,
+    "capped": false,
+    "cap_value": 20,
+    "current": 100
+   },
+   {
+    "var": "enemyDistance",
+    "label": "Distance to enemy:",
+    "ratio": 1.1027053760545202,
+    "capped": true,
+    "cap_value": 0,
+    "current": 1
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2ba48.code",
+  "title": "POE2 0.5.5 - Gemling Adonia Temporalis - Insane survivability for 6 man party",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 99,
+  "main_skill": "Comet",
+  "supports": [
+   "SupportMetaCastOnCritPlayer",
+   "Zenith II",
+   "Spell Cascade",
+   "Execute III",
+   "Efficiency II"
+  ],
+  "dps": 2429329.1674458,
+  "ehp": 4638.9418796897,
+  "dewatered_dps": 179469.60614574,
+  "conditional": [
+   {
+    "var": "arcLightningInfused",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "buffArcaneSurge",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "buffOnslaught",
+    "kind": "self_condition",
+    "dps_pct": 3.023671440913911
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 1.1873882219498144
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyFrozen",
+    "kind": "enemy_state",
+    "dps_pct": 61.254161425176015
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIntimidated",
+    "kind": "enemy_state",
+    "dps_pct": 7.652839065671002
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 16.5740646236342
+   },
+   {
+    "var": "conditionGainedPowerChargeRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionInfusionConsumedRecently",
+    "kind": "self_condition",
+    "dps_pct": 10.0325808715084
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionTriggeredSkillRecently",
+    "kind": "self_condition",
+    "dps_pct": 10.449438717636461
+   },
+   {
+    "var": "configResonanceCount",
+    "kind": "ramp",
+    "dps_pct": 77.49816551576367
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overridePowerCharges",
+    "kind": "ramp",
+    "dps_pct": 43.72483210968554
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 155.24328757920665
+   }
+  ],
+  "ramp": [
+   {
+    "var": "overridePowerCharges",
+    "label": "# of Power Charges (if not maximum):",
+    "ratio": 4.087504399970811,
+    "capped": false,
+    "cap_value": 20,
+    "current": 8
+   },
+   {
+    "var": "conditionEnemyFrozen",
+    "label": "Is the enemy Frozen?",
+    "ratio": 1.6125416142517601,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "conditionFrozen",
+    "label": "Are you Frozen?",
+    "ratio": 1.3795238370973744,
+    "capped": true,
+    "cap_value": false,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.3020078813159721,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2ba76.code",
+  "title": "EARTHSHATTER IS ACTUALLY INSANE || EARTHSHATTER INFERNALIST GUIDE",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 97,
+  "main_skill": "Earthshatter",
+  "supports": [
+   "Garukhan's Resolve",
+   "Vorana's Siege",
+   "Aftershock II",
+   "Kaom's Madness",
+   "Execute III"
+  ],
+  "dps": 178151.47479923,
+  "ehp": 6824.5833333333,
+  "dewatered_dps": 119449.6512557,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 3.160680481191358
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyLightningExposure",
+    "kind": "enemy_state",
+    "dps_pct": 10.61116239328097
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 30.658873192230374
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.3033630278206578,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "conditionEnemyIsolated",
+    "label": "Is the enemy Isolated?",
+    "ratio": 1.2055054258911937,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.204284857936078,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2baca.code",
+  "title": "POE-0.5.5-Spirit Walker Shrine Stacker-OFF META BUILD",
+  "ascendancy": "Spirit Walker",
+  "class": "Huntress",
+  "level": 92,
+  "main_skill": "Mace Strike",
+  "supports": [
+   "Rage III",
+   "Execute III",
+   "Lifetap",
+   "Fire Attunement"
+  ],
+  "dps": 33615.816398827,
+  "ehp": 23655.93337531,
+  "dewatered_dps": 33615.816398827,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.3128976165335682,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2bbe2.code",
+  "title": "Cast on Dodge Gemling Makes Everything Explode With ONE Button | PoE2 0.5.5",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 98,
+  "main_skill": "Ember Fusillade",
+  "supports": [
+   "SupportMetaCastOnDodgePlayer",
+   "Execute III",
+   "Wildshards II",
+   "Projectile Acceleration III"
+  ],
+  "dps": 3136512.5242305,
+  "ehp": 17347.127752649,
+  "dewatered_dps": 1050095.1264868,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionBeenHitRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionMoving",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierWitheredStackCount",
+    "kind": "enemy_state",
+    "dps_pct": 100.0000000000064
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 1.9554417987551975
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 18.19963647084122
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 24.1516964501586
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierWitheredStackCount",
+    "label": "# of Withered Stacks:",
+    "ratio": 2.000000000000064,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.299999025111194,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2bbee.code",
+  "title": "Poe 2 0.5.5 Chaos Ignite Warp EarthShatter Titan Build Guide | Arm+Eva Too OP (FaceTank Expedition)",
+  "ascendancy": "Titan",
+  "class": "Warrior",
+  "level": 97,
+  "main_skill": "Earthshatter",
+  "supports": [
+   "Aftershock II",
+   "Branching Fissures II",
+   "Garukhan's Resolve",
+   "Fist of War III",
+   "Defy II"
+  ],
+  "dps": 161671.30999756,
+  "ehp": 362231.35904068,
+  "dewatered_dps": 102868.81200371,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "bannerPlanted",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "bannerValour",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "buffLifetap",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsedWarcryRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 57.16261017161281
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.375034239540733,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2bcc9.code",
+  "title": "POE2-0.5.5-The Bodach Walking Simulator-OFF META BUILD GUIDE",
+  "ascendancy": "Acolyte of Chayula",
+  "class": "Monk",
+  "level": 97,
+  "main_skill": "Shield Wall",
+  "supports": [
+   "Physical Mastery",
+   "Heft",
+   "Rageforged II",
+   "Execute III",
+   "Supercritical"
+  ],
+  "dps": 198457.78333217,
+  "ehp": 131087.97709896,
+  "dewatered_dps": 112275.66959016,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionUsedWarcryRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 76.75938523154717
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "purpleFlameStacks",
+    "label": "Purple Flames collected:",
+    "ratio": 3.17648223821517,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.630757133432377,
+    "capped": false,
+    "cap_value": 20,
+    "current": 30
+   },
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.2975887352259698,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2bd34.code",
+  "title": "RAW CHAOTIC POWER! #1 Chayula Monk Build Guide | PoE 2",
+  "ascendancy": "Acolyte of Chayula",
+  "class": "Monk",
+  "level": 96,
+  "main_skill": "Flicker Strike",
+  "supports": [
+   "Close Combat II",
+   "Rigwald's Ferocity",
+   "Hit and Run",
+   "Execute III",
+   "Rakiata's Flow"
+  ],
+  "dps": 156301900.92922,
+  "ehp": 48827.130857828,
+  "dewatered_dps": 53745405.501776,
+  "conditional": [
+   {
+    "var": "conditionCritInPast8Sec",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 4.5381384502507505
+   },
+   {
+    "var": "conditionEnemyArmourBroken",
+    "kind": "enemy_state",
+    "dps_pct": 0.36558828196937565
+   },
+   {
+    "var": "conditionEnemyBlinded",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 11.32847171503606
+   },
+   {
+    "var": "conditionEnemyMaimed",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 28.86780003977647
+   },
+   {
+    "var": "conditionGainedPowerChargeRecently",
+    "kind": "self_condition",
+    "dps_pct": 2.6065873353690483
+   },
+   {
+    "var": "conditionKilledShockedLast3Seconds",
+    "kind": "self_condition",
+    "dps_pct": 7.731567340446599
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionOnConsecratedGround",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overrideEnduranceCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overrideFrenzyCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "overridePowerCharges",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 11.22899338024952
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 38.48859490048693
+   },
+   {
+    "var": "windDancerStacks",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionEnemyLowLife",
+    "label": "Is the enemy on Low Life?",
+    "ratio": 1.2997095488724315,
+    "capped": true,
+    "cap_value": true,
+    "current": null
+   },
+   {
+    "var": "purpleFlameStacks",
+    "label": "Purple Flames collected:",
+    "ratio": 1.2689668218414638,
+    "capped": true,
+    "cap_value": 10,
+    "current": 10
+   },
+   {
+    "var": "overridePowerCharges",
+    "label": "# of Power Charges (if not maximum):",
+    "ratio": 1.256615369749068,
+    "capped": false,
+    "cap_value": 20,
+    "current": 8
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2bd4e.code",
+  "title": "I Think I Found a Better Werewolf Than Oracle… | PoE 2 Lich Build Guide",
+  "ascendancy": "Lich",
+  "class": "Witch",
+  "level": 92,
+  "main_skill": "Shred",
+  "supports": [
+   "Close Combat II",
+   "Rapid Attacks II",
+   "Crescendo II",
+   "Elemental Armament II",
+   "Execute III"
+  ],
+  "dps": 1436325.6105019,
+  "ehp": 39314.331371408,
+  "dewatered_dps": 173269.70176248,
+  "conditional": [
+   {
+    "var": "buffUnholyMight",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyShocked",
+    "kind": "enemy_state",
+    "dps_pct": 15.151515151511031
+   },
+   {
+    "var": "conditionLowLife",
+    "kind": "self_condition",
+    "dps_pct": 112.82269020444117
+   },
+   {
+    "var": "conditionShapeshifted",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "enemyDistance",
+    "kind": "enemy_state",
+    "dps_pct": 10.517602618974674
+   },
+   {
+    "var": "multiplierCombo",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierRage",
+    "kind": "ramp",
+    "dps_pct": 164.69571031194158
+   }
+  ],
+  "ramp": [
+   {
+    "var": "conditionLowLife",
+    "label": "Are you always on Low Life?",
+    "ratio": 2.128226902044412,
+    "capped": true,
+    "cap_value": true,
+    "current": true
+   },
+   {
+    "var": "multiplierRage",
+    "label": "Rage:",
+    "ratio": 1.523046654884835,
+    "capped": false,
+    "cap_value": 20,
+    "current": 100
+   },
+   {
+    "var": "enemyDistance",
+    "label": "Distance to enemy:",
+    "ratio": 1.1051760261897468,
+    "capped": true,
+    "cap_value": 0,
+    "current": 1
+   },
+   {
+    "var": "SecondsSinceInevitableCrit",
+    "label": "# of seconds since Inevitable Crit:",
+    "ratio": 1.063963308696415,
+    "capped": true,
+    "cap_value": 1,
+    "current": 10
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2bd8c.code",
+  "title": "THE FASTEST WHIRLING ASSAULT BUILD | POE 0.5.5",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 97,
+  "main_skill": "Mace Strike",
+  "supports": [
+   "Life Leech I",
+   "Volcanic Eruption",
+   "Rage III",
+   "Ailith's Chimes",
+   "Culmination II"
+  ],
+  "dps": 48941.079862686,
+  "ehp": 6890.4564807133,
+  "dewatered_dps": 48941.079862686,
+  "conditional": [],
+  "ramp": [
+   {
+    "var": "multiplierCombo",
+    "label": "Combo:",
+    "ratio": 1.4385836611642955,
+    "capped": true,
+    "cap_value": 10,
+    "current": null
+   }
+  ]
+ },
+ {
+  "file": "poe_ninja_2c0b6.code",
+  "title": "Empowered Sparks (Support Gem) Oracle Druid | Path Of Exile 2 (0.5.5) Build Guide",
+  "ascendancy": "Oracle",
+  "class": "Druid",
+  "level": 93,
+  "main_skill": "Cast on Critical",
+  "supports": [
+   "Energy Retention",
+   "Boundless Energy II"
+  ],
+  "dps": 2745.5208371785,
+  "ehp": 15457.41217553,
+  "dewatered_dps": 2745.5208371785,
+  "conditional": [],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2c0bf.code",
+  "title": "Last Chance to Play the BEST Comet Class Before 1.0 | Insane Vines Tech | PoE2 Infernalist Guide",
+  "ascendancy": "Infernalist",
+  "class": "Witch",
+  "level": 99,
+  "main_skill": "Comet",
+  "supports": [
+   "SupportMetaCastOnCritPlayer",
+   "Spell Cascade",
+   "Concentrated Area"
+  ],
+  "dps": 11332834.002681,
+  "ehp": 24442.185535795,
+  "dewatered_dps": 10875082.478851,
+  "conditional": [
+   {
+    "var": "DisableEHPGainOnBlock",
+    "kind": "skill_option",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionCritRecently",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyBleeding",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyChilled",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "conditionEnemyDazed",
+    "kind": "enemy_state",
+    "dps_pct": 3.010457391327659
+   },
+   {
+    "var": "conditionEnemyIgnited",
+    "kind": "enemy_state",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyEnemies",
+    "kind": "ramp",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "multiplierNearbyRareOrUniqueEnemies",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useEnduranceCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   },
+   {
+    "var": "useFrenzyCharges",
+    "kind": "self_condition",
+    "dps_pct": 1.1636877461125072
+   },
+   {
+    "var": "usePowerCharges",
+    "kind": "self_condition",
+    "dps_pct": 0.0
+   }
+  ],
+  "ramp": []
+ },
+ {
+  "file": "poe_ninja_2c166.code",
+  "title": "ICE NOVA NUKES ENTIRE SCREENS??? POE 0.5.5 ICE NOVA GUIDE",
+  "ascendancy": "Gemling Legionnaire",
+  "class": "Mercenary",
+  "level": 95,
+  "main_skill": "Virtuous Barrier",
+  "supports": [],
+  "dps": 0.0,
+  "ehp": 14380.560056282,
+  "dewatered_dps": 0.0,
+  "conditional": [],
+  "ramp": []
+ }
+]

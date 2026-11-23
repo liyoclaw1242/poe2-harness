@@ -1,0 +1,14 @@
+vendor/
+__pycache__/
+*.pyc
+.venv/
+data/builds/
+.DS_Store
+.pytest_cache/
+# local run logs and partial batch output (contain machine-specific paths)
+data/results/*.log
+data/results/*.err
+data/results/*.partial.json
+# poe.ninja usage data is read manually for local research only; not republished
+data/ninja/
+data/results/ninja_compare.*

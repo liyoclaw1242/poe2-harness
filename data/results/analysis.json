@@ -1,0 +1,3792 @@
+{
+ "scan_start": {
+  "backtest": {
+   "observed_main_skills": {
+    "Shred": 6,
+    "Virtuous Barrier": 6,
+    "Earthshatter": 5,
+    "Comet": 5,
+    "Whirling Assault": 4,
+    "Arc": 4,
+    "Ember Fusillade": 4,
+    "Meteors": 4,
+    "Twister": 3,
+    "Shield Wall": 3,
+    "Flicker Strike": 3,
+    "Explosive Grenade": 2,
+    "Rend": 2,
+    "Berserk": 2,
+    "Boneshatter": 2,
+    "Supporting Fire": 2,
+    "Kelari, the Tainted Sands": 2,
+    "Living Bomb": 2,
+    "Mace Strike": 2,
+    "Flameblast": 1,
+    "Skeletal Cleric Minion": 1,
+    "Earthquake": 1,
+    "Thorns": 1,
+    "Fury of the Mountain": 1,
+    "Punch": 1,
+    "Embrace The Fall": 1,
+    "Molten Shower": 1,
+    "Spear Stab": 1,
+    "Spiraling Conspiracy": 1,
+    "Profane Ritual": 1,
+    "Snipe": 1,
+    "Navira, the Last Mirage": 1,
+    "High Velocity Rounds": 1,
+    "Hexblast": 1,
+    "Grim Pillars": 1,
+    "Archmage": 1,
+    "Armour Piercing Rounds": 1,
+    "Armour Breaker": 1,
+    "Herald of Thunder": 1,
+    "Incendiary Shot": 1,
+    "Thrashing Vines": 1,
+    "Reap": 1,
+    "Ice Shot": 1,
+    "Detonating Arrow": 1,
+    "Elemental Storm": 1,
+    "Harbinger of Madness": 1,
+    "Supercharged Slam": 1,
+    "Primal Strikes": 1,
+    "Coiling Bolts": 1,
+    "Entangle": 1,
+    "Volcano": 1,
+    "Hollow Form": 1,
+    "Skeletal Sniper Minion": 1,
+    "On Kill Monster Explosion": 1,
+    "Falling Thunder": 1,
+    "Glacial Cascade": 1,
+    "Companion: Diretusk Boar": 1,
+    "Lightning Rod": 1,
+    "Wardbound Minions": 1,
+    "Cluster Grenade": 1,
+    "Orb of Storms": 1,
+    "Spectre: Powered Zealot": 1,
+    "Glacial Bolt": 1,
+    "Oil Barrage": 1,
+    "Spark": 1,
+    "Ancestral Warrior Totem": 1,
+    "Sorcery Ward": 1,
+    "Spear Throw": 1,
+    "Tornado": 1,
+    "Primal Bounty": 1,
+    "Doom Blast": 1,
+    "Skeletal Storm Mage Minion": 1,
+    "Dark Consequences": 1,
+    "Voltaic Barrier": 1,
+    "Void Illusion": 1,
+    "Iron Ward": 1,
+    "Skeletal Warrior Minion": 1,
+    "Volcanic Fissure": 1,
+    "Raise Shield": 1,
+    "Hammer of the Gods": 1,
+    "Cast on Critical": 1
+   },
+   "matched": 49,
+   "unmatched": [
+    "Skeletal Cleric Minion",
+    "Thorns",
+    "Punch",
+    "Embrace The Fall",
+    "Spiraling Conspiracy",
+    "Virtuous Barrier",
+    "Archmage",
+    "Meteors",
+    "Herald of Thunder",
+    "Berserk",
+    "Shield Wall",
+    "Elemental Storm",
+    "Harbinger of Madness",
+    "Supporting Fire",
+    "Hollow Form",
+    "Skeletal Sniper Minion",
+    "On Kill Monster Explosion",
+    "Companion: Diretusk Boar",
+    "Wardbound Minions",
+    "Spectre: Powered Zealot",
+    "Ancestral Warrior Totem",
+    "Sorcery Ward",
+    "Primal Bounty",
+    "Doom Blast",
+    "Skeletal Storm Mage Minion",
+    "Dark Consequences",
+    "Voltaic Barrier",
+    "Void Illusion",
+    "Iron Ward",
+    "Skeletal Warrior Minion",
+    "Raise Shield",
+    "Cast on Critical"
+   ],
+   "spearman_score_vs_usage": 0.15226313407636094,
+   "top40_recall_of_15_most_used": 0.45454545454545453,
+   "popular_ranks": {
+    "Shred": 115,
+    "Earthshatter": 112,
+    "Comet": 35,
+    "Whirling Assault": 168,
+    "Arc": 31,
+    "Ember Fusillade": 23,
+    "Twister": 5,
+    "Flicker Strike": 26,
+    "Explosive Grenade": 148,
+    "Rend": 41,
+    "Boneshatter": 57
+   },
+   "pool_size": 195
+  },
+  "meta_ranks": {
+   "Twister": 5,
+   "Whirling Assault": 168,
+   "Falling Thunder": 111,
+   "Spark": 88,
+   "Ember Fusillade": 23,
+   "Snipe": 97,
+   "Ice Shot": 45,
+   "Comet": 35,
+   "Arc": 31,
+   "Flameblast": 130,
+   "Entangle": 107,
+   "Galvanic Shards": 187,
+   "Frostbolt": 64,
+   "Contagion": 159,
+   "Essence Drain": 51,
+   "Sunder": 32,
+   "Earthshatter": 112,
+   "Oil Grenade": 106,
+   "Tempest Flurry": 131
+  },
+  "top": [
+   {
+    "skill": "Bursting Fen Toad",
+    "type": "Attack",
+    "weapon": null,
+    "tags": "AoE, Trigger, Physical, Chaos",
+    "base_dps": 1335.1406163625,
+    "supported_dps": 2780.6169978957,
+    "support_mult": 2.0826398087351,
+    "supports": [
+     "Concentrated Area",
+     "Heft",
+     "Bleed III"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 2780.6169978957,
+    "gem_level_elasticity": 0.16926977039679,
+    "elasticity": {
+     "crit_chance": 0.040330175839302,
+     "extra_ele": 0.035452563252905,
+     "gem_level": 0.16926977039679,
+     "inc_damage": 0.14543678234248,
+     "skill_speed": 0.071035396510006
+    },
+    "gated": [],
+    "family": "Attack",
+    "z_in_family": 2.5514114099533325,
+    "z_global": 1.795469246407654,
+    "flags": [
+     "scales-with-gem-level",
+     "family-outlier"
+    ],
+    "score": 2.249034544535061,
+    "rank": 1
+   },
+   {
+    "skill": "Rain of Arrows",
+    "type": "Attack",
+    "weapon": "Bow",
+    "tags": "AoE, Projectile, Sustained",
+    "base_dps": 128.72245005053,
+    "supported_dps": 581.27399797138,
+    "support_mult": 4.515715772526,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Hourglass"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 581.27399797138,
+    "gem_level_elasticity": 0.087643509142409,
+    "elasticity": {
+     "crit_chance": 0.0093519170676606,
+     "extra_ele": 0,
+     "gem_level": 0.087643509142409,
+     "inc_damage": 0.17290183659256,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Bow",
+    "z_in_family": 2.6697871481385893,
+    "z_global": 0.9036982205625794,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.9633515771081853,
+    "rank": 2
+   },
+   {
+    "skill": "Decompose",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Fire, Chaos, Duration",
+    "base_dps": 7645.85,
+    "supported_dps": 16824.35,
+    "support_mult": 2.2004551488716,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Controlled Destruction"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 16824.35,
+    "gem_level_elasticity": 0,
+    "elasticity": {
+     "crit_chance": 0,
+     "extra_ele": 0.031910593871383,
+     "gem_level": 0,
+     "inc_damage": 0.12505386537964,
+     "skill_speed": 0.086206896551724
+    },
+    "gated": [
+     "corpse"
+    ],
+    "family": "Spell",
+    "z_in_family": 2.330429599792147,
+    "z_global": 2.821101435082814,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 1.776698333908414,
+    "rank": 3
+   },
+   {
+    "skill": "Detonate Dead",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Fire, Detonator, Repeatable",
+    "base_dps": 6128.8341246819,
+    "supported_dps": 14087.113646474,
+    "support_mult": 2.2984981090846,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Unleash"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 14087.113646474,
+    "gem_level_elasticity": 0.035514269399098,
+    "elasticity": {
+     "crit_chance": 0.039188250769261,
+     "extra_ele": 0.040551167140117,
+     "gem_level": 0.035514269399098,
+     "inc_damage": 0.13391541521166,
+     "skill_speed": 0.082113821138212
+    },
+    "gated": [
+     "Detonator",
+     "corpse"
+    ],
+    "family": "Spell",
+    "z_in_family": 2.2258507933265737,
+    "z_global": 2.7199333276163786,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 1.673483807042496,
+    "rank": 4
+   },
+   {
+    "skill": "Twister",
+    "type": "Attack",
+    "weapon": "Spear",
+    "tags": "AoE, Projectile, Duration, Repeatable, Wind",
+    "base_dps": 20.533888185233,
+    "supported_dps": 135.2379000504,
+    "support_mult": 6.586083396892,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 5.362395318719423,
+    "ramp_notes": [
+     "# of Whirlwind Stages: x5.36"
+    ],
+    "potential_dps": 725.19908214371,
+    "gem_level_elasticity": 0.054988239994376,
+    "elasticity": {
+     "crit_chance": 0.0096122451044582,
+     "extra_ele": 0,
+     "gem_level": 0.054988239994376,
+     "inc_damage": 0.14914255968203,
+     "skill_speed": 0.056768547563073
+    },
+    "gated": [],
+    "family": "Attack/Spear",
+    "z_in_family": 1.9824155286271228,
+    "z_global": 1.0297398674679326,
+    "flags": [
+     "hidden-multiplier",
+     "family-outlier"
+    ],
+    "score": 1.6013452641634467,
+    "rank": 5
+   },
+   {
+    "skill": "Hammer of the Gods",
+    "type": "Attack",
+    "weapon": "One Hand Mace",
+    "tags": "AoE, Melee, Slam, Duration, Conditional",
+    "base_dps": 985.53502320779,
+    "supported_dps": 2618.1610872801,
+    "support_mult": 2.656588579428,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Bleed III"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 2618.1610872801,
+    "gem_level_elasticity": 0.040097566493672,
+    "elasticity": {
+     "crit_chance": 0.044144012812834,
+     "extra_ele": 0,
+     "gem_level": 0.040097566493672,
+     "inc_damage": 0.13958445868913,
+     "skill_speed": 0.081378372838499
+    },
+    "gated": [
+     "Conditional",
+     "glory",
+     "when you have maximum"
+    ],
+    "family": "Attack/One Hand Mace",
+    "z_in_family": 2.620118904747779,
+    "z_global": 1.7611701201829835,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 1.5265393909218608,
+    "rank": 6
+   },
+   {
+    "skill": "Rapid Shot",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "Ammunition, Projectile, Fire",
+    "base_dps": 95.362101540178,
+    "supported_dps": 445.5155271903,
+    "support_mult": 4.6718300036897,
+    "supports": [
+     "Fire Penetration II",
+     "Fresh Clip II",
+     "Hit and Run"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 445.5155271903,
+    "gem_level_elasticity": 0.068975148707023,
+    "elasticity": {
+     "crit_chance": 0.0085721359521487,
+     "extra_ele": 0.070598328759678,
+     "gem_level": 0.068975148707023,
+     "inc_damage": 0.12645538863422,
+     "skill_speed": 0.1505816238244
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.947223569434892,
+    "z_global": 0.7521511903953826,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.4691946178190882,
+    "rank": 7
+   },
+   {
+    "skill": "Crushing Fear",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike, Physical, Chaos",
+    "base_dps": 386.21263589072,
+    "supported_dps": 754.03429031109,
+    "support_mult": 1.95238120206,
+    "supports": [
+     "Concentrated Area",
+     "Chaos Attunement",
+     "Close Combat II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 754.03429031109,
+    "gem_level_elasticity": 0.051050948439767,
+    "elasticity": {
+     "crit_chance": 0.046508643760163,
+     "extra_ele": 0.030488631590913,
+     "gem_level": 0.051050948439767,
+     "inc_damage": 0.12732635393478,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.7344873589784509,
+    "z_global": 1.0519552244084485,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.4614745051504499,
+    "rank": 8
+   },
+   {
+    "skill": "Killing Palm",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike, Physical",
+    "base_dps": 187.02784985582,
+    "supported_dps": 749.1520977665,
+    "support_mult": 4.0055644030769,
+    "supports": [
+     "Brutality III",
+     "Heavy Swing",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 749.1520977665,
+    "gem_level_elasticity": 0.062093310557484,
+    "elasticity": {
+     "crit_chance": 0.06012421851779,
+     "extra_ele": 0,
+     "gem_level": 0.062093310557484,
+     "inc_damage": 0.16375239160204,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.7259306766649494,
+    "z_global": 1.0482542551447214,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.4548601080568582,
+    "rank": 9
+   },
+   {
+    "skill": "Plasma Blast",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "AoE, Ammunition, Projectile, Lightning, Channelling",
+    "base_dps": 145.35673084844,
+    "supported_dps": 385.78147365011,
+    "support_mult": 2.6540324028914,
+    "supports": [
+     "Lightning Penetration",
+     "Heightened Accuracy I",
+     "Lightning Attunement"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 385.78147365011,
+    "gem_level_elasticity": 0.077453279300679,
+    "elasticity": {
+     "crit_chance": 0.012721863924051,
+     "extra_ele": 0.085141481834675,
+     "gem_level": 0.077453279300679,
+     "inc_damage": 0.13212182099288,
+     "skill_speed": 0.040136054421769
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.801516402729027,
+    "z_global": 0.6701298608428147,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.348961785974542,
+    "rank": 10
+   },
+   {
+    "skill": "Hexblast",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Chaos, Payoff, Repeatable",
+    "base_dps": 1023.296,
+    "supported_dps": 2209.31124,
+    "support_mult": 2.1590148305085,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Unleash"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 2209.31124,
+    "gem_level_elasticity": 0.15238382619191,
+    "elasticity": {
+     "crit_chance": 0.032287822878229,
+     "extra_ele": 0.037115268557634,
+     "gem_level": 0.15238382619191,
+     "inc_damage": 0.12492456246228,
+     "skill_speed": 0.082113821138212
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 1.1347651796926108,
+    "z_global": 1.6644320234248853,
+    "flags": [
+     "scales-with-gem-level",
+     "family-outlier"
+    ],
+    "score": 1.3466319171855208,
+    "rank": 11
+   },
+   {
+    "skill": "Oil Barrage",
+    "type": "Attack",
+    "weapon": "Talisman",
+    "tags": "Shapeshift, Wyvern, AoE, Projectile, Sustained, Channelling",
+    "base_dps": 131.95032038035,
+    "supported_dps": 530.83166141492,
+    "support_mult": 4.022966066962,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Heightened Accuracy I"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 530.83166141492,
+    "gem_level_elasticity": 0.065596829950938,
+    "elasticity": {
+     "crit_chance": 0.019753858571882,
+     "extra_ele": 0,
+     "gem_level": 0.065596829950938,
+     "inc_damage": 0.17159409258414,
+     "skill_speed": 0.1
+    },
+    "gated": [],
+    "family": "Attack/Talisman",
+    "z_in_family": 1.6131015343856558,
+    "z_global": 0.8519781488882251,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.3086521801866835,
+    "rank": 12
+   },
+   {
+    "skill": "Cull The Weak",
+    "type": "Attack",
+    "weapon": "Spear",
+    "tags": "AoE, Melee, Strike",
+    "base_dps": 112.06929756843,
+    "supported_dps": 484.28962337118,
+    "support_mult": 4.3213407586095,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Hit and Run"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 484.28962337118,
+    "gem_level_elasticity": 0.066463806970329,
+    "elasticity": {
+     "crit_chance": 0.035268822961593,
+     "extra_ele": 0,
+     "gem_level": 0.066463806970329,
+     "inc_damage": 0.17364899953621,
+     "skill_speed": 0.1
+    },
+    "gated": [],
+    "family": "Attack/Spear",
+    "z_in_family": 1.5763384391545936,
+    "z_global": 0.7996971430973991,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.2656819207317158,
+    "rank": 13
+   },
+   {
+    "skill": "Staggering Palm",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "Buff, AoE, Melee, Strike, Projectile, Physical, Duration, Wind",
+    "base_dps": 146.51824607254,
+    "supported_dps": 610.05822124386,
+    "support_mult": 4.1637013655065,
+    "supports": [
+     "Brutality III",
+     "Heavy Swing",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 610.05822124386,
+    "gem_level_elasticity": 0.070025744318367,
+    "elasticity": {
+     "crit_chance": 0.061105054453869,
+     "extra_ele": 0,
+     "gem_level": 0.070025744318367,
+     "inc_damage": 0.16424969020613,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.4553815681018356,
+    "z_global": 0.9312353103673876,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.2457230650080564,
+    "rank": 14
+   },
+   {
+    "skill": "Bleeding Concoction",
+    "type": "Attack",
+    "weapon": "Unarmed",
+    "tags": "AoE, Projectile, Physical",
+    "base_dps": 297.71146055933,
+    "supported_dps": 770.17648402351,
+    "support_mult": 2.5869897066661,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Heightened Accuracy I"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 770.17648402351,
+    "gem_level_elasticity": 0.15292291863728,
+    "elasticity": {
+     "crit_chance": 0.014010009569732,
+     "extra_ele": 0,
+     "gem_level": 0.15292291863728,
+     "inc_damage": 0.14688523592304,
+     "skill_speed": 0.071884948737704
+    },
+    "gated": [],
+    "family": "Attack/Unarmed",
+    "z_in_family": 1.331845189869308,
+    "z_global": 1.064023511899725,
+    "flags": [
+     "scales-with-gem-level",
+     "family-outlier"
+    ],
+    "score": 1.2247165186814748,
+    "rank": 15
+   },
+   {
+    "skill": "His Scattering Calamity",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Projectile, Lightning, Duration, Repeatable",
+    "base_dps": 543.36,
+    "supported_dps": 1537.51353,
+    "support_mult": 2.829640625,
+    "supports": [
+     "Extraction",
+     "Lightning Penetration",
+     "Unleash"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 1537.51353,
+    "gem_level_elasticity": 0.14557391894951,
+    "elasticity": {
+     "crit_chance": 0.048586572438162,
+     "extra_ele": 0.06973058637084,
+     "gem_level": 0.14557391894951,
+     "inc_damage": 0.12429250622595,
+     "skill_speed": 0.082113821138211
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.9212606600455642,
+    "z_global": 1.4578906703704055,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 1.1359126641755006,
+    "rank": 16
+   },
+   {
+    "skill": "Hand of Chayula",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike, Chaos, Meta",
+    "base_dps": 279.02,
+    "supported_dps": 542.22,
+    "support_mult": 1.9433015554441,
+    "supports": [
+     "Concentrated Area",
+     "Chaos Attunement",
+     "Close Combat II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 542.22,
+    "gem_level_elasticity": 0.053446940356313,
+    "elasticity": {
+     "crit_chance": 0.044642857142857,
+     "extra_ele": 0.024786986831913,
+     "gem_level": 0.053446940356313,
+     "inc_damage": 0.12600051639556,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.3000994568183226,
+    "z_global": 0.8640720921934335,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.125688510968367,
+    "rank": 17
+   },
+   {
+    "skill": "His Winnowing Flame",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Trigger, Fire, Payoff",
+    "base_dps": 403.03609022556,
+    "supported_dps": 1414.9052631579,
+    "support_mult": 3.5106167846309,
+    "supports": [
+     "Fire Penetration II",
+     "Extraction",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 1414.9052631579,
+    "gem_level_elasticity": 0.14400921658986,
+    "elasticity": {
+     "crit_chance": 0.032287822878229,
+     "extra_ele": 0.036866359447004,
+     "gem_level": 0.14400921658986,
+     "inc_damage": 0.12442396313364,
+     "skill_speed": 0.1
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.8723161962064861,
+    "z_global": 1.4105424652712304,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 1.0876067038323838,
+    "rank": 18
+   },
+   {
+    "skill": "Icestorm",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Sustained, Cold, Duration, Payoff, Repeatable, Storm",
+    "base_dps": 413.18,
+    "supported_dps": 1285.952,
+    "support_mult": 3.1123287671233,
+    "supports": [
+     "Extraction",
+     "Cold Penetration",
+     "Considered Casting"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 1285.952,
+    "gem_level_elasticity": 0.14495305164319,
+    "elasticity": {
+     "crit_chance": 0.048586572438162,
+     "extra_ele": 0.044014084507042,
+     "gem_level": 0.14495305164319,
+     "inc_damage": 0.125,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.8160337486127383,
+    "z_global": 1.3560955950202036,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 1.0320584871757243,
+    "rank": 19
+   },
+   {
+    "skill": "Firestorm",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Sustained, Fire, Duration, Repeatable, Storm",
+    "base_dps": 351.06278664572,
+    "supported_dps": 1279.335096139,
+    "support_mult": 3.6441774656966,
+    "supports": [
+     "Fire Penetration II",
+     "Considered Casting",
+     "Extraction"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 1279.335096139,
+    "gem_level_elasticity": 0.14409504305259,
+    "elasticity": {
+     "crit_chance": 0.032296494747649,
+     "extra_ele": 0.037070037508646,
+     "gem_level": 0.14409504305259,
+     "inc_damage": 0.12502391374598,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.8129954409499993,
+    "z_global": 1.3531563777301185,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 1.029059815662047,
+    "rank": 20
+   },
+   {
+    "skill": "High Velocity Rounds",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "Ammunition, Projectile, Physical, Duration, Payoff",
+    "base_dps": 46.564092713569,
+    "supported_dps": 247.22768216515,
+    "support_mult": 5.3094061917181,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Heightened Accuracy I"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 247.22768216515,
+    "gem_level_elasticity": 0.050200598371355,
+    "elasticity": {
+     "crit_chance": 0.015405525785197,
+     "extra_ele": 0,
+     "gem_level": 0.050200598371355,
+     "inc_damage": 0.14551464766854,
+     "skill_speed": 0.062113042217419
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.351157958334088,
+    "z_global": 0.4166145450240205,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 0.977340593010061,
+    "rank": 21
+   },
+   {
+    "skill": "Living Bomb",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Fire, Duration, Remnant",
+    "base_dps": 286.989,
+    "supported_dps": 1046.06,
+    "support_mult": 3.6449480642115,
+    "supports": [
+     "Fire Penetration II",
+     "Considered Casting",
+     "Extraction"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 1046.06,
+    "gem_level_elasticity": 0.16321243523316,
+    "elasticity": {
+     "crit_chance": 0.032287822878229,
+     "extra_ele": 0.037046632124353,
+     "gem_level": 0.16321243523316,
+     "inc_damage": 0.12538860103627,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.6944330971126983,
+    "z_global": 1.238460787407493,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.9120441732306163,
+    "rank": 22
+   },
+   {
+    "skill": "Ember Fusillade",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Projectile, Fire, Duration, Repeatable",
+    "base_dps": 312.51408141453,
+    "supported_dps": 1036.8857951399,
+    "support_mult": 3.3178850388009,
+    "supports": [
+     "Fire Penetration II",
+     "Extraction",
+     "Unleash"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 1036.8857951399,
+    "gem_level_elasticity": 0.14633887952207,
+    "elasticity": {
+     "crit_chance": 0.032299238695189,
+     "extra_ele": 0.036969307690081,
+     "gem_level": 0.14633887952207,
+     "inc_damage": 0.12382492904273,
+     "skill_speed": 0.082113821138212
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.6892450344696114,
+    "z_global": 1.2334419265430674,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.9069237912989938,
+    "rank": 23
+   },
+   {
+    "skill": "Leap Slam",
+    "type": "Attack",
+    "weapon": "One Hand Mace",
+    "tags": "AoE, Melee, Slam, Travel, Payoff",
+    "base_dps": 41.673687448286,
+    "supported_dps": 171.28847383598,
+    "support_mult": 4.1102308032745,
+    "supports": [
+     "Brutality III",
+     "Heavy Swing",
+     "Heightened Accuracy I"
+    ],
+    "ramp_factor": 1.9899654212950377,
+    "ramp_notes": [
+     "Is enemy Armour Broken? x1.99"
+    ],
+    "potential_dps": 340.85814,
+    "gem_level_elasticity": 0.10019374787848,
+    "elasticity": {
+     "crit_chance": 0.015854887979938,
+     "extra_ele": 0,
+     "gem_level": 0.10019374787848,
+     "inc_damage": 0.16906528698346,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/One Hand Mace",
+    "z_in_family": 1.106400779005192,
+    "z_global": 0.599592530629751,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 0.9036774796550157,
+    "rank": 24
+   },
+   {
+    "skill": "Siege Cascade",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "AoE, Ammunition, Projectile, Sustained",
+    "base_dps": 5.5335466110117,
+    "supported_dps": 46.647153427823,
+    "support_mult": 8.4298835280424,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Heightened Accuracy I"
+    ],
+    "ramp_factor": 4.813959090281836,
+    "ramp_notes": [
+     "Is the enemy Heavy Stunned? x2.16",
+     "Is the enemy Pinned? x4.81",
+     "Is the enemy Immobilised? x2.16",
+     "Is the enemy Frozen? x2.16",
+     "Is the enemy Electrocuted? x2.16"
+    ],
+    "potential_dps": 224.55748827964004,
+    "gem_level_elasticity": 0.059381191210263,
+    "elasticity": {
+     "crit_chance": 0.013705657680071,
+     "extra_ele": 0,
+     "gem_level": 0.059381191210263,
+     "inc_damage": 0.12540460580815,
+     "skill_speed": 0.1
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.2538134322617536,
+    "z_global": 0.36181746377107693,
+    "flags": [
+     "hidden-multiplier",
+     "family-outlier"
+    ],
+    "score": 0.8970150448654829,
+    "rank": 25
+   },
+   {
+    "skill": "Flicker Strike",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike",
+    "base_dps": 104.03546602575,
+    "supported_dps": 430.25493427963,
+    "support_mult": 4.1356563363991,
+    "supports": [
+     "Brutality III",
+     "Bleed III",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 430.25493427963,
+    "gem_level_elasticity": 0.090457849547102,
+    "elasticity": {
+     "crit_chance": 0.022727236536565,
+     "extra_ele": 0,
+     "gem_level": 0.090457849547102,
+     "inc_damage": 0.15428454687516,
+     "skill_speed": 0.073440526573144
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 0.9954250090085315,
+    "z_global": 0.7322931239585352,
+    "flags": [],
+    "score": 0.8901722549885329,
+    "rank": 26
+   },
+   {
+    "skill": "His Vile Intrusion",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Duration, Repeatable",
+    "base_dps": 252.21546469692,
+    "supported_dps": 944.06534143071,
+    "support_mult": 3.7430906251731,
+    "supports": [
+     "Extraction",
+     "Considered Casting",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 944.06534143071,
+    "gem_level_elasticity": 0.19615830824451,
+    "elasticity": {
+     "crit_chance": 0.082820375973568,
+     "extra_ele": 0.054371236552557,
+     "gem_level": 0.19615830824451,
+     "inc_damage": 0.15830580578268,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.6340118605586438,
+    "z_global": 1.1800101093060198,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.8524111600575942,
+    "rank": 27
+   },
+   {
+    "skill": "Flame Breath",
+    "type": "Attack",
+    "weapon": "Talisman",
+    "tags": "Shapeshift, Wyvern, AoE, Sustained, Fire, Duration, Channelling, Detonator",
+    "base_dps": 187.52077194427,
+    "supported_dps": 689.15467647305,
+    "support_mult": 3.6750844683908,
+    "supports": [
+     "Fire Penetration II",
+     "Heightened Accuracy I",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 689.15467647305,
+    "gem_level_elasticity": 0.073491028459539,
+    "elasticity": {
+     "crit_chance": 0.013544958648262,
+     "extra_ele": 0.049868630618433,
+     "gem_level": 0.073491028459539,
+     "inc_damage": 0.12335995737899,
+     "skill_speed": 0.099999727713804
+    },
+    "gated": [
+     "Detonator"
+    ],
+    "family": "Attack/Talisman",
+    "z_in_family": 1.9989402306947819,
+    "z_global": 1.0006939064983633,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 0.8496417010162145,
+    "rank": 28
+   },
+   {
+    "skill": "Explosive Concoction",
+    "type": "Attack",
+    "weapon": "Unarmed",
+    "tags": "AoE, Projectile, Fire",
+    "base_dps": 161.6146812036,
+    "supported_dps": 634.3975701917,
+    "support_mult": 3.9253709221658,
+    "supports": [
+     "Fire Penetration II",
+     "Heightened Accuracy I",
+     "Hit and Run"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 634.3975701917,
+    "gem_level_elasticity": 0.12942831228224,
+    "elasticity": {
+     "crit_chance": 0.0086037772977909,
+     "extra_ele": 0.050323933267672,
+     "gem_level": 0.12942831228224,
+     "inc_damage": 0.12525976408539,
+     "skill_speed": 0.1
+    },
+    "gated": [],
+    "family": "Attack/Unarmed",
+    "z_in_family": 0.7330684269686232,
+    "z_global": 0.9535246268964485,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.8212509069397533,
+    "rank": 29
+   },
+   {
+    "skill": "Lightning Warp",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Lightning, Duration, Remnant, Repeatable",
+    "base_dps": 280.453,
+    "supported_dps": 870.2816,
+    "support_mult": 3.1031281533804,
+    "supports": [
+     "Extraction",
+     "Lightning Penetration",
+     "Considered Casting"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 870.2816,
+    "gem_level_elasticity": 0.15348595213319,
+    "elasticity": {
+     "crit_chance": 0.048586572438162,
+     "extra_ele": 0.069719042663892,
+     "gem_level": 0.15348595213319,
+     "inc_damage": 0.12460978147763,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5860835791039285,
+    "z_global": 1.1336449451511927,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.8051081255228342,
+    "rank": 30
+   },
+   {
+    "skill": "Arc",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "Projectile, Lightning, Chaining, Repeatable",
+    "base_dps": 96.698181818182,
+    "supported_dps": 273.93084,
+    "support_mult": 2.83284375,
+    "supports": [
+     "Extraction",
+     "Lightning Penetration",
+     "Unleash"
+    ],
+    "ramp_factor": 2.995477159656248,
+    "ramp_notes": [
+     "Lightning Infused? x3.00"
+    ],
+    "potential_dps": 820.55357454545,
+    "gem_level_elasticity": 0.14427860696517,
+    "elasticity": {
+     "crit_chance": 0.040613718411552,
+     "extra_ele": 0.068747173224785,
+     "gem_level": 0.14427860696517,
+     "inc_damage": 0.12528267752148,
+     "skill_speed": 0.082113821138211
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5514308740018907,
+    "z_global": 1.1001223920426932,
+    "flags": [
+     "hidden-multiplier",
+     "scales-with-gem-level"
+    ],
+    "score": 0.7709074812182117,
+    "rank": 31
+   },
+   {
+    "skill": "Sunder",
+    "type": "Attack",
+    "weapon": "One Hand Mace",
+    "tags": "AoE, Melee, Slam, Duration, Payoff",
+    "base_dps": 75.562239439657,
+    "supported_dps": 279.83370274491,
+    "support_mult": 3.7033537494397,
+    "supports": [
+     "Brutality III",
+     "Heavy Swing",
+     "Heightened Accuracy I"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 279.83370274491,
+    "gem_level_elasticity": 0.092062231617561,
+    "elasticity": {
+     "crit_chance": 0.014960977716802,
+     "extra_ele": 0,
+     "gem_level": 0.092062231617561,
+     "inc_damage": 0.1617940148935,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/One Hand Mace",
+    "z_in_family": 0.9599331552524012,
+    "z_global": 0.4871980851560313,
+    "flags": [],
+    "score": 0.7708391272138533,
+    "rank": 32
+   },
+   {
+    "skill": "Poisonburst Arrow",
+    "type": "Attack",
+    "weapon": "Bow",
+    "tags": "AoE, Projectile, Chaos, Duration, Repeatable",
+    "base_dps": 35.254605549091,
+    "supported_dps": 188.3901428012,
+    "support_mult": 5.3437030387101,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Heft"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 188.3901428012,
+    "gem_level_elasticity": 0.057137721171708,
+    "elasticity": {
+     "crit_chance": 0.0087733689950016,
+     "extra_ele": 0,
+     "gem_level": 0.057137721171708,
+     "inc_damage": 0.14864972664652,
+     "skill_speed": 0.058487289683883
+    },
+    "gated": [],
+    "family": "Attack/Bow",
+    "z_in_family": 1.0601597016963755,
+    "z_global": 0.2617604088931727,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 0.7407999845750943,
+    "rank": 33
+   },
+   {
+    "skill": "Chaos Bolt",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "Projectile, Chaos, Repeatable",
+    "base_dps": 390.96266666667,
+    "supported_dps": 778.65888,
+    "support_mult": 1.9916451016636,
+    "supports": [
+     "Extraction",
+     "Unleash",
+     "Deliberation"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 778.65888,
+    "gem_level_elasticity": 0.14269406392694,
+    "elasticity": {
+     "crit_chance": 0.032287822878229,
+     "extra_ele": 0.037100456621004,
+     "gem_level": 0.14269406392694,
+     "inc_damage": 0.12557077625571,
+     "skill_speed": 0.082113821138212
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5205660231708135,
+    "z_global": 1.070264157364505,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.7404452768482901,
+    "rank": 34
+   },
+   {
+    "skill": "Comet",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Cold, Repeatable",
+    "base_dps": 258.944,
+    "supported_dps": 774.231,
+    "support_mult": 2.9899553571429,
+    "supports": [
+     "Extraction",
+     "Cold Penetration",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 774.231,
+    "gem_level_elasticity": 0.15326614408361,
+    "elasticity": {
+     "crit_chance": 0.056228373702422,
+     "extra_ele": 0.043486375513251,
+     "gem_level": 0.15326614408361,
+     "inc_damage": 0.12467338559164,
+     "skill_speed": 0.047619047619048
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5172073457282615,
+    "z_global": 1.0670150187298522,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.7371304149288977,
+    "rank": 35
+   },
+   {
+    "skill": "Reap",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Duration",
+    "base_dps": 202.22506489726,
+    "supported_dps": 726.59444209832,
+    "support_mult": 3.5929989314998,
+    "supports": [
+     "Extraction",
+     "Poison II",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 726.59444209832,
+    "gem_level_elasticity": 0.17676700717086,
+    "elasticity": {
+     "crit_chance": 0.075143475841733,
+     "extra_ele": 0.043360176368692,
+     "gem_level": 0.17676700717086,
+     "inc_damage": 0.1520436163687,
+     "skill_speed": 0.078303336147424
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.47980765307142365,
+    "z_global": 1.0308350674204614,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.7002186188110388,
+    "rank": 36
+   },
+   {
+    "skill": "Firebolt",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Projectile, Fire, Repeatable",
+    "base_dps": 208.73279924329,
+    "supported_dps": 692.99500973592,
+    "support_mult": 3.3200101385513,
+    "supports": [
+     "Fire Penetration II",
+     "Extraction",
+     "Unleash"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 692.99500973592,
+    "gem_level_elasticity": 0.14492005100388,
+    "elasticity": {
+     "crit_chance": 0.036515296265959,
+     "extra_ele": 0.036744468539589,
+     "gem_level": 0.14492005100388,
+     "inc_damage": 0.1254526943585,
+     "skill_speed": 0.082113821138212
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.4519231935932027,
+    "z_global": 1.0038600225860688,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6726979251903491,
+    "rank": 37
+   },
+   {
+    "skill": "His Foul Emergence",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Chaos, Duration, Repeatable",
+    "base_dps": 172.78737170304,
+    "supported_dps": 682.0724742715,
+    "support_mult": 3.9474671531188,
+    "supports": [
+     "Spell Echo",
+     "Extraction",
+     "Considered Casting"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 682.0724742715,
+    "gem_level_elasticity": 0.16546872741783,
+    "elasticity": {
+     "crit_chance": 0.068747583346943,
+     "extra_ele": 0.042285098024076,
+     "gem_level": 0.16546872741783,
+     "inc_damage": 0.13409346643136,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.44256654060711714,
+    "z_global": 0.994808524421055,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6634633341326923,
+    "rank": 38
+   },
+   {
+    "skill": "Bone Cage",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Duration, Nova, Repeatable",
+    "base_dps": 177.59486490077,
+    "supported_dps": 652.50980160486,
+    "support_mult": 3.6741479094536,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Poison II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 652.50980160486,
+    "gem_level_elasticity": 0.18773446562259,
+    "elasticity": {
+     "crit_chance": 0.08260803006787,
+     "extra_ele": 0.046566350306566,
+     "gem_level": 0.18773446562259,
+     "inc_damage": 0.15421861426898,
+     "skill_speed": 0.080201700435091
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.41647009692141995,
+    "z_global": 0.9695631816167699,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.63770733079956,
+    "rank": 39
+   },
+   {
+    "skill": "Molten Crash",
+    "type": "Attack",
+    "weapon": "Talisman",
+    "tags": "Shapeshift, Bear, AoE, Melee, Slam, Travel",
+    "base_dps": 54.74311488068,
+    "supported_dps": 290.17161344707,
+    "support_mult": 5.3006047259009,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 290.17161344707,
+    "gem_level_elasticity": 0.080148351014003,
+    "elasticity": {
+     "crit_chance": 0.011443853973462,
+     "extra_ele": 0,
+     "gem_level": 0.080148351014003,
+     "inc_damage": 0.14218956283323,
+     "skill_speed": 0.056939501779359
+    },
+    "gated": [],
+    "family": "Attack/Talisman",
+    "z_in_family": 0.7203146627187815,
+    "z_global": 0.5078667954278383,
+    "flags": [],
+    "score": 0.6353355158024042,
+    "rank": 40
+   }
+  ]
+ },
+ "scan_mid": {
+  "backtest": {
+   "observed_main_skills": {
+    "Shred": 6,
+    "Virtuous Barrier": 6,
+    "Earthshatter": 5,
+    "Comet": 5,
+    "Whirling Assault": 4,
+    "Arc": 4,
+    "Ember Fusillade": 4,
+    "Meteors": 4,
+    "Twister": 3,
+    "Shield Wall": 3,
+    "Flicker Strike": 3,
+    "Explosive Grenade": 2,
+    "Rend": 2,
+    "Berserk": 2,
+    "Boneshatter": 2,
+    "Supporting Fire": 2,
+    "Kelari, the Tainted Sands": 2,
+    "Living Bomb": 2,
+    "Mace Strike": 2,
+    "Flameblast": 1,
+    "Skeletal Cleric Minion": 1,
+    "Earthquake": 1,
+    "Thorns": 1,
+    "Fury of the Mountain": 1,
+    "Punch": 1,
+    "Embrace The Fall": 1,
+    "Molten Shower": 1,
+    "Spear Stab": 1,
+    "Spiraling Conspiracy": 1,
+    "Profane Ritual": 1,
+    "Snipe": 1,
+    "Navira, the Last Mirage": 1,
+    "High Velocity Rounds": 1,
+    "Hexblast": 1,
+    "Grim Pillars": 1,
+    "Archmage": 1,
+    "Armour Piercing Rounds": 1,
+    "Armour Breaker": 1,
+    "Herald of Thunder": 1,
+    "Incendiary Shot": 1,
+    "Thrashing Vines": 1,
+    "Reap": 1,
+    "Ice Shot": 1,
+    "Detonating Arrow": 1,
+    "Elemental Storm": 1,
+    "Harbinger of Madness": 1,
+    "Supercharged Slam": 1,
+    "Primal Strikes": 1,
+    "Coiling Bolts": 1,
+    "Entangle": 1,
+    "Volcano": 1,
+    "Hollow Form": 1,
+    "Skeletal Sniper Minion": 1,
+    "On Kill Monster Explosion": 1,
+    "Falling Thunder": 1,
+    "Glacial Cascade": 1,
+    "Companion: Diretusk Boar": 1,
+    "Lightning Rod": 1,
+    "Wardbound Minions": 1,
+    "Cluster Grenade": 1,
+    "Orb of Storms": 1,
+    "Spectre: Powered Zealot": 1,
+    "Glacial Bolt": 1,
+    "Oil Barrage": 1,
+    "Spark": 1,
+    "Ancestral Warrior Totem": 1,
+    "Sorcery Ward": 1,
+    "Spear Throw": 1,
+    "Tornado": 1,
+    "Primal Bounty": 1,
+    "Doom Blast": 1,
+    "Skeletal Storm Mage Minion": 1,
+    "Dark Consequences": 1,
+    "Voltaic Barrier": 1,
+    "Void Illusion": 1,
+    "Iron Ward": 1,
+    "Skeletal Warrior Minion": 1,
+    "Volcanic Fissure": 1,
+    "Raise Shield": 1,
+    "Hammer of the Gods": 1,
+    "Cast on Critical": 1
+   },
+   "matched": 49,
+   "unmatched": [
+    "Skeletal Cleric Minion",
+    "Thorns",
+    "Punch",
+    "Embrace The Fall",
+    "Spiraling Conspiracy",
+    "Virtuous Barrier",
+    "Archmage",
+    "Meteors",
+    "Herald of Thunder",
+    "Berserk",
+    "Shield Wall",
+    "Elemental Storm",
+    "Harbinger of Madness",
+    "Supporting Fire",
+    "Hollow Form",
+    "Skeletal Sniper Minion",
+    "On Kill Monster Explosion",
+    "Companion: Diretusk Boar",
+    "Wardbound Minions",
+    "Spectre: Powered Zealot",
+    "Ancestral Warrior Totem",
+    "Sorcery Ward",
+    "Primal Bounty",
+    "Doom Blast",
+    "Skeletal Storm Mage Minion",
+    "Dark Consequences",
+    "Voltaic Barrier",
+    "Void Illusion",
+    "Iron Ward",
+    "Skeletal Warrior Minion",
+    "Raise Shield",
+    "Cast on Critical"
+   ],
+   "spearman_score_vs_usage": 0.21725779539121257,
+   "top40_recall_of_15_most_used": 0.45454545454545453,
+   "popular_ranks": {
+    "Shred": 67,
+    "Earthshatter": 89,
+    "Comet": 38,
+    "Whirling Assault": 154,
+    "Arc": 43,
+    "Ember Fusillade": 31,
+    "Twister": 5,
+    "Flicker Strike": 7,
+    "Explosive Grenade": 155,
+    "Rend": 42,
+    "Boneshatter": 39
+   },
+   "pool_size": 195
+  },
+  "meta_ranks": {
+   "Twister": 5,
+   "Whirling Assault": 154,
+   "Falling Thunder": 100,
+   "Spark": 114,
+   "Ember Fusillade": 31,
+   "Snipe": 84,
+   "Ice Shot": 45,
+   "Comet": 38,
+   "Arc": 43,
+   "Flameblast": 136,
+   "Entangle": 107,
+   "Galvanic Shards": 181,
+   "Frostbolt": 78,
+   "Contagion": 165,
+   "Essence Drain": 63,
+   "Sunder": 21,
+   "Earthshatter": 89,
+   "Oil Grenade": 91,
+   "Tempest Flurry": 132
+  },
+  "top": [
+   {
+    "skill": "Bursting Fen Toad",
+    "type": "Attack",
+    "weapon": null,
+    "tags": "AoE, Trigger, Physical, Chaos",
+    "base_dps": 6294.0239320062,
+    "supported_dps": 16220.382253764,
+    "support_mult": 2.5771084490609,
+    "supports": [
+     "Concentrated Area",
+     "Heft",
+     "Bleed III",
+     "Close Combat II",
+     "Chaos Mastery"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 16220.382253764,
+    "gem_level_elasticity": 0.1265184221524,
+    "elasticity": {
+     "crit_chance": 0.045263251711237,
+     "extra_ele": 0.030616984990273,
+     "gem_level": 0.1265184221524,
+     "inc_damage": 0.083848866670406,
+     "skill_speed": 0.07031051253551
+    },
+    "gated": [],
+    "family": "Attack",
+    "z_in_family": 2.549577721253312,
+    "z_global": 1.3780763411233226,
+    "flags": [
+     "scales-with-gem-level",
+     "family-outlier"
+    ],
+    "score": 2.080977169201316,
+    "rank": 1
+   },
+   {
+    "skill": "Rain of Arrows",
+    "type": "Attack",
+    "weapon": "Bow",
+    "tags": "AoE, Projectile, Sustained",
+    "base_dps": 1465.6307267218,
+    "supported_dps": 7693.6330915792,
+    "support_mult": 5.2493666728642,
+    "supports": [
+     "Brutality III",
+     "Heightened Accuracy I",
+     "Concentrated Area",
+     "Hourglass",
+     "Deliberation"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 7693.6330915792,
+    "gem_level_elasticity": 0.078762631100024,
+    "elasticity": {
+     "crit_chance": 0.013837494826967,
+     "extra_ele": 0,
+     "gem_level": 0.078762631100024,
+     "inc_damage": 0.092711682336904,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Bow",
+    "z_in_family": 2.7105795967234543,
+    "z_global": 0.997430267340174,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 2.0253198649701423,
+    "rank": 2
+   },
+   {
+    "skill": "Rapid Shot",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "Ammunition, Projectile, Fire",
+    "base_dps": 718.87670400948,
+    "supported_dps": 8209.6572855209,
+    "support_mult": 11.420118693139,
+    "supports": [
+     "Fresh Clip II",
+     "Hit and Run",
+     "Fire Penetration II",
+     "Heightened Accuracy I",
+     "Rapid Attacks II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8209.6572855209,
+    "gem_level_elasticity": 0.074041469597242,
+    "elasticity": {
+     "crit_chance": 0.01392549449725,
+     "extra_ele": 0.063900229354113,
+     "gem_level": 0.074041469597242,
+     "inc_damage": 0.090576975507737,
+     "skill_speed": 0.12905282569923
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 2.000696309626232,
+    "z_global": 1.0305602012048591,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.6126418662576827,
+    "rank": 3
+   },
+   {
+    "skill": "Oil Barrage",
+    "type": "Attack",
+    "weapon": "Talisman",
+    "tags": "Shapeshift, Wyvern, AoE, Projectile, Sustained, Channelling",
+    "base_dps": 1805.2220480479,
+    "supported_dps": 8935.7534400379,
+    "support_mult": 4.9499469883499,
+    "supports": [
+     "Brutality III",
+     "Heightened Accuracy I",
+     "Hit and Run",
+     "Concentrated Area",
+     "Rapid Attacks II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8935.7534400379,
+    "gem_level_elasticity": 0.059684668666345,
+    "elasticity": {
+     "crit_chance": 0.019026495198091,
+     "extra_ele": 0,
+     "gem_level": 0.059684668666345,
+     "inc_damage": 0.092147483882176,
+     "skill_speed": 0.074074074074074
+    },
+    "gated": [],
+    "family": "Attack/Talisman",
+    "z_in_family": 1.7744961995648554,
+    "z_global": 1.0738106964004575,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.494221998299096,
+    "rank": 4
+   },
+   {
+    "skill": "Twister",
+    "type": "Attack",
+    "weapon": "Spear",
+    "tags": "AoE, Projectile, Duration, Repeatable, Wind",
+    "base_dps": 333.19643566393,
+    "supported_dps": 1856.8708423317,
+    "support_mult": 5.5729012785856,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Concentrated Area",
+     "Heightened Accuracy I",
+     "Hit and Run"
+    ],
+    "ramp_factor": 4.79519016307093,
+    "ramp_notes": [
+     "# of Whirlwind Stages: x4.80"
+    ],
+    "potential_dps": 8904.0487972422,
+    "gem_level_elasticity": 0.050330437714881,
+    "elasticity": {
+     "crit_chance": 0.020152644200222,
+     "extra_ele": 0,
+     "gem_level": 0.050330437714881,
+     "inc_damage": 0.091997584070818,
+     "skill_speed": 0.073603334208173
+    },
+    "gated": [],
+    "family": "Attack/Spear",
+    "z_in_family": 1.7547409535517904,
+    "z_global": 1.0719967757104245,
+    "flags": [
+     "hidden-multiplier",
+     "family-outlier"
+    ],
+    "score": 1.4816432824152441,
+    "rank": 5
+   },
+   {
+    "skill": "Cull The Weak",
+    "type": "Attack",
+    "weapon": "Spear",
+    "tags": "AoE, Melee, Strike",
+    "base_dps": 1931.2322261135,
+    "supported_dps": 8586.6833489057,
+    "support_mult": 4.4462200002669,
+    "supports": [
+     "Brutality III",
+     "Hit and Run",
+     "Concentrated Area",
+     "Heavy Swing",
+     "Rapid Attacks II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8586.6833489057,
+    "gem_level_elasticity": 0.058321200342167,
+    "elasticity": {
+     "crit_chance": 0.035839848831284,
+     "extra_ele": 0,
+     "gem_level": 0.058321200342167,
+     "inc_damage": 0.090419297889754,
+     "skill_speed": 0.076470588235294
+    },
+    "gated": [],
+    "family": "Attack/Spear",
+    "z_in_family": 1.7218603835044026,
+    "z_global": 1.0534749270711656,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.4545062009311078,
+    "rank": 6
+   },
+   {
+    "skill": "Flicker Strike",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike",
+    "base_dps": 1733.2984812434,
+    "supported_dps": 8477.5800847662,
+    "support_mult": 4.8910099307792,
+    "supports": [
+     "Heightened Accuracy I",
+     "Brutality III",
+     "Hit and Run",
+     "Concentrated Area",
+     "Heavy Swing"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8477.5800847662,
+    "gem_level_elasticity": 0.083309442995204,
+    "elasticity": {
+     "crit_chance": 0.029414393764065,
+     "extra_ele": 0,
+     "gem_level": 0.083309442995204,
+     "inc_damage": 0.087155629160037,
+     "skill_speed": 0.089887640449438
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.7230753967344363,
+    "z_global": 1.0469490164206292,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.4526248446089134,
+    "rank": 7
+   },
+   {
+    "skill": "Hammer of the Gods",
+    "type": "Attack",
+    "weapon": "One Hand Mace",
+    "tags": "AoE, Melee, Slam, Duration, Conditional",
+    "base_dps": 10579.415142777,
+    "supported_dps": 34946.538115281,
+    "support_mult": 3.303258038715,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Bleed III",
+     "Heavy Swing",
+     "Heft"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 34946.538115281,
+    "gem_level_elasticity": 0.033569441051572,
+    "elasticity": {
+     "crit_chance": 0.041883542911494,
+     "extra_ele": 0,
+     "gem_level": 0.033569441051572,
+     "inc_damage": 0.081167895677114,
+     "skill_speed": 0.077287843814236
+    },
+    "gated": [
+     "Conditional",
+     "glory",
+     "when you have maximum"
+    ],
+    "family": "Attack/One Hand Mace",
+    "z_in_family": 2.4250181758247105,
+    "z_global": 1.7697840686043373,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 1.412924532936561,
+    "rank": 8
+   },
+   {
+    "skill": "Crushing Fear",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike, Physical, Chaos",
+    "base_dps": 2645.5206963105,
+    "supported_dps": 6726.8125251658,
+    "support_mult": 2.5427177850271,
+    "supports": [
+     "Concentrated Area",
+     "Close Combat II",
+     "Heavy Swing",
+     "Inexorable Critical I",
+     "Supercritical"
+    ],
+    "ramp_factor": 1.1821567094813747,
+    "ramp_notes": [
+     "# of seconds since Inevitable Crit: x1.18"
+    ],
+    "potential_dps": 7952.1465600481,
+    "gem_level_elasticity": 0.054249220761617,
+    "elasticity": {
+     "crit_chance": 0.077044231116063,
+     "extra_ele": 0.046799924126281,
+     "gem_level": 0.054249220761617,
+     "inc_damage": 0.08639616537038,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.6333370226779909,
+    "z_global": 1.0142962053542648,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.3857206957485004,
+    "rank": 9
+   },
+   {
+    "skill": "Killing Palm",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike, Physical",
+    "base_dps": 1976.6289241102,
+    "supported_dps": 7725.0195561746,
+    "support_mult": 3.9081789515208,
+    "supports": [
+     "Brutality III",
+     "Heavy Swing",
+     "Concentrated Area",
+     "Heft",
+     "Close Combat II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 7725.0195561746,
+    "gem_level_elasticity": 0.055480421563829,
+    "elasticity": {
+     "crit_chance": 0.061438509685384,
+     "extra_ele": 0,
+     "gem_level": 0.055480421563829,
+     "inc_damage": 0.085719112325098,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.5926951014802189,
+    "z_global": 0.9995079613260168,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.355420245418538,
+    "rank": 10
+   },
+   {
+    "skill": "Armour Piercing Rounds",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "Ammunition, Projectile, Physical",
+    "base_dps": 513.86073103426,
+    "supported_dps": 5165.6755719389,
+    "support_mult": 10.052676260242,
+    "supports": [
+     "Fresh Clip II",
+     "Hit and Run",
+     "Brutality III",
+     "Heightened Accuracy I",
+     "Rapid Attacks II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5165.6755719389,
+    "gem_level_elasticity": 0.10072654320122,
+    "elasticity": {
+     "crit_chance": 0.015156547089862,
+     "extra_ele": 0,
+     "gem_level": 0.10072654320122,
+     "inc_damage": 0.099273359534172,
+     "skill_speed": 0.12170948820918
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.5676529641127122,
+    "z_global": 0.7941347935383817,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.25824569588298,
+    "rank": 11
+   },
+   {
+    "skill": "Bleeding Concoction",
+    "type": "Attack",
+    "weapon": "Unarmed",
+    "tags": "AoE, Projectile, Physical",
+    "base_dps": 1215.9706226435,
+    "supported_dps": 4721.8198902445,
+    "support_mult": 3.8831693811642,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Heightened Accuracy I",
+     "Hit and Run",
+     "Heft"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 4721.8198902445,
+    "gem_level_elasticity": 0.1147615804808,
+    "elasticity": {
+     "crit_chance": 0.018626597095723,
+     "extra_ele": 0,
+     "gem_level": 0.1147615804808,
+     "inc_damage": 0.08621740580231,
+     "skill_speed": 0.074485363918698
+    },
+    "gated": [],
+    "family": "Attack/Unarmed",
+    "z_in_family": 1.575734387639789,
+    "z_global": 0.7482855182797638,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.2447548398957788,
+    "rank": 12
+   },
+   {
+    "skill": "Siege Cascade",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "AoE, Ammunition, Projectile, Sustained",
+    "base_dps": 95.824670673092,
+    "supported_dps": 734.2627956208,
+    "support_mult": 7.66256529204,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Heightened Accuracy I",
+     "Concentrated Area",
+     "Heft"
+    ],
+    "ramp_factor": 6.280010830946935,
+    "ramp_notes": [
+     "Is the enemy Heavy Stunned? x2.57",
+     "Is the enemy Pinned? x6.28",
+     "Is the enemy Immobilised? x2.57",
+     "Is the enemy Frozen? x2.57",
+     "Is the enemy Electrocuted? x2.57"
+    ],
+    "potential_dps": 4611.17830926,
+    "gem_level_elasticity": 0.073443255871433,
+    "elasticity": {
+     "crit_chance": 0.013829901232127,
+     "extra_ele": 0,
+     "gem_level": 0.073443255871433,
+     "inc_damage": 0.088263636795874,
+     "skill_speed": 0.061953414092164
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.4615105849950207,
+    "z_global": 0.7361850397468032,
+    "flags": [
+     "hidden-multiplier",
+     "family-outlier"
+    ],
+    "score": 1.1713803668957337,
+    "rank": 13
+   },
+   {
+    "skill": "Staggering Palm",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "Buff, AoE, Melee, Strike, Projectile, Physical, Duration, Wind",
+    "base_dps": 1624.4541610148,
+    "supported_dps": 6474.3892800049,
+    "support_mult": 3.9855783163252,
+    "supports": [
+     "Brutality III",
+     "Heavy Swing",
+     "Concentrated Area",
+     "Heft",
+     "Close Combat II"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 6474.3892800049,
+    "gem_level_elasticity": 0.054912791234954,
+    "elasticity": {
+     "crit_chance": 0.061911838079539,
+     "extra_ele": 0,
+     "gem_level": 0.054912791234954,
+     "inc_damage": 0.086322999260295,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 1.344993908300102,
+    "z_global": 0.9093777316793781,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.1707474376518123,
+    "rank": 14
+   },
+   {
+    "skill": "Hexblast",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Chaos, Payoff, Repeatable",
+    "base_dps": 4349.33664,
+    "supported_dps": 13133.647824,
+    "support_mult": 3.0196898771211,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Unleash",
+     "Deliberation",
+     "Chaos Attunement"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 13133.647824,
+    "gem_level_elasticity": 0.14853458382181,
+    "elasticity": {
+     "crit_chance": 0.042358229598893,
+     "extra_ele": 0.015650644783118,
+     "gem_level": 0.14853458382181,
+     "inc_damage": 0.080011723329426,
+     "skill_speed": 0.072877535687453
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 1.0372923192554937,
+    "z_global": 1.2703492279403439,
+    "flags": [
+     "scales-with-gem-level",
+     "family-outlier"
+    ],
+    "score": 1.130515082729434,
+    "rank": 15
+   },
+   {
+    "skill": "Plasma Blast",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "AoE, Ammunition, Projectile, Lightning, Channelling",
+    "base_dps": 1150.5799098416,
+    "supported_dps": 4218.9189675581,
+    "support_mult": 3.6667761460729,
+    "supports": [
+     "Lightning Penetration",
+     "Heightened Accuracy I",
+     "Lightning Attunement",
+     "Elemental Armament II",
+     "Elemental Focus"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 4218.9189675581,
+    "gem_level_elasticity": 0.078537258502069,
+    "elasticity": {
+     "crit_chance": 0.01199029649049,
+     "extra_ele": 0.084139704680193,
+     "gem_level": 0.078537258502069,
+     "inc_damage": 0.081293318418045,
+     "skill_speed": 0.031026252983293
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.3784077265668475,
+    "z_global": 0.690813999213132,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 1.1033702356253614,
+    "rank": 16
+   },
+   {
+    "skill": "Detonate Dead",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Fire, Detonator, Repeatable",
+    "base_dps": 14504.222390809,
+    "supported_dps": 46086.888787197,
+    "support_mult": 3.1774808428477,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Unleash",
+     "Deliberation",
+     "Considered Casting"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 46086.888787197,
+    "gem_level_elasticity": 0.029253954253589,
+    "elasticity": {
+     "crit_chance": 0.048638259390376,
+     "extra_ele": 0.038724040718838,
+     "gem_level": 0.029253954253589,
+     "inc_damage": 0.081913814452861,
+     "skill_speed": 0.067604667124228
+    },
+    "gated": [
+     "Detonator",
+     "corpse"
+    ],
+    "family": "Spell",
+    "z_in_family": 1.7248595874748804,
+    "z_global": 1.9109982910994907,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 1.0493150689247246,
+    "rank": 17
+   },
+   {
+    "skill": "Decompose",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Fire, Chaos, Duration",
+    "base_dps": 12976.425,
+    "supported_dps": 40486.95,
+    "support_mult": 3.120038839665,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Controlled Destruction",
+     "Deliberation",
+     "Chaos Attunement"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 40486.95,
+    "gem_level_elasticity": 0,
+    "elasticity": {
+     "crit_chance": 0,
+     "extra_ele": 0.013635566522052,
+     "gem_level": 0,
+     "inc_damage": 0.07998132731658,
+     "skill_speed": 0.079365079365079
+    },
+    "gated": [
+     "corpse"
+    ],
+    "family": "Spell",
+    "z_in_family": 1.6539045210816157,
+    "z_global": 1.8448850554753427,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 0.9802967348391065,
+    "rank": 18
+   },
+   {
+    "skill": "His Scattering Calamity",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Projectile, Lightning, Duration, Repeatable",
+    "base_dps": 2251.9332,
+    "supported_dps": 8888.61709408,
+    "support_mult": 3.9471051335271,
+    "supports": [
+     "Extraction",
+     "Lightning Penetration",
+     "Unleash",
+     "Deliberation",
+     "Considered Casting"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8888.61709408,
+    "gem_level_elasticity": 0.13631348833408,
+    "elasticity": {
+     "crit_chance": 0.061777920410783,
+     "extra_ele": 0.069464307604298,
+     "gem_level": 0.13631348833408,
+     "inc_damage": 0.080088260532015,
+     "skill_speed": 0.067604667124228
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.823463377107803,
+    "z_global": 1.0711115419783659,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.9225226430560282,
+    "rank": 19
+   },
+   {
+    "skill": "His Winnowing Flame",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Trigger, Fire, Payoff",
+    "base_dps": 1762.8588270677,
+    "supported_dps": 8764.1951278195,
+    "support_mult": 4.9715808170515,
+    "supports": [
+     "Fire Penetration II",
+     "Extraction",
+     "Concentrated Area",
+     "Fire Attunement",
+     "Elemental Focus"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8764.1951278195,
+    "gem_level_elasticity": 0.1362391330237,
+    "elasticity": {
+     "crit_chance": 0.042358229598893,
+     "extra_ele": 0.016374895796118,
+     "gem_level": 0.1362391330237,
+     "inc_damage": 0.080028581636298,
+     "skill_speed": 0.083333333333333
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.8157424339086433,
+    "z_global": 1.0639174603868198,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.9150124444999139,
+    "rank": 20
+   },
+   {
+    "skill": "Sunder",
+    "type": "Attack",
+    "weapon": "One Hand Mace",
+    "tags": "AoE, Melee, Slam, Duration, Payoff",
+    "base_dps": 1142.9044785358,
+    "supported_dps": 4863.5353144536,
+    "support_mult": 4.2554171462207,
+    "supports": [
+     "Heightened Accuracy I",
+     "Heavy Swing",
+     "Brutality III",
+     "Concentrated Area",
+     "Heft"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 4863.5353144536,
+    "gem_level_elasticity": 0.081082980528466,
+    "elasticity": {
+     "crit_chance": 0.012293066869314,
+     "extra_ele": 0,
+     "gem_level": 0.081082980528466,
+     "inc_damage": 0.08335946274707,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/One Hand Mace",
+    "z_in_family": 1.0044925993801679,
+    "z_global": 0.7633767804772732,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 0.9080462718190101,
+    "rank": 21
+   },
+   {
+    "skill": "His Vile Intrusion",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Duration, Repeatable",
+    "base_dps": 1809.1468939062,
+    "supported_dps": 7200.4223979991,
+    "support_mult": 3.9800098169212,
+    "supports": [
+     "Extraction",
+     "Considered Casting",
+     "Concentrated Area",
+     "Deliberation",
+     "Inexorable Critical I"
+    ],
+    "ramp_factor": 1.1728136721761375,
+    "ramp_notes": [
+     "# of seconds since Inevitable Crit: x1.17"
+    ],
+    "potential_dps": 8444.753833816634,
+    "gem_level_elasticity": 0.16101394084156,
+    "elasticity": {
+     "crit_chance": 0.073674819912139,
+     "extra_ele": 0.04063379671744,
+     "gem_level": 0.16101394084156,
+     "inc_damage": 0.086617014699705,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.7954063837036768,
+    "z_global": 1.044969101274396,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.8952314707319645,
+    "rank": 22
+   },
+   {
+    "skill": "Icestorm",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Sustained, Cold, Duration, Payoff, Repeatable, Storm",
+    "base_dps": 1558,
+    "supported_dps": 8168.0746666667,
+    "support_mult": 5.2426666666667,
+    "supports": [
+     "Extraction",
+     "Cold Penetration",
+     "Considered Casting",
+     "Concentrated Area",
+     "Hourglass"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8168.0746666667,
+    "gem_level_elasticity": 0.13692777212614,
+    "elasticity": {
+     "crit_chance": 0.061777920410783,
+     "extra_ele": 0.043489318413021,
+     "gem_level": 0.13692777212614,
+     "inc_damage": 0.080671414038658,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.7771609982098394,
+    "z_global": 1.0279687441255232,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.8774840965761129,
+    "rank": 23
+   },
+   {
+    "skill": "Firestorm",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Sustained, Fire, Duration, Repeatable, Storm",
+    "base_dps": 1314.7407195878,
+    "supported_dps": 8077.5394981964,
+    "support_mult": 6.1438269750472,
+    "supports": [
+     "Fire Penetration II",
+     "Considered Casting",
+     "Extraction",
+     "Concentrated Area",
+     "Hourglass"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 8077.5394981964,
+    "gem_level_elasticity": 0.14321889234497,
+    "elasticity": {
+     "crit_chance": 0.042359735947889,
+     "extra_ele": 0.037056086208781,
+     "gem_level": 0.14321889234497,
+     "inc_damage": 0.080202470839975,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.7710562791485456,
+    "z_global": 1.022280598793073,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.8715460070063565,
+    "rank": 24
+   },
+   {
+    "skill": "High Velocity Rounds",
+    "type": "Attack",
+    "weapon": "Crossbow",
+    "tags": "Ammunition, Projectile, Physical, Duration, Payoff",
+    "base_dps": 571.05435458636,
+    "supported_dps": 3010.3192827293,
+    "support_mult": 5.2715109490932,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Heightened Accuracy I",
+     "Hit and Run",
+     "Heft"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 3010.3192827293,
+    "gem_level_elasticity": 0.044645048815467,
+    "elasticity": {
+     "crit_chance": 0.016573036547836,
+     "extra_ele": 0,
+     "gem_level": 0.044645048815467,
+     "inc_damage": 0.085580592077058,
+     "skill_speed": 0.069185100791778
+    },
+    "gated": [],
+    "family": "Attack/Crossbow",
+    "z_in_family": 1.062901313716818,
+    "z_global": 0.5185593437559514,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 0.8451645257324713,
+    "rank": 25
+   },
+   {
+    "skill": "Leap Slam",
+    "type": "Attack",
+    "weapon": "One Hand Mace",
+    "tags": "AoE, Melee, Slam, Travel, Payoff",
+    "base_dps": 741.10219667405,
+    "supported_dps": 3281.1732232411,
+    "support_mult": 4.4274234214478,
+    "supports": [
+     "Heightened Accuracy I",
+     "Heavy Swing",
+     "Brutality III",
+     "Concentrated Area",
+     "Heft"
+    ],
+    "ramp_factor": 1.2762672261062433,
+    "ramp_notes": [
+     "Is enemy Armour Broken? x1.28"
+    ],
+    "potential_dps": 4187.653848,
+    "gem_level_elasticity": 0.08333670549234,
+    "elasticity": {
+     "crit_chance": 0.012510801984805,
+     "extra_ele": 0,
+     "gem_level": 0.08333670549234,
+     "inc_damage": 0.084716856971317,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/One Hand Mace",
+    "z_in_family": 0.8967135452010214,
+    "z_global": 0.6870179824154845,
+    "flags": [],
+    "score": 0.8128353200868067,
+    "rank": 26
+   },
+   {
+    "skill": "Poisonburst Arrow",
+    "type": "Attack",
+    "weapon": "Bow",
+    "tags": "AoE, Projectile, Chaos, Duration, Repeatable",
+    "base_dps": 451.0192668199,
+    "supported_dps": 2198.8057950899,
+    "support_mult": 4.8751926067227,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Heightened Accuracy I",
+     "Hit and Run",
+     "Heft"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 2198.8057950899,
+    "gem_level_elasticity": 0.055964476375798,
+    "elasticity": {
+     "crit_chance": 0.019680895278697,
+     "extra_ele": 0,
+     "gem_level": 0.055964476375798,
+     "inc_damage": 0.090622224183635,
+     "skill_speed": 0.073182851000008
+    },
+    "gated": [],
+    "family": "Attack/Bow",
+    "z_in_family": 1.0769682887824423,
+    "z_global": 0.3582470408545566,
+    "flags": [
+     "family-outlier"
+    ],
+    "score": 0.789479789611288,
+    "rank": 27
+   },
+   {
+    "skill": "Hand of Chayula",
+    "type": "Attack",
+    "weapon": "Quarterstaff",
+    "tags": "AoE, Melee, Strike, Chaos, Meta",
+    "base_dps": 1542.8652542111,
+    "supported_dps": 3781.6829808747,
+    "support_mult": 2.4510779347407,
+    "supports": [
+     "Concentrated Area",
+     "Chaos Attunement",
+     "Close Combat II",
+     "Inexorable Critical I",
+     "Supercritical"
+    ],
+    "ramp_factor": 1.171703785662721,
+    "ramp_notes": [
+     "# of seconds since Inevitable Crit: x1.17"
+    ],
+    "potential_dps": 4431.0122648671695,
+    "gem_level_elasticity": 0.053814000580599,
+    "elasticity": {
+     "crit_chance": 0.073270986986539,
+     "extra_ele": 0.024060187080767,
+     "gem_level": 0.053814000580599,
+     "inc_damage": 0.082497866270762,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Attack/Quarterstaff",
+    "z_in_family": 0.8131171726117127,
+    "z_global": 0.7158454692148988,
+    "flags": [],
+    "score": 0.7742084912529872,
+    "rank": 28
+   },
+   {
+    "skill": "Living Bomb",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Fire, Duration, Remnant",
+    "base_dps": 1166.3436,
+    "supported_dps": 6643.5024,
+    "support_mult": 5.69600793454,
+    "supports": [
+     "Fire Penetration II",
+     "Considered Casting",
+     "Extraction",
+     "Concentrated Area",
+     "Deliberation"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 6643.5024,
+    "gem_level_elasticity": 0.15941145742643,
+    "elasticity": {
+     "crit_chance": 0.042358229598893,
+     "extra_ele": 0.037045098380637,
+     "gem_level": 0.15941145742643,
+     "inc_damage": 0.080097510012189,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.6640076096824779,
+    "z_global": 0.9225367148477613,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.7674192517485913,
+    "rank": 29
+   },
+   {
+    "skill": "Bonestorm",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Projectile, Physical, Channelling",
+    "base_dps": 938.37028022246,
+    "supported_dps": 4756.104732755,
+    "support_mult": 5.0684733233745,
+    "supports": [
+     "Extraction",
+     "Considered Casting",
+     "Deliberation",
+     "Supercritical",
+     "Inexorable Critical I"
+    ],
+    "ramp_factor": 1.2776107836092003,
+    "ramp_notes": [
+     "# of seconds since Inevitable Crit: x1.28"
+    ],
+    "potential_dps": 6076.450694542543,
+    "gem_level_elasticity": 0.14994856911687,
+    "elasticity": {
+     "crit_chance": 0.10864450549836,
+     "extra_ele": 0.049241977029454,
+     "gem_level": 0.14994856911687,
+     "inc_damage": 0.096560907200681,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.6151417994134595,
+    "z_global": 0.8770054090157765,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.7198872432543864,
+    "rank": 30
+   },
+   {
+    "skill": "Ember Fusillade",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Projectile, Fire, Duration, Repeatable",
+    "base_dps": 1255.531040931,
+    "supported_dps": 5829.983596099,
+    "support_mult": 4.6434404296178,
+    "supports": [
+     "Fire Penetration II",
+     "Extraction",
+     "Unleash",
+     "Deliberation",
+     "Fire Attunement"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5829.983596099,
+    "gem_level_elasticity": 0.13806654701485,
+    "elasticity": {
+     "crit_chance": 0.0424491056421,
+     "extra_ele": 0.015680959215935,
+     "gem_level": 0.13806654701485,
+     "inc_damage": 0.080118360402212,
+     "skill_speed": 0.072877535687453
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.59246304054093,
+    "z_global": 0.8558742029551322,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6978275055066109,
+    "rank": 31
+   },
+   {
+    "skill": "His Foul Emergence",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Chaos, Duration, Repeatable",
+    "base_dps": 803.66264976897,
+    "supported_dps": 5694.7026152669,
+    "support_mult": 7.0859366388421,
+    "supports": [
+     "Spell Echo",
+     "Extraction",
+     "Considered Casting",
+     "Zarokh's Revolt",
+     "Concentrated Area"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5694.7026152669,
+    "gem_level_elasticity": 0.15348036215228,
+    "elasticity": {
+     "crit_chance": 0.0814183882901,
+     "extra_ele": 0.038561616160293,
+     "gem_level": 0.15348036215228,
+     "inc_damage": 0.082778616587167,
+     "skill_speed": -0.05625
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5796040289129272,
+    "z_global": 0.8438926643720535,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6853194830965776,
+    "rank": 32
+   },
+   {
+    "skill": "Bone Cage",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Duration, Nova, Repeatable",
+    "base_dps": 1503.481734179,
+    "supported_dps": 5644.2808472316,
+    "support_mult": 3.7541399532291,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Poison II",
+     "Deliberation",
+     "Considered Casting"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5644.2808472316,
+    "gem_level_elasticity": 0.16203436244783,
+    "elasticity": {
+     "crit_chance": 0.086930228785913,
+     "extra_ele": 0.033652790344967,
+     "gem_level": 0.16203436244783,
+     "inc_damage": 0.087494442094861,
+     "skill_speed": 0.073550852187376
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5747329314671645,
+    "z_global": 0.8393539608016138,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6805813432009442,
+    "rank": 33
+   },
+   {
+    "skill": "Reap",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Duration",
+    "base_dps": 1498.9045758728,
+    "supported_dps": 5621.5320666691,
+    "support_mult": 3.7504269165338,
+    "supports": [
+     "Extraction",
+     "Concentrated Area",
+     "Poison II",
+     "Deliberation",
+     "Considered Casting"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5621.5320666691,
+    "gem_level_elasticity": 0.14767719475408,
+    "elasticity": {
+     "crit_chance": 0.081097405682647,
+     "extra_ele": 0.03280337813932,
+     "gem_level": 0.14767719475408,
+     "inc_damage": 0.086573801098556,
+     "skill_speed": 0.081980653220808
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5725209769949858,
+    "z_global": 0.8372929456459305,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6784297644553636,
+    "rank": 34
+   },
+   {
+    "skill": "Lightning Warp",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Lightning, Duration, Remnant, Repeatable",
+    "base_dps": 1117.086,
+    "supported_dps": 5421.84,
+    "support_mult": 4.8535564853556,
+    "supports": [
+     "Extraction",
+     "Lightning Penetration",
+     "Considered Casting",
+     "Concentrated Area",
+     "Deliberation"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5421.84,
+    "gem_level_elasticity": 0.14774712643678,
+    "elasticity": {
+     "crit_chance": 0.061777920410783,
+     "extra_ele": 0.06951724137931,
+     "gem_level": 0.14774712643678,
+     "inc_damage": 0.079908045977011,
+     "skill_speed": 0
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5527108866704136,
+    "z_global": 0.8188346559713764,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6591603943907987,
+    "rank": 35
+   },
+   {
+    "skill": "Bone Blast",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Physical, Duration, Repeatable",
+    "base_dps": 1378.9410707953,
+    "supported_dps": 5184.9646588547,
+    "support_mult": 3.7601060470731,
+    "supports": [
+     "Brutality III",
+     "Concentrated Area",
+     "Deliberation",
+     "Considered Casting",
+     "Unleash"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5184.9646588547,
+    "gem_level_elasticity": 0.16728432712963,
+    "elasticity": {
+     "crit_chance": 0.086792538883941,
+     "extra_ele": 0,
+     "gem_level": 0.16728432712963,
+     "inc_damage": 0.08985455882421,
+     "skill_speed": 0.061194099356185
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5282435045870065,
+    "z_global": 0.7960368787440141,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.6353608542498096,
+    "rank": 36
+   },
+   {
+    "skill": "Flame Breath",
+    "type": "Attack",
+    "weapon": "Talisman",
+    "tags": "Shapeshift, Wyvern, AoE, Sustained, Fire, Duration, Channelling, Detonator",
+    "base_dps": 1378.3253298901,
+    "supported_dps": 7959.8870381316,
+    "support_mult": 5.7750422672465,
+    "supports": [
+     "Fire Penetration II",
+     "Heightened Accuracy I",
+     "Concentrated Area",
+     "Elemental Armament II",
+     "Fire Attunement"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 7959.8870381316,
+    "gem_level_elasticity": 0.064759048609198,
+    "elasticity": {
+     "crit_chance": 0.016258268925604,
+     "extra_ele": 0.019938349841363,
+     "gem_level": 0.064759048609198,
+     "inc_damage": 0.080437574118726,
+     "skill_speed": 0.090907720955026
+    },
+    "gated": [
+     "Detonator"
+    ],
+    "family": "Attack/Talisman",
+    "z_in_family": 1.6232276711963096,
+    "z_global": 1.014792714372256,
+    "flags": [
+     "family-outlier",
+     "needs-setup"
+    ],
+    "score": 0.6298536884666881,
+    "rank": 37
+   },
+   {
+    "skill": "Comet",
+    "type": "Spell",
+    "weapon": null,
+    "tags": "AoE, Cold, Repeatable",
+    "base_dps": 1098.3808,
+    "supported_dps": 5099.4669306062,
+    "support_mult": 4.6427131015092,
+    "supports": [
+     "Extraction",
+     "Cold Penetration",
+     "Concentrated Area",
+     "Considered Casting",
+     "Unleash"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 5099.4669306062,
+    "gem_level_elasticity": 0.14812955440951,
+    "elasticity": {
+     "crit_chance": 0.0704770755886,
+     "extra_ele": 0.043471315777463,
+     "gem_level": 0.14812955440951,
+     "inc_damage": 0.079898985288972,
+     "skill_speed": 0.025323294168813
+    },
+    "gated": [],
+    "family": "Spell",
+    "z_in_family": 0.5191367361493374,
+    "z_global": 0.7875515378360487,
+    "flags": [
+     "scales-with-gem-level"
+    ],
+    "score": 0.626502656824022,
+    "rank": 38
+   },
+   {
+    "skill": "Boneshatter",
+    "type": "Attack",
+    "weapon": "One Hand Mace",
+    "tags": "AoE, Melee, Strike",
+    "base_dps": 583.15668197414,
+    "supported_dps": 3018.9468981593,
+    "support_mult": 5.1769052665904,
+    "supports": [
+     "Bleed III",
+     "Brutality III",
+     "Concentrated Area",
+     "Heightened Accuracy I",
+     "Hit and Run"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 3018.9468981593,
+    "gem_level_elasticity": 0.054196506931013,
+    "elasticity": {
+     "crit_chance": 0.018174057562591,
+     "extra_ele": 0,
+     "gem_level": 0.054196506931013,
+     "inc_damage": 0.087657279071429,
+     "skill_speed": 0.061253900983834
+    },
+    "gated": [],
+    "family": "Attack/One Hand Mace",
+    "z_in_family": 0.6609987586495932,
+    "z_global": 0.5200198776024566,
+    "flags": [],
+    "score": 0.6046072062307386,
+    "rank": 39
+   },
+   {
+    "skill": "Explosive Concoction",
+    "type": "Attack",
+    "weapon": "Unarmed",
+    "tags": "AoE, Projectile, Fire",
+    "base_dps": 547.15562460698,
+    "supported_dps": 3513.8405822447,
+    "support_mult": 6.4220130877182,
+    "supports": [
+     "Fire Penetration II",
+     "Heightened Accuracy I",
+     "Hit and Run",
+     "Concentrated Area",
+     "Fire Attunement"
+    ],
+    "ramp_factor": 1.0,
+    "ramp_notes": [],
+    "potential_dps": 3513.8405822447,
+    "gem_level_elasticity": 0.10704049553915,
+    "elasticity": {
+     "crit_chance": 0.012054671028556,
+     "extra_ele": 0.019897509719504,
+     "gem_level": 0.10704049553915,
+     "inc_damage": 0.080920700307703,
+     "skill_speed": 0.090909090909091
+    },
+    "gated": [],
+    "family": "Attack/Unarmed",
+    "z_in_family": 0.5976550461082731,
+    "z_global": 0.5974894662741392,
+    "flags": [],
+    "score": 0.5975888141746195,
+    "rank": 40
+   }
+  ]
+ },
+ "ascendancy": {
+  "rows": [
+   {
+    "ascendancy": "Gemling Legionnaire",
+    "median_lift": 1.7220528637632,
+    "p90_lift": 1.9336826789033,
+    "skills_lift_1_5": 123,
+    "sample": 33,
+    "ladder_share": 33.6,
+    "top_nodes": [
+     "Integrated Efficiency",
+     "Gem Studded",
+     "Enhanced Effectiveness",
+     "Adaptive Capability"
+    ]
+   },
+   {
+    "ascendancy": "Martial Artist",
+    "median_lift": 1.3463788372936,
+    "p90_lift": 1.4515202167136,
+    "skills_lift_1_5": 0,
+    "sample": 9,
+    "ladder_share": 10.4,
+    "top_nodes": [
+     "Attack Speed",
+     "Attributes",
+     "Martial Adept"
+    ]
+   },
+   {
+    "ascendancy": "Lich",
+    "median_lift": 1.2223365172527,
+    "p90_lift": 1.3306843698588,
+    "skills_lift_1_5": 10,
+    "sample": 3,
+    "ladder_share": 1.0,
+    "top_nodes": [
+     "Necromantic Conduit"
+    ]
+   },
+   {
+    "ascendancy": "Amazon",
+    "median_lift": 1.160174705394,
+    "p90_lift": 1.302691313587,
+    "skills_lift_1_5": 0,
+    "sample": 3,
+    "ladder_share": null,
+    "top_nodes": [
+     "Accuracy",
+     "Skill Speed",
+     "Elemental Damage",
+     "Critical Strike"
+    ]
+   },
+   {
+    "ascendancy": "Invoker",
+    "median_lift": 1.1453367878265,
+    "p90_lift": 1.2932997697216,
+    "skills_lift_1_5": 0,
+    "sample": 1,
+    "ladder_share": 0.3,
+    "top_nodes": [
+     "Elemental Damage",
+     "Critical Chance",
+     "Sunder my Enemies...",
+     "I am the Blizzard..."
+    ]
+   },
+   {
+    "ascendancy": "Shaman",
+    "median_lift": 1.0818541892535,
+    "p90_lift": 1.2801065591734,
+    "skills_lift_1_5": 0,
+    "sample": 6,
+    "ladder_share": null,
+    "top_nodes": [
+     "Elemental Damage",
+     "Turning of the Seasons",
+     "Elemental Resistances",
+     "Flask Recovery"
+    ]
+   },
+   {
+    "ascendancy": "Acolyte of Chayula",
+    "median_lift": 1.0658783783784,
+    "p90_lift": 2.2862918864376,
+    "skills_lift_1_5": 82,
+    "sample": 5,
+    "ladder_share": 1.6,
+    "top_nodes": [
+     "Skill Speed",
+     "Waking Dream",
+     "Damage as Chaos",
+     "Choice of Power"
+    ]
+   },
+   {
+    "ascendancy": "Pathfinder",
+    "median_lift": 1.054996243426,
+    "p90_lift": 1.0727272727273,
+    "skills_lift_1_5": 0,
+    "sample": 3,
+    "ladder_share": 1.0,
+    "top_nodes": [
+     "Skill Speed",
+     "Relentless Pursuit",
+     "Poison Effect",
+     "Overwhelming Toxicity"
+    ]
+   },
+   {
+    "ascendancy": "Witchhunter",
+    "median_lift": 1.0526315789474,
+    "p90_lift": 1.1657111830273,
+    "skills_lift_1_5": 0,
+    "sample": 2,
+    "ladder_share": null,
+    "top_nodes": [
+     "Pitiless Killer",
+     "Cooldown Recovery Rate",
+     "Witchbane"
+    ]
+   },
+   {
+    "ascendancy": "Oracle",
+    "median_lift": 1.0415454691914,
+    "p90_lift": 1.2632635815964,
+    "skills_lift_1_5": 0,
+    "sample": 10,
+    "ladder_share": 7.0,
+    "top_nodes": [
+     "Forced Outcome",
+     "The Lesser Harm",
+     "Spell Damage"
+    ]
+   },
+   {
+    "ascendancy": "Chronomancer",
+    "median_lift": 1.0363636363636,
+    "p90_lift": 1.08,
+    "skills_lift_1_5": 0,
+    "sample": 0,
+    "ladder_share": null,
+    "top_nodes": [
+     "Skill Speed and Area of Effect",
+     "Cooldown Recovery Rate",
+     "Cast Speed",
+     "Unbound Encore"
+    ]
+   },
+   {
+    "ascendancy": "Deadeye",
+    "median_lift": 1.0359712230216,
+    "p90_lift": 1.3301657901924,
+    "skills_lift_1_5": 0,
+    "sample": 2,
+    "ladder_share": 6.0,
+    "top_nodes": [
+     "Skill Speed",
+     "Point Blank",
+     "Projectile Proximity Specialisation",
+     "Projectile Damage"
+    ]
+   },
+   {
+    "ascendancy": "Ritualist",
+    "median_lift": 1.0289683893678,
+    "p90_lift": 1.0701095377726,
+    "skills_lift_1_5": 0,
+    "sample": 2,
+    "ladder_share": null,
+    "top_nodes": [
+     "Physical Damage"
+    ]
+   },
+   {
+    "ascendancy": "Infernalist",
+    "median_lift": 1.0271080950252,
+    "p90_lift": 1.7546046369754,
+    "skills_lift_1_5": 50,
+    "sample": 8,
+    "ladder_share": 5.3,
+    "top_nodes": [
+     "Grinning Immolation",
+     "Bringer of Flame",
+     "Spell Damage",
+     "Demonic Possession"
+    ]
+   },
+   {
+    "ascendancy": "Spirit Walker",
+    "median_lift": 1.0091327176951,
+    "p90_lift": 1.0338289962825,
+    "skills_lift_1_5": 0,
+    "sample": 4,
+    "ladder_share": 7.0,
+    "top_nodes": [
+     "Critical Chance",
+     "Primal Bounty"
+    ]
+   },
+   {
+    "ascendancy": "Blood Mage",
+    "median_lift": 1.0056362210216,
+    "p90_lift": 1.2076328447435,
+    "skills_lift_1_5": 3,
+    "sample": 5,
+    "ladder_share": 3.0,
+    "top_nodes": [
+     "Sanguimancy",
+     "Gore Spike",
+     "Sunder the Flesh",
+     "Blood Barbs"
+    ]
+   },
+   {
+    "ascendancy": "Smith of Kitava",
+    "median_lift": 1,
+    "p90_lift": 1.0910265614379,
+    "skills_lift_1_5": 0,
+    "sample": 1,
+    "ladder_share": null,
+    "top_nodes": [
+     "Melee Damage",
+     "Fire Damage"
+    ]
+   },
+   {
+    "ascendancy": "Tactician",
+    "median_lift": 1,
+    "p90_lift": 1,
+    "skills_lift_1_5": 0,
+    "sample": 5,
+    "ladder_share": 1.0,
+    "top_nodes": []
+   },
+   {
+    "ascendancy": "Disciple of Varashta",
+    "median_lift": 1,
+    "p90_lift": 1.0235929993137,
+    "skills_lift_1_5": 0,
+    "sample": 5,
+    "ladder_share": 7.0,
+    "top_nodes": [
+     "Cast Speed"
+    ]
+   },
+   {
+    "ascendancy": "Warbringer",
+    "median_lift": 1,
+    "p90_lift": 1,
+    "skills_lift_1_5": 0,
+    "sample": 0,
+    "ladder_share": null,
+    "top_nodes": []
+   },
+   {
+    "ascendancy": "Stormweaver",
+    "median_lift": 1,
+    "p90_lift": 1.1307209816349,
+    "skills_lift_1_5": 0,
+    "sample": 3,
+    "ladder_share": 3.0,
+    "top_nodes": [
+     "Spell Critical Chance",
+     "Tempest Caller",
+     "Constant Gale",
+     "Multiplying Squalls"
+    ]
+   },
+   {
+    "ascendancy": "Abyssal Lich",
+    "median_lift": 1,
+    "p90_lift": 1,
+    "skills_lift_1_5": 0,
+    "sample": 1,
+    "ladder_share": null,
+    "top_nodes": []
+   },
+   {
+    "ascendancy": "Titan",
+    "median_lift": 1,
+    "p90_lift": 1,
+    "skills_lift_1_5": 0,
+    "sample": 10,
+    "ladder_share": 3.0,
+    "top_nodes": []
+   }
+  ],
+  "spearman_median_lift_vs_ladder": 0.10018231555701317,
+  "top2_by_lift": [
+   "Gemling Legionnaire",
+   "Martial Artist"
+  ],
+  "top2_by_ladder": [
+   "Gemling Legionnaire",
+   "Martial Artist"
+  ]
+ },
+ "pairs": {
+  "pool": 4393,
+  "matched_builds": 75,
+  "median_rank": 1624,
+  "top": [
+   {
+    "skill": "Unleash",
+    "asc": "Acolyte of Chayula",
+    "lift": 5.3636363636364,
+    "gated": false,
+    "family": "Support",
+    "pot": 4.4788788,
+    "score": 3.380163452212414,
+    "rank": 1
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Gemling Legionnaire",
+    "lift": 1.8689264056456,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 10979.977264328,
+    "score": 3.2840227254593444,
+    "rank": 2
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Deadeye",
+    "lift": 1.2991077880713,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 9994.8586678336,
+    "score": 3.168998663557239,
+    "rank": 3
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Amazon",
+    "lift": 1.1500865279096,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 8848.3437693047,
+    "score": 3.0199112764377536,
+    "rank": 4
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Ritualist",
+    "lift": 1.0694039648897,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 8227.601732541,
+    "score": 2.930909858915517,
+    "rank": 5
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Martial Artist",
+    "lift": 1.3486702692044,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 7923.4628224029,
+    "score": 2.88482043380374,
+    "rank": 6
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Spirit Walker",
+    "lift": 1.0066419975169,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 7744.7341834697,
+    "score": 2.8569031552730992,
+    "rank": 7
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Pathfinder",
+    "lift": 1,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 7693.6330915792,
+    "score": 2.8488026983961774,
+    "rank": 8
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Acolyte of Chayula",
+    "lift": 1.8803920107783,
+    "gated": false,
+    "family": "Attack",
+    "pot": 30500.677201749,
+    "score": 2.7591024924101966,
+    "rank": 9
+   },
+   {
+    "skill": "Rapid Shot",
+    "asc": "Acolyte of Chayula",
+    "lift": 2.5610686242594,
+    "gated": false,
+    "family": "Attack/Crossbow",
+    "pot": 16054.462600401,
+    "score": 2.7419972509531325,
+    "rank": 10
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Gemling Legionnaire",
+    "lift": 1.2611793609526,
+    "gated": false,
+    "family": "Attack",
+    "pot": 20456.81132521,
+    "score": 2.6026313784180255,
+    "rank": 11
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Lich",
+    "lift": 1.2236255546367,
+    "gated": false,
+    "family": "Attack",
+    "pot": 19847.674231682,
+    "score": 2.590789653295869,
+    "rank": 12
+   },
+   {
+    "skill": "Smash to Smithereens",
+    "asc": "Gemling Legionnaire",
+    "lift": 1.8225629947295,
+    "gated": false,
+    "family": "Attack/Any Martial Weapon",
+    "pot": 63.6250953,
+    "score": 2.590300857214851,
+    "rank": 13
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Witchhunter",
+    "lift": 1.0526315789474,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 6184.2300315531,
+    "score": 2.581574011983633,
+    "rank": 14
+   },
+   {
+    "skill": "Rapid Shot",
+    "asc": "Gemling Legionnaire",
+    "lift": 2.1372165306237,
+    "gated": false,
+    "family": "Attack/Crossbow",
+    "pot": 13397.478901909,
+    "score": 2.580494601392579,
+    "rank": 15
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Infernalist",
+    "lift": 1.113432547844,
+    "gated": false,
+    "family": "Attack",
+    "pot": 18060.301539813,
+    "score": 2.553821572036315,
+    "rank": 16
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Invoker",
+    "lift": 1.0998598724458,
+    "gated": false,
+    "family": "Attack",
+    "pot": 17840.147556647,
+    "score": 2.5490170260824487,
+    "rank": 17
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Pathfinder",
+    "lift": 1.0763288210972,
+    "gated": false,
+    "family": "Attack",
+    "pot": 17458.46490894,
+    "score": 2.5405451040492206,
+    "rank": 18
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Ritualist",
+    "lift": 1.0628680180787,
+    "gated": false,
+    "family": "Attack",
+    "pot": 17240.125538537,
+    "score": 2.535615112278085,
+    "rank": 19
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Oracle",
+    "lift": 1.0623965878705,
+    "gated": false,
+    "family": "Attack",
+    "pot": 17232.478760355,
+    "score": 2.5354413223326824,
+    "rank": 20
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Amazon",
+    "lift": 1.0562849066138,
+    "gated": false,
+    "family": "Attack",
+    "pot": 17133.344954157,
+    "score": 2.533181280544813,
+    "rank": 21
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Martial Artist",
+    "lift": 1.0562849066138,
+    "gated": false,
+    "family": "Attack",
+    "pot": 17133.344954157,
+    "score": 2.533181280544813,
+    "rank": 22
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Witchhunter",
+    "lift": 1.0526315789474,
+    "gated": false,
+    "family": "Attack",
+    "pot": 17074.08658291,
+    "score": 2.5318240615784795,
+    "rank": 23
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Shaman",
+    "lift": 1.0402580905726,
+    "gated": false,
+    "family": "Attack",
+    "pot": 16873.383871659,
+    "score": 2.5271920341541723,
+    "rank": 24
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Invoker",
+    "lift": 1.0051762158565,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 5905.4288940475,
+    "score": 2.525127564355649,
+    "rank": 25
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Chronomancer",
+    "lift": 1.0281797981576,
+    "gated": false,
+    "family": "Attack",
+    "pot": 16677.469351714,
+    "score": 2.522617064338416,
+    "rank": 26
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Deadeye",
+    "lift": 1.0281797981576,
+    "gated": false,
+    "family": "Attack",
+    "pot": 16677.469351714,
+    "score": 2.522617064338416,
+    "rank": 27
+   },
+   {
+    "skill": "Bursting Fen Toad",
+    "asc": "Spirit Walker",
+    "lift": 1.0219726475805,
+    "gated": false,
+    "family": "Attack",
+    "pot": 16576.786996647,
+    "score": 2.5202449932847224,
+    "rank": 28
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Tactician",
+    "lift": 1,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 5875.0185299755,
+    "score": 2.5188101419593716,
+    "rank": 29
+   },
+   {
+    "skill": "Rain of Arrows",
+    "asc": "Acolyte of Chayula",
+    "lift": 1,
+    "gated": false,
+    "family": "Attack/Bow",
+    "pot": 5875.0185299755,
+    "score": 2.5188101419593716,
+    "rank": 30
+   }
+  ],
+  "recall": {
+   "100": 0.06666666666666667,
+   "250": 0.09333333333333334,
+   "500": 0.2,
+   "1000": 0.44
+  }
+ }
+}
