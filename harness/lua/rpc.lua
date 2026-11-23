@@ -1277,6 +1277,98 @@ function commands.enablers(req)
 	return { base = base, rows = rows, detected = req.detect and detectEnablers() or nil }
 end
 
+-- Scenarios: the same build against PoB's four enemy tiers, with the enemy each tier assumes.
+-- Author overrides in the Enemy Stats section (e.g. a hand-set enemy resist) are cleared per tier
+-- unless req.keepOverrides, and reported separately. req.sources (synergy format) are measured
+-- leave-one-out in every tier, to find pieces whose value depends on the enemy.
+local SCENARIOS = {
+	{ name = "map", val = "None", label = "normal/magic/rare monsters" },
+	{ name = "boss", val = "Boss", label = "standard (map) boss" },
+	{ name = "pinnacle", val = "Pinnacle", label = "Guardian/Pinnacle boss (PoB default)" },
+	{ name = "uber", val = "Uber", label = "Uber pinnacle boss" },
+}
+
+local function enemySnapshot()
+	local env = build.calcsTab.mainEnv
+	local db = env and env.enemyDB
+	if not db then return nil end
+	local function s(name) return num(db:Sum("BASE", nil, name)) end
+	return {
+		level = env.enemyLevel,
+		fireResist = s("FireResist"), coldResist = s("ColdResist"),
+		lightningResist = s("LightningResist"), chaosResist = s("ChaosResist"),
+		armour = s("Armour"), evasion = s("Evasion"),
+		damageTakenMore = num(db:More(nil, "DamageTaken")),
+	}
+end
+
+function commands.scenarios(req)
+	recalc()
+	local snap = snapshotConfig()
+	local input = build.configTab.input
+	local overrides, section = {}, nil
+	for _, opt in ipairs(configOptions) do
+		if opt.section then
+			section = opt.section
+		elseif opt.var and section == "Enemy Stats" and opt.var ~= "enemyIsBoss" and input[opt.var] ~= nil
+				and input[opt.var] ~= build.configTab:GetDefaultState(opt.var, type(input[opt.var]))
+				and not (opt.type == "list" and input[opt.var] == "None") then
+			overrides[#overrides + 1] = { var = opt.var, value = input[opt.var],
+				label = opt.label and opt.label:gsub("%^x%x%x%x%x%x%x", ""):gsub("%^%d", "") }
+		end
+	end
+	local configured = input.enemyIsBoss or "Pinnacle"
+
+	local group = build.skillsTab.socketGroupList[build.mainSocketGroup]
+	local nodeByName, supByName = {}, {}
+	for _, node in pairs(build.spec.allocNodes) do nodeByName[node.dn] = node end
+	for _, g in ipairs(group and group.gemList or {}) do
+		local nm = g.nameSpec or (g.gemData and g.gemData.name)
+		if nm then supByName[nm] = g end
+	end
+	local fastOpts = { requirementsGems = true, skipEHP = true }
+	local function eval(s)
+		local override, sup = { removeNodes = {} }, nil
+		if s then
+			if s.kind == "node" then
+				local n = nodeByName[s.name]; if not n then return nil end
+				override.removeNodes[n] = true
+			elseif s.kind == "slot" then
+				override.repSlotName = s.slot
+				override.repItem = s.raw and new("Item"):Item(s.raw) or nil
+			elseif s.kind == "support" then
+				sup = supByName[s.name]; if not sup then return nil end
+				sup.enabled = false; build.skillsTab:ProcessSocketGroup(group); recalc()
+			end
+		end
+		local v = fastDps(build.calcsTab:GetMiscCalculator(), override, fastOpts)
+		if sup then sup.enabled = true; build.skillsTab:ProcessSocketGroup(group); recalc() end
+		return v
+	end
+
+	local out = { configured = configured, overrides = overrides, scenarios = {} }
+	for _, sc in ipairs(SCENARIOS) do
+		restoreConfig(snap)
+		if not req.keepOverrides then for _, o in ipairs(overrides) do input[o.var] = nil end end
+		input.enemyIsBoss = sc.val
+		recalc()
+		local row = { name = sc.name, val = sc.val, label = sc.label, dps = skillDps(),
+			ehp = num((build.calcsTab.mainOutput or {}).TotalEHP), enemy = enemySnapshot(), sources = {} }
+		if req.sources and #req.sources > 0 then
+			local base = eval(nil)
+			for i, s in ipairs(req.sources) do
+				local v = eval(s)
+				row.sources[i] = (base and v and v > 0) and base / v or "inf"
+			end
+		end
+		out.scenarios[#out.scenarios + 1] = row
+	end
+	restoreConfig(snap)
+	recalc()
+	out.asConfigured = { dps = skillDps(), ehp = num((build.calcsTab.mainOutput or {}).TotalEHP), enemy = enemySnapshot() }
+	return out
+end
+
 -- Try every unique from PoB's database in each equipment slot of the current build.
 -- Returns the top uniques per slot by main-skill DPS multiplier (vs the item currently there).
 local SWEEP_SLOTS = { "Weapon 1", "Weapon 2", "Helmet", "Body Armour", "Gloves", "Boots", "Amulet", "Ring 1", "Belt" }

@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import analysis, decompose, enablers, scan, sources, trade
+from . import analysis, decompose, enablers, scan, scenario, sources, trade
 from .engine import Engine, EngineError
 
 ENV_STAMP = "PoE2 | PoB-PoE2 {ver} | values are PoB calculations, not in-game measurements"
@@ -115,6 +115,46 @@ def render_audit(a: dict):
         print(f"kept on: {', '.join(a['kept'])}")
 
 
+TIER_LABEL = {"map": "map monsters", "boss": "map boss", "pinnacle": "pinnacle boss", "uber": "uber pinnacle"}
+
+
+def render_scenarios(sc: dict):
+    print("## Scenarios (which enemy the numbers assume)")
+    conf = {"None": "map", "Boss": "boss", "Pinnacle": "pinnacle", "Uber": "uber"}.get(sc["configured"], sc["configured"])
+    print(f"The build is configured against: {TIER_LABEL.get(conf, conf)}. Every DPS/multiplier elsewhere in "
+          "this report uses that enemy unless stated.")
+    print("| enemy | DPS | vs configured | EHP | enemy level | ele res* | armour | damage taken |")
+    print("|---|---|---|---|---|---|---|---|")
+    base = sc["as_configured"]["dps"] or 0
+    for t in sc["tiers"]:
+        e = t.get("enemy") or {}
+        res = f"{e.get('fireResist', 0):.0f}/{e.get('coldResist', 0):.0f}/{e.get('lightningResist', 0):.0f}"
+        dt = e.get("damageTakenMore")
+        dts = f"x{dt:.2f}" if dt is not None and abs(dt - 1) > 1e-6 else "x1"
+        print(f"| {TIER_LABEL[t['name']]} | {fmt(t['dps'])} | {fpct(analysis.pct(t['dps'], base))} | {fmt(t['ehp'])} | "
+              f"{e.get('level', '?')} | {res} | {fmt(e.get('armour'))} | {dts} |")
+    print("(*fire/cold/lightning after your own curses/exposure; uber pinnacles take 70% less damage in PoB.)")
+    if sc["overrides"]:
+        print("The author hand-set these enemy values; the table above uses PoB defaults instead:")
+        for o in sc["overrides"]:
+            print(f"- {(o.get('label') or o['var']).strip()} = {o['value']}")
+    dep = scenario.dependent(sc["sources"])
+    if dep:
+        print("\nPieces whose worth depends on the enemy (leave-one-out multiplier per enemy):")
+        print("| piece | map monsters | map boss | pinnacle | uber | worth more vs |\n|---|---|---|---|---|---|")
+        mx = lambda v: "∞" if v == scenario.INF else f"x{v:.2f}"
+        for r in dep:
+            m = r["mult"]
+            print(f"| {r['name']} | {mx(m['map'])} | {mx(m['boss'])} | {mx(m['pinnacle'])} | {mx(m['uber'])} | "
+                  f"{TIER_LABEL[r['favours']]} |")
+        if any(v < 1 for r in dep for v in r["mult"].values()):
+            print("x<1 means the piece costs damage against that enemy (removing it raises DPS).")
+        print("Typical causes: resistance penetration/inversion and armour-related damage only matter when the "
+              "enemy has resistances/armour (bosses); culling, on-kill and count-of-enemies effects favour maps.")
+    elif sc["sources"]:
+        print("\nNo measured piece changes its multiplier by 15% or more between map monsters and pinnacle bosses.")
+
+
 def render_enablers(e: dict):
     print("## Enablers (pieces that keep a config condition true)")
     print("alone = remove the piece only (what decompose shows); cond = turn off only the conditions it "
@@ -196,6 +236,21 @@ def cmd_enablers(args):
         emit(args, enablers.measure(eng), render_enablers)
 
 
+def _scenario_with_sources(eng, d=None):
+    if d is None:
+        d = decompose.decompose(eng, conditions=False)
+    items = {i["slot"]: i for i in eng.call("items")["items"]}
+    main = next((g for g in eng.call("skills")["groups"] if g["main"]), None)
+    sups = [g["name"] for g in (main or {}).get("gems", []) if g["support"] and g["enabled"] and g["name"]]
+    return scenario.scenarios(eng, scenario.sources_from_decompose(d, items, supports=sups))
+
+
+def cmd_scenarios(args):
+    with Engine(args.verbose) as eng:
+        load(eng, args.build)
+        emit(args, _scenario_with_sources(eng), render_scenarios)
+
+
 def cmd_ramp(args):
     with Engine(args.verbose) as eng:
         load(eng, args.build)
@@ -226,10 +281,13 @@ def cmd_diagnose(args):
         r["summary"] = analysis.summarize_ramp(r["ramp"], r["base"])
         el = analysis.elasticity(eng)
         hr = trade.slot_headroom(eng)
-        data = {"summary": info, "enablers": en, "audit": a, "ramp": r, "scales": el, "headroom": hr}
+        sc = _scenario_with_sources(eng)
+        data = {"summary": info, "scenarios": sc, "enablers": en, "audit": a, "ramp": r, "scales": el, "headroom": hr}
 
         def render(_):
             render_summary(info, eng.version)
+            print()
+            render_scenarios(sc)
             print()
             render_enablers(en)
             print()
@@ -384,6 +442,9 @@ def cmd_decompose(args):
     with Engine(args.verbose) as eng:
         info = load(eng, args.build)
         d = decompose.decompose(eng)
+        cfg = {v["var"]: v["value"] for v in eng.call("config")["values"]}
+        d["enemy"] = TIER_LABEL.get({"None": "map", "Boss": "boss", "Pinnacle": "pinnacle", "Uber": "uber"}
+                                    .get(cfg.get("enemyIsBoss", "Pinnacle"), "pinnacle"))
         pairs = None
         if args.synergy:
             items = {i["slot"]: i for i in eng.call("items")["items"]}
@@ -404,12 +465,15 @@ def cmd_decompose(args):
                      if p["synergy"] == "inf" or p["synergy"] >= 1.1]
             pairs.sort(key=lambda p: -(1e9 if p["synergy"] == "inf" else p["synergy"]))
         d["synergy"] = pairs
+        if args.scenarios:
+            d["scenarios"] = _scenario_with_sources(eng, d)
 
     def render(d):
         ms = (info.get("mainSkill") or {}).get("name")
         print(f"[{ENV_STAMP.format(ver=eng.version)}]")
         print(f"## {ms} — {info.get('ascendancy') or info.get('className')} — DPS {fmt(d['base_dps'])}")
-        print("Leave-one-out: x2.00 = removing it halves DPS.\n")
+        print("Leave-one-out: x2.00 = removing it halves DPS. "
+              f"Enemy: {d.get('enemy', 'pinnacle boss')} (see `scenarios` for map monsters).\n")
         print("layers: " + ", ".join(f"{k} {'∞' if v == decompose.INF else f'x{v:.2f}'}" for k, v in d["layers"].items()))
         print("\n| layer | source | mult |\n|---|---|---|")
         for s in d["sources"][: args.top]:
@@ -427,6 +491,9 @@ def cmd_decompose(args):
                 j = p["joint"] if p["joint"] == "inf" else f"x{p['joint']:.2f}"
                 sy = p["synergy"] if p["synergy"] == "inf" else f"x{p['synergy']:.2f}"
                 print(f"| {p['a']} | {p['b']} | {j} | {sy} |")
+        if d.get("scenarios"):
+            print()
+            render_scenarios(d["scenarios"])
     emit(args, d, render)
 
 
@@ -478,6 +545,7 @@ def main(argv=None):
     p = build_cmd("audit", cmd_audit, "attribute DPS/EHP to config conditions; dewatered and boss scenarios")
     p.add_argument("--keep", nargs="*")
     build_cmd("enablers", cmd_enablers, "pieces that keep a config condition true, and what they really carry")
+    build_cmd("scenarios", cmd_scenarios, "the build vs map monsters / bosses / ubers, and enemy-dependent pieces")
     build_cmd("ramp", cmd_ramp, "stack/stage/condition curves for the main skill")
     build_cmd("scales", cmd_scales, "stat elasticity: what one unit of each stat is worth")
     p = build_cmd("headroom", cmd_headroom, "how much each equipped item contributes")
@@ -496,6 +564,7 @@ def main(argv=None):
 
     p = build_cmd("decompose", cmd_decompose, "multiplier stack: what each support/node/item/condition is worth")
     p.add_argument("--synergy", action="store_true", help="also test pairs of the top sources for engines")
+    p.add_argument("--scenarios", action="store_true", help="also measure the top sources vs map monsters and bosses")
     p.add_argument("--top", type=int, default=25)
     p = sub.add_parser("build-up", help="construct one skill greedily with PoB and show each multiplier")
     p.add_argument("skill")

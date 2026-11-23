@@ -165,12 +165,31 @@
   - Rage、Power Charge 要靠資源循環模型
   - 第二版要把這類「自產條件」分開處理
 
+**情境假設說明（已完成，10 個 smoke test 通過）**
+- 程式：`harness/pob_agent/scenario.py`、`rpc.lua` 的 `scenarios` 指令、CLI 新增 `scenarios` 子指令。`diagnose` 會一併列出；`decompose --scenarios` 會加上各情境欄位；`decompose` 標頭會註明敵人假設。
+- 同一份 build 依 PoB 的四種敵人情境各算一次：一般怪、地圖王、Pinnacle（PoB 預設）、Uber。每種情境都列出 DPS、EHP，以及敵人的等級、元素抗性（已算進自己的詛咒和 exposure）、護甲、受傷倍率（Uber 為 ×0.30）。
+- 作者在 Enemy Stats 手填的值，例如 −60% 抗性，會先清掉，四種情境一律用 PoB 預設；手填了哪些另外列出。
+- 每種情境都量測主技能組的所有 support，以及最強的節點和裝備。打一般怪和打 Pinnacle 的乘數差 ≥15% 時，標為「情境依賴」。
+- 結果：
+
+  | build | 打一般怪 vs 面板 | 情境依賴的件 |
+  |---|---|---|
+  | Gemling Twister | −27% | Rakiata's Flow：一般怪 ×1.02 → Pinnacle ×2.18 |
+  | Arc Gemling | −33% | Rakiata's Flow：×1.00 → ×3.00 |
+  | MA Falling Thunder | −35% | Rakiata's Flow：×1.00 → ×2.18；武器 ×6.25 → ×7.40 |
+  | Oracle Comet | −32% | Rakiata's Flow：×1.00 → ×2.00 |
+  | Deadeye Lightning Rod | −32% | Rakiata's Flow：×1.00 → ×1.81 |
+  | 巫妖 Shred | +27% | 無（物理傷害，一般怪護甲較低） |
+
+- **方法論發現**：
+  - 0.5.5 的熱門 build 普遍帶 Rakiata's Flow，面板數字其實是「打 Boss 的數字」，打圖大約只剩七成。
+  - 有一份 Comet 作者手填敵人抗性 −60%：反轉之後變成正抗，DPS 反而變低。打一般怪時 Rakiata's Flow 是 ×0.82，帶著反而掉傷害。
+
 **待做**（照 Fable 的排序）：
 1. 促成者第二版：處理自產條件（從 PoB 的 Shock、Blind 機率驗證）；從 PoB 解析不了的詞綴中初篩更多促成者
-2. 情境語意：敵人抗性的假設、抗性反轉類的警示
-3. headroom 的門檻旗標：MoM 剛好 100%、抗性上限、Spirit 為負
-4. synergy 支援裝備×裝備和 jewel
-5. 資源循環模型
-6. 圖騰與觸發次數建模
+2. headroom 的門檻旗標：MoM 剛好 100%、抗性上限、Spirit 為負
+3. synergy 支援裝備×裝備和 jewel
+4. 資源循環模型
+5. 圖騰與觸發次數建模
 
 **待查**：巫妖的 Spirit 仍為 −29（可能是 PoB 少算 Crystalline Phylactery）、Oracle 的 4 組 CoC 何者由護符提供、Arc 未開啟的 Lightning Infused（×3.78）。

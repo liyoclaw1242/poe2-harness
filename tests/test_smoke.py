@@ -106,3 +106,33 @@ def test_enabler_absent_piece_is_skipped():
         eng.call("load", **sources.resolve(str(BUILD)))
         en = enablers.measure(eng, detect=False)   # no table piece in this Sunder build
         assert en["rows"] == []
+
+
+def test_scenarios_tiers_and_sources():
+    """Four enemy tiers with PoB's default resistances, and per-tier leave-one-out for sources."""
+    from pob_agent import scenario
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        src = [{"kind": "node", "name": "Mystical Rage", "layer": "notable"}]
+        sc = scenario.scenarios(eng, src)
+        tiers = {t["name"]: t for t in sc["tiers"]}
+        assert list(tiers) == ["map", "boss", "pinnacle", "uber"]
+        assert tiers["map"]["enemy"]["fireResist"] <= tiers["pinnacle"]["enemy"]["fireResist"]
+        assert abs(tiers["uber"]["enemy"]["damageTakenMore"] - 0.3) < 1e-6
+        assert tiers["uber"]["dps"] < tiers["pinnacle"]["dps"]
+        # configured enemy is the PoB default (pinnacle) and no author overrides
+        assert sc["configured"] == "Pinnacle" and sc["overrides"] == []
+        assert abs(sc["as_configured"]["dps"] - tiers["pinnacle"]["dps"]) / tiers["pinnacle"]["dps"] < 1e-6
+        (row,) = sc["sources"]
+        assert set(row["mult"]) == set(scenario.TIERS) and all(v > 1 for v in row["mult"].values())
+        # the build is unchanged afterwards
+        cfg = {v["var"]: v["value"] for v in eng.call("config")["values"]}
+        assert "enemyIsBoss" not in cfg
+
+
+def test_scenario_dependent_picks_spread():
+    from pob_agent import scenario
+    rows = [{"name": "inv", "layer": "support", "mult": {"map": 1.0, "boss": 1.6, "pinnacle": 2.2, "uber": 2.2}},
+            {"name": "flat", "layer": "gear", "mult": {"map": 1.3, "boss": 1.3, "pinnacle": 1.31, "uber": 1.31}}]
+    dep = scenario.dependent(rows)
+    assert [r["name"] for r in dep] == ["inv"] and dep[0]["favours"] == "pinnacle"
