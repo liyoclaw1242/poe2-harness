@@ -41,6 +41,62 @@ BACKTEST = {
     "Ranger": {"clear": ["Lightning Arrow", "Poisonburst Arrow"], "boss": []},
     "Warrior": {"clear": ["Boneshatter", "Rolling Slam"], "boss": []},
 }
+# HELD-OUT keys, frozen 2026-11-24 before any model run against them (research note §6, "held-out keys").
+# Scored once; never tuned on. Inclusion rules fixed in advance: 0.5/0.5.5 sources only; drop sources that cite
+# maxroll; drop transient level 1-6 openers (Unearth, Spark, Bow Shot, plain bolts); keep every other clear skill
+# a source names. Skills the stage cannot use (gem tier) simply never rank.
+# (1) second source, pre-ascendancy: non-maxroll, non-poe-vault guides (game8, mobalytics, sportskeeda, aoeah,
+#     akrpg, mtmmo, exiledascendants), several read from search excerpts only
+HELDOUT_SOURCE2 = {
+    "Witch": {"clear": ["Essence Drain", "Contagion", "Entangle", "Thunderstorm", "Thrashing Vines", "Bonestorm"]},
+    "Sorceress": {"clear": ["Ice Nova", "Frost Bomb", "Orb of Storms", "Ember Fusillade", "Arc", "Elemental Storm",
+                            "Mana Drain", "Contagion", "Entangle", "Essence Drain", "Volcano", "Flame Wall",
+                            "Skeletal Sniper"]},
+    "Mercenary": {"clear": ["Explosive Grenade", "Frost Bomb", "Flash Grenade", "Gas Grenade", "Fragmentation Rounds",
+                            "Rapid Shot", "Contagion", "Galvanic Shards"]},
+    "Huntress": {"clear": ["Contagion", "Lightning Spear", "Twister", "Disengage", "Permafrost Bolts",
+                           "Fragmentation Rounds"]},
+    "Druid": {"clear": ["Entangle", "Volcano", "Bonestorm", "Contagion", "Devour", "Wing Blast", "Rolling Magma",
+                        "Shred", "Lunar Assault", "Thunderstorm", "Blight"]},
+    "Monk": {"clear": ["Glacial Cascade", "Frozen Locus", "Tempest Flurry", "Falling Thunder", "Killing Palm",
+                       "Wind Blast", "Whirling Slash", "Twister"]},
+    "Ranger": {"clear": ["Lightning Arrow", "Lightning Rod", "Permafrost Bolts", "Explosive Grenade",
+                         "Poisonburst Arrow"]},
+    "Warrior": {"clear": ["Rolling Slam", "Boneshatter", "Infernal Slam", "Perfect Strike", "Frost Bomb",
+                          "Shield Wall"]},
+}
+# (2) after the first ascendancy (stage asc1), per ascendancy: maxroll, poe-vault, exiledascendants, sportskeeda.
+#     New stage, so new labels even where the site is the same. Chronomancer had no source; Spirit Walker and
+#     Martial Artist were not researched.
+HELDOUT_ASC1 = {
+    "Witch/Infernalist": {"class": "Witch", "asc": "Infernalist", "clear": ["Contagion", "Essence Drain"]},
+    "Witch/Blood Mage": {"class": "Witch", "asc": "Blood Mage", "clear": ["Spark", "Orb of Storms"]},
+    "Witch/Lich": {"class": "Witch", "asc": "Lich", "clear": ["Contagion", "Essence Drain"]},
+    "Sorceress/Stormweaver": {"class": "Sorceress", "asc": "Stormweaver", "clear": ["Ice Nova", "Snap"]},
+    "Sorceress/Disciple of Varashta": {"class": "Sorceress", "asc": "Disciple of Varashta",
+                                       "clear": ["Entangle", "Thunderstorm", "Frost Bomb", "Ice Nova",
+                                                 "Navira's Fracturing"]},
+    "Mercenary/Witchhunter": {"class": "Mercenary", "asc": "Witchhunter",
+                              "clear": ["Explosive Grenade", "Gas Grenade"]},
+    "Mercenary/Gemling Legionnaire": {"class": "Mercenary", "asc": "Gemling Legionnaire",
+                                      "clear": ["Explosive Grenade", "Gas Grenade", "Oil Grenade"]},
+    "Mercenary/Tactician": {"class": "Mercenary", "asc": "Tactician", "clear": ["Galvanic Shards"]},
+    "Huntress/Amazon": {"class": "Huntress", "asc": "Amazon", "clear": ["Rake", "Spearfield", "Whirling Slash",
+                                                                       "Twister"]},
+    "Huntress/Ritualist": {"class": "Huntress", "asc": "Ritualist", "clear": ["Spearfield", "Rake"]},
+    "Druid/Shaman": {"class": "Druid", "asc": "Shaman", "clear": ["Shockwave Totem", "Fury of the Mountain"]},
+    "Druid/Oracle": {"class": "Druid", "asc": "Oracle", "clear": ["Shred", "Cross Slash", "Pounce", "Lunar Assault",
+                                                                  "Entangle"]},
+    "Monk/Invoker": {"class": "Monk", "asc": "Invoker", "clear": ["Ice Strike"]},
+    "Monk/Acolyte of Chayula": {"class": "Monk", "asc": "Acolyte of Chayula", "clear": ["Staggering Palm"]},
+    "Ranger/Deadeye": {"class": "Ranger", "asc": "Deadeye", "clear": ["Lightning Arrow", "Ice Shot"]},
+    "Ranger/Pathfinder": {"class": "Ranger", "asc": "Pathfinder", "clear": ["Poisonburst Arrow"]},
+    "Warrior/Titan": {"class": "Warrior", "asc": "Titan", "clear": ["Leap Slam", "Stampede"]},
+    "Warrior/Warbringer": {"class": "Warrior", "asc": "Warbringer", "clear": ["Earthshatter", "Sunder", "Leap Slam",
+                                                                             "Boneshatter"]},
+    "Warrior/Smith of Kitava": {"class": "Warrior", "asc": "Smith of Kitava", "clear": ["Rolling Slam",
+                                                                                       "Boneshatter"]},
+}
 # skills the research found no leveling evidence for; they should not be a class's top pick
 NEGATIVE = {"Witch": ["Rapid Shot", "Galvanic Shards", "Living Bomb"]}
 
@@ -394,7 +450,8 @@ def _random_best(n: int, k: int) -> dict:
     return {"top1": dist[0], "top3": sum(dist[:3]), "rr": sum(p / r for r, p in enumerate(dist, 1)), "dist": dist}
 
 
-def backtest(stage: str, cfg: dict | None = None, top: int = 3, classes=None, perms: int = 20000) -> dict:
+def backtest(stage: str, cfg: dict | None = None, top: int = 3, classes=None, perms: int = 20000,
+             key: dict | None = None) -> dict:
     """Per class: best rank of a community clear pick; pass if within `top`; negatives must not be #1.
 
     Also scores the rank within the class family (off-family rows dropped) against a uniformly random
@@ -403,12 +460,14 @@ def backtest(stage: str, cfg: dict | None = None, top: int = 3, classes=None, pe
     out = {"classes": {}, "passed": 0, "total": 0, "mrr": 0.0, "top1": 0,
            "fam": {"top1": 0, "top3": 0, "mrr": 0.0, "rand_top1": 0.0, "rand_top3": 0.0, "rand_mrr": 0.0}}
     dists = []
-    for cls, exp in BACKTEST.items():
+    for label, exp in (key or BACKTEST).items():
+        cls = exp.get("class", label)
+        st_ = stage.replace("{asc}", exp.get("asc", ""))
         if classes and cls not in classes:
             continue
-        if not all(load(st, cls) for st in stage.split(",")):
+        if not all(load(st, cls) for st in st_.split(",")):
             continue
-        rows = rank(stage, cls, cfg)
+        rows = rank(st_, cls, cfg)
         names = [m["skill"] for m in rows]
 
         def hit(m):
@@ -423,9 +482,9 @@ def backtest(stage: str, cfg: dict | None = None, top: int = 3, classes=None, pe
         fam_best = next((i for i, m in enumerate(fam, 1) if hit(m)), None)
         rnd = _random_best(len(fam), sum(1 for m in fam if hit(m)))
         dists.append(rnd["dist"])
-        neg = [s for s in NEGATIVE.get(cls, []) if names and names[0] == s]
+        neg = [s for s in NEGATIVE.get(cls, []) if names and names[0] == s] if key is None else []
         ok = best is not None and best <= top and not neg
-        out["classes"][cls] = {"best_rank": best, "ranks": ranks, "top": names[:5], "negative_top": neg, "pass": ok,
+        out["classes"][label] = {"best_rank": best, "ranks": ranks, "top": names[:5], "negative_top": neg, "pass": ok,
                                "fam_rank": fam_best, "fam_size": len(fam), "fam_hits": sum(1 for m in fam if hit(m)),
                                "rand_top3": rnd["top3"]}
         out["total"] += 1

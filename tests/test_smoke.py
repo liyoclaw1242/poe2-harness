@@ -227,3 +227,12 @@ def test_leveling_answer_key_is_frozen():
     from pob_agent import leveling as L
     key = json.dumps([L.BACKTEST, L.NEGATIVE], sort_keys=True).encode()
     assert hashlib.sha256(key).hexdigest()[:16] == "d84c824a64111d4b"
+
+
+def test_leveling_heldout_keys_are_frozen():
+    # held-out keys frozen 2026-11-24 before any run against them; scored once, never tuned on
+    import hashlib
+    import json
+    from pob_agent import leveling as L
+    key = json.dumps([L.HELDOUT_SOURCE2, L.HELDOUT_ASC1], sort_keys=True).encode()
+    assert hashlib.sha256(key).hexdigest()[:16] == "e5d178a626d061a2"
