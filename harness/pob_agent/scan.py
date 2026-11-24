@@ -29,6 +29,57 @@ TIERS = {
     },
 }
 
+# Campaign stages follow ascendancy trials (each trial = 2 ascendancy points):
+#   pre_asc1  before the first trial (no ascendancy)        <- implemented
+#   asc1      after trial 1, before trial 2 (2 points)      <- todo
+#   asc2      after trial 2, before trial 3 (4 points)      <- todo
+#   endgame   the target build itself
+# "act1" is an early snapshot inside pre_asc1. Levels and the gem/support tier limits are assumptions
+# about when uncut gems of each level drop; calibrate them against real campaign exports. Enemy =
+# normal monsters (PoB tier "None": enemy level = character level, 0% resistances). No gear mods: a
+# plain weapon base of the stage's level only, so these numbers rank skills, they are not in-game DPS.
+# Calibration (docs/research/2026-11-24-leveling-builds.md): fixed quest rewards give uncut skill gems
+# L2-L5 in Act 1 and L6-L7 in Act 2; support tier 2 drops from area level ~16; a gem has 2 support
+# sockets until Lesser Jeweller's Orbs (monster level 25+). Trial 1 is in Act 2 (level ~21-28).
+STAGES = {
+    "act1": {"level": 12, "maxSkillTier": 5, "gemLevel": 5, "maxSupportTier": 1, "supports": 2,
+             "treePoints": 12, "weaponLevel": 10},
+    "pre_asc1": {"level": 24, "maxSkillTier": 7, "gemLevel": 7, "maxSupportTier": 2, "supports": 2,
+                 "treePoints": 25, "weaponLevel": 22},
+    # after trial 1 (2 ascendancy points) and after trial 2 (4 points). Assumptions: trial 1 in Act 2, trial 2
+    # in Act 3; quest gems L9/L10 in Act 3; support tier 3 from area ~33, tier 4 from ~45; third socket from
+    # Lesser Jeweller's Orbs (monster level 25+).
+    "asc1": {"level": 32, "maxSkillTier": 9, "gemLevel": 9, "maxSupportTier": 2, "supports": 3,
+             "treePoints": 33, "weaponLevel": 30, "ascPoints": 2},
+    "asc2": {"level": 45, "maxSkillTier": 11, "gemLevel": 11, "maxSupportTier": 4, "supports": 3,
+             "treePoints": 47, "weaponLevel": 43, "ascPoints": 4},
+}
+STAGE_COMMON = {"impliedConditions": True, "capGemByLevel": True, "gemQuality": 0, "enemyIsBoss": "None", "templateMods": "",
+                "weaponMods": ""}
+
+
+def run_campaign(eng_factory, stage: str = "pre_asc1", top: int = 15, classes: list[str] | None = None,
+                 progress: bool = False, chunk: int = 3) -> dict:
+    """Rank the stage's skills once, then run the per-class tree step a few skills per fresh engine
+    (one engine building hundreds of characters runs out of memory)."""
+    params = {**STAGE_COMMON, **STAGES[stage], "progress": progress}
+    params.setdefault("maxPath", params["treePoints"])
+    if classes:
+        params["classes"] = {c: True for c in classes}
+    with eng_factory() as eng:
+        scanned = eng.call("skill_scan", **params)["results"]
+    ranked = sorted((r for r in scanned if (r.get("supportedDPS") or 0) > 0), key=lambda r: -r["supportedDPS"])
+    names = [r["gem"] for r in ranked[:top]]
+    results = []
+    for i in range(0, len(names), chunk):
+        part = names[i:i + chunk]
+        with eng_factory() as eng:
+            res = eng.call("campaign", **{**params, "skills": part, "top": len(part)})
+        order = {n: k for k, n in enumerate(part)}
+        results += sorted(res["results"], key=lambda x: order.get(x["skill"], 99))
+    return {"scanned": len(scanned), "withDamage": len(ranked), "results": results}
+
+
 PROBES = [
     {"name": "gem_level", "mod": "+1 to Level of all Skills"},
     {"name": "inc_damage", "mod": "20% increased Damage"},

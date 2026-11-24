@@ -159,3 +159,52 @@ def test_threshold_margins_and_headroom():
         assert all("text" in e for e in m["edges"])
         rows = trade.slot_headroom(eng)
         assert rows and all(isinstance(r["breaks"], list) for r in rows)
+
+
+def _probe(skill, sets, types, **v0):
+    variants = [{"label": lab, "dps": d, "TotalDot": dot, "AverageHit": hit, "Speed": 1.25, **v0}
+                for lab, d, dot, hit in sets]
+    return {"skill": skill, "types": types, "variants": variants, "monsterLife": 366, "weaponType": None,
+            "reqInt": 100}
+
+
+def test_leveling_scores_dot_sets_pairs_and_family():
+    from pob_agent import leveling as L
+    L.CLASS_BASE.update({"Witch": {"str": 7, "dex": 7, "int": 15}, "Warrior": {"str": 15, "dex": 7, "int": 7}})
+    cfg = dict(L.DEFAULT)
+    ed = _probe("Essence Drain", [("Projectile", 160, 0, 100), ("Damage over Time", 150, 150, 0)],
+                ["Spell", "Chaos", "DamageOverTime", "Projectile"], ProjectileCount=1)
+    ed["variants"][1]["Duration"] = 4.8
+    cont = _probe("Contagion", [("Contagion", 55, 55, 0)], ["Spell", "Chaos", "DamageOverTime", "Cooldown"],
+                  AreaOfEffectRadiusMetres=1.7)
+    m = L.metrics(ed, cfg, "Witch")
+    assert m["st"] == 310  # hit and DoT sets are both counted
+    c = L.metrics(cont, cfg, "Witch")
+    pair = L.pair_metrics(c, m, cfg)
+    assert pair and pair["targets"] == cfg["pack"] and pair["clear"] > m["clear"] / 6
+    # a charged variant is not the normal use
+    sp = _probe("Spear", [("Explosion", 100, 0, 100), ("Frenzy-Charged", 400, 0, 400)], ["Attack", "Area"],
+                AreaOfEffectRadiusMetres=2.0)
+    assert L.metrics(sp, cfg, "Witch")["st"] == 100
+    # spells are off-family for a martial class
+    assert L.metrics(ed, cfg, "Warrior")["weapon_factor"] < 1 and L.metrics(ed, cfg, "Witch")["weapon_factor"] == 1
+
+
+def test_leveling_probe_reads_dot_set_and_minions():
+    from pob_agent import leveling as L
+    with Engine() as eng:
+        res = eng.call("leveling_probe", skills=["Essence Drain", "Raise Zombie"], **L.stage_params("pre_asc1"))
+    ed, rz = res["results"]
+    labels = [v.get("label") for v in ed["variants"]]
+    assert "Damage over Time" in labels and any((v.get("TotalDot") or 0) > 0 for v in ed["variants"])
+    assert rz["variants"][0]["dps"] > 0 and rz["variants"][0].get("minion")
+    # support gems with levels are capped at the stage level (Unleash at 20 needed 157 Int)
+    assert all((v.get("ReqInt") or 0) < 100 for v in ed["variants"])
+
+
+def test_leveling_ascendancy_sees_node_implied_config():
+    # Eldritch Empowerment's 30% more needs PoB's "Are you Sacrificing?" box; the node implies it
+    from pob_agent import leveling as L
+    with Engine() as eng:
+        res = eng.call("leveling_probe", skills=["Essence Drain"], **L.stage_params("asc1+asc-Lich", "Witch"))
+    assert res["results"][0]["ascNodes"] == ["Eldritch Empowerment"]

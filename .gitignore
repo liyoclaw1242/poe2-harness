@@ -12,3 +12,5 @@ data/results/*.partial.json
 # poe.ninja usage data is read manually for local research only; not republished
 data/ninja/
 data/results/ninja_compare.*
+# leveling probe cache: regenerable, and error strings carry local paths
+data/results/leveling_cache/

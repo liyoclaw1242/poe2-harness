@@ -364,6 +364,109 @@ def cmd_upgrade(args):
         emit(args, rows, render)
 
 
+def render_campaign(r, stage):
+    st = scan.STAGES[stage]
+    print(f"## Campaign stage {stage}: level {st['level']}, skill tier <= {st['maxSkillTier']}, gem level <= "
+          f"{st['gemLevel']}, support tier <= {st['maxSupportTier']} ({st['supports']} supports), "
+          f"{st['treePoints']} passive points, no ascendancy")
+    print(f"{r['withDamage']} of {r['scanned']} allowed skills deal damage; top {len(r['results'])} taken to the tree step.")
+    best = {}
+    for x in r["results"]:
+        for c in x["classes"]:
+            if c.get("error"):
+                continue
+            best.setdefault(c["class"], []).append((c["dps"], x, c))
+    print("\n### Best skills per class start\n| class | 1st | 2nd | 3rd |\n|---|---|---|---|")
+    for cls in sorted(best):
+        rows = sorted(best[cls], key=lambda t: -t[0])[:3]
+        print(f"| {cls} | " + " | ".join(f"{x['skill']} {fmt(d)}" for d, x, _ in rows) + " |")
+    print("\n### Setups\n| skill | weapon | gem lv | supports | best class | DPS | notables taken |\n|---|---|---|---|---|---|---|")
+    for x in sorted(r["results"], key=lambda x: -max((c.get("dps") or 0) for c in x["classes"])):
+        ok = [c for c in x["classes"] if not c.get("error")]
+        if not ok:
+            continue
+        c = max(ok, key=lambda c: c["dps"])
+        print(f"| {x['skill']} | {x.get('weaponType') or '-'} | {x['gemLevel']} | "
+              f"{', '.join(s['name'] for s in x.get('supports') or [])} | {c['class']} | {fmt(c['dps'])} | "
+              f"{', '.join(p['name'] for p in c['picks'])} |")
+    print("\nnote: normal monsters (0% resist), plain weapon base, no gear mods, single target DPS only — this ranks "
+          "skills against each other; clear speed, defence and gem availability timing are not modelled. "
+          "Stage limits are assumptions to calibrate against real campaign exports. Item-granted skills "
+          "(e.g. werewolf Shred) have no tier in PoB data and are not included.")
+
+
+def render_leveling(rows, cls, stage, top, boss=None):
+    base = stage.split(",")[0].split("+")[0]
+    st = scan.STAGES[base]
+    print(f"## Leveling picks for {cls} — stage {base}: level {st['level']}, gems to level {st['gemLevel']} "
+          f"(skill tier <= {st['maxSkillTier']}), {st['supports']} supports of tier <= {st['maxSupportTier']}, "
+          f"{st['treePoints']} passive points from the {cls} start, "
+          + (f"{st['ascPoints']} ascendancy points" if st.get("ascPoints") else "no ascendancy"))
+    print("\n| # | skill | clear (packs/s x6) | single target DPS | monsters per use | time per pack | notes |")
+    print("|---|---|---|---|---|---|---|")
+    for i, m in enumerate(rows[:top], 1):
+        notes = []
+        if m.get("members"):
+            notes.append("Contagion spreads the partner's chaos DoT")
+        if m.get("off_weapon"):
+            notes.append("outside the class's weapon/spell family")
+        if m.get("needs_setup"):
+            notes.append("needs corpses or a prepared target")
+        if m.get("attr_points"):
+            notes.append(f"~{m['attr_points']} points of attributes short")
+        if m.get("asc_nodes"):
+            notes.append("ascendancy: " + ", ".join(m["asc_nodes"]))
+        if m.get("stored_uses") and m.get("stored_uses") > 1:
+            notes.append(f"{m['stored_uses']:.0f} stored uses per pack")
+        print(f"| {i} | {m['skill']} | {m['clear']:.2f} | {fmt(m['st'])} | {m['targets']:.1f} | "
+              f"{m['kill_time']:.2f}s | {'; '.join(notes)} |")
+    if boss:
+        print("\n### Boss skill (single target)")
+        print("\n| # | skill | single target DPS | after factors | notes |\n|---|---|---|---|---|")
+        for i, m in enumerate(boss[:min(top, 5)], 1):
+            notes = []
+            if m.get("off_weapon"):
+                notes.append("outside the class's weapon/spell family")
+            if m.get("needs_setup"):
+                notes.append("needs corpses or a prepared target")
+            if m.get("attr_points"):
+                notes.append(f"~{m['attr_points']} points of attributes short")
+            print(f"| {i} | {m['skill']} | {fmt(m['st'])} | {fmt(m['boss'])} | {'; '.join(notes)} |")
+        print("\nboss DPS is measured against a level-matched monster with no boss resistances or armour, so "
+              "physical attacks read high next to what a real act boss takes.")
+    print("\nnote: PoB numbers on a plain weapon base with no gear mods against white monsters of the stage level; "
+          "clear = monsters reached per use / time to kill them (no credit for overkill, DoT counted as cast-and-move-"
+          "on when it kills within its duration). Backtested against community leveling picks: see "
+          "docs/research/2026-11-24-leveling-builds.md §6.")
+
+
+def cmd_leveling(args):
+    """Rank leveling skills for one class at a campaign stage (collects PoB data on first use)."""
+    from . import leveling
+    asc = f"+asc-{args.ascendancy}" if args.ascendancy else ""
+    if scan.STAGES[args.stage].get("ascPoints") and not asc:
+        raise SystemExit(f"stage {args.stage} spends ascendancy points: pass --ascendancy")
+    stages = [args.stage + asc, args.stage + "+clearsup" + asc]
+    for st in stages:
+        if not leveling.load(st, args.cls):
+            print(f"collecting {st} for {args.cls} (first run takes a few minutes)...", file=sys.stderr)
+            leveling.collect(st, [args.cls], verbose=args.verbose)
+    cfg = {"off_weapon_factor": args.off_weapon}
+    rows = leveling.rank(",".join(stages), args.cls, cfg)
+    boss = leveling.rank_boss(",".join(stages), args.cls, cfg)
+
+    def plain(ms):
+        return [{k: (sorted(v) if isinstance(v, set) else v) for k, v in m.items()} for m in ms[:args.top]]
+    emit(args, {"clear": plain(rows), "boss": plain(boss)},
+         lambda _: render_leveling(rows, args.cls, ",".join(stages), args.top, boss))
+
+
+def cmd_campaign(args):
+    """Strongest pre-ascendancy skills per class start at a campaign stage."""
+    r = scan.run_campaign(lambda: Engine(args.verbose), args.stage, top=args.top, classes=args.classes)
+    emit(args, r, lambda r: render_campaign(r, args.stage))
+
+
 def cmd_scan(args):
     with Engine(args.verbose) as eng:
         results = scan.run_scan(eng, tier=args.tier, skills=args.skills, allow_lineage=args.lineage,
@@ -597,6 +700,18 @@ def main(argv=None):
     p.add_argument("--out", help="save raw scan results (JSON)")
     p.set_defaults(fn=cmd_scan)
 
+    p = sub.add_parser("leveling", help="rank leveling (pre-ascendancy) skills for a class, backtested scoring")
+    p.add_argument("--class", dest="cls", required=True)
+    p.add_argument("--stage", choices=list(scan.STAGES), default="pre_asc1")
+    p.add_argument("--top", type=int, default=12)
+    p.add_argument("--off-weapon", type=float, default=0.25, help="score factor for skills outside the class family")
+    p.add_argument("--ascendancy", help="for stages after a trial (asc1, asc2): which ascendancy spends the points")
+    p.set_defaults(fn=cmd_leveling)
+    p = sub.add_parser("campaign", help="strongest pre-ascendancy skills per class start at a campaign stage")
+    p.add_argument("--stage", choices=list(scan.STAGES), default="pre_asc1")
+    p.add_argument("--top", type=int, default=15, help="skills taken to the per-class tree step")
+    p.add_argument("--classes", nargs="*")
+    p.set_defaults(fn=cmd_campaign)
     p = build_cmd("export-build", cmd_export_build, "write the in-game Build Planner .build file")
     p.add_argument("--out", required=True)
     p.add_argument("--name")

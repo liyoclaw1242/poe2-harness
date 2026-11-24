@@ -483,10 +483,64 @@ local function findGemByName(name)
 	end
 end
 
-local function skillDps()
-	local o = build.calcsTab.mainOutput or {}
+-- Highest gem level a character of `charLevel` can use (PoB's per-level requirement), capped at maxLevel.
+local function gemLevelFor(g, charLevel, maxLevel)
+	local levels = g.grantedEffect and g.grantedEffect.levels
+	local best = 1
+	for l = 1, math.min(maxLevel or 20, g.naturalMaxLevel or 20) do
+		local lv = levels and levels[l]
+		if lv and (lv.levelRequirement or 0) <= charLevel then best = l end
+	end
+	return best
+end
+
+-- Campaign stages limit which gems exist yet: skill gem Tier (uncut skill gem level needed) and
+-- support Tier (uncut support gem level). Tier 0 gems are item/ascendancy-granted or untiered.
+local function skillAllowed(g, req)
+	if req.extraSkills and req.extraSkills[g.name] then return true end
+	if not req.maxSkillTier then return true end
+	return g.Tier and g.Tier >= 1 and g.Tier <= req.maxSkillTier
+end
+local function supportAllowed(g, req)
+	if not req.maxSupportTier then return true end
+	return g.Tier and g.Tier >= 1 and g.Tier <= req.maxSupportTier
+end
+
+-- Support gems with levels (a few untiered ones such as Unleash) are capped like skill gems in campaign stages.
+local function supportLevel(g, req)
+	if req.capGemByLevel then return gemLevelFor(g, req.level or 90, req.gemLevel or 20) end
+	return g.naturalMaxLevel
+end
+
+local function gemLevelForReq(g, req)
+	if req.capGemByLevel then return gemLevelFor(g, req.level or 90, req.gemLevel or 20) end
+	return req.gemLevel or 20
+end
+
+-- Main skill DPS from a calc output; minion skills fall back to the minion's own DPS.
+function outDps(o)
 	local v = o.CombinedDPS
 	if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+	if v == 0 and o.Minion then v = o.Minion.CombinedDPS or o.Minion.TotalDPS or 0 end
+	return v
+end
+
+-- Value a support choice is judged by. "clear" weighs DPS by the monsters a use reaches in a pack
+-- (area radius, projectiles, pierce, chain), so supports that trade area for damage lose credit.
+function supportValue(o, req)
+	local v = outDps(o)
+	if req.supportObjective ~= "clear" then return v end
+	local pack, density = req.pack or 6, req.density or 0.3
+	local r = o.AreaOfEffectRadiusMetres or 0
+	local tArea = r > 0 and math.min(pack, math.max(1, density * math.pi * r * r)) or 1
+	local proj = o.ProjectileCount or 0
+	local tProj = proj > 0 and math.min(pack, proj * (1 + math.min(o.PierceCount or 0, 5)) + (o.ChainMax or 0)) or 1
+	return v * math.max(tArea, tProj, 1)
+end
+
+local function skillDps()
+	local o = build.calcsTab.mainOutput or {}
+	local v = outDps(o)
 	if v ~= v or v == math.huge then v = 0 end
 	return v
 end
@@ -496,8 +550,7 @@ end
 local function fastDps(calcFunc, override, opts)
 	local ok, o = pcall(calcFunc, override or {}, false, opts)
 	if not ok or not o then return nil end
-	local v = o.CombinedDPS
-	if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+	local v = outDps(o)
 	if v ~= v or v == math.huge then return nil end
 	return v
 end
@@ -644,7 +697,11 @@ end
 local function scanOne(gemId, gemData, req)
 	newBuild()
 	build.characterLevel = req.level or 90
-	applyConfig(nil, req.templateMods or "")
+	applyConfig(req.enemyIsBoss and { enemyIsBoss = req.enemyIsBoss } or nil, req.templateMods or "")
+	-- a shapeshift skill is only used in its form: the form's own condition is always true
+	if req.impliedConditions and gemData.tags and gemData.tags.shapeshift then
+		build.configTab.input.conditionShapeshifted = true
+	end
 	-- weapon for attacks
 	local weaponType
 	if gemData.weaponRequirements then
@@ -655,7 +712,7 @@ local function scanOne(gemId, gemData, req)
 			build.itemsTab:AddDisplayItem()
 		end
 	end
-	build.skillsTab:PasteSocketGroup(gemData.name .. " " .. (req.gemLevel or 20) .. "/" .. (req.gemQuality or 20) .. "  1")
+	build.skillsTab:PasteSocketGroup(gemData.name .. " " .. gemLevelForReq(gemData, req) .. "/" .. (req.gemQuality or 20) .. "  1")
 	build.mainSocketGroup = 1
 	recalc()
 	recalc() -- first calc after newBuild can be stale
@@ -674,7 +731,7 @@ local function scanOne(gemId, gemData, req)
 	local candidates = {}
 	for id, g in pairs(data.gems) do
 		if g.grantedEffect and g.grantedEffect.support and not g.grantedEffect.hidden
-			and (req.allowLineage or not (g.tags and g.tags.lineage))
+			and (req.allowLineage or not (g.tags and g.tags.lineage)) and supportAllowed(g, req)
 			and calcLib.canGrantedEffectSupportActiveSkill(g.grantedEffect, active) then
 			candidates[#candidates + 1] = { id = id, g = g }
 		end
@@ -683,17 +740,20 @@ local function scanOne(gemId, gemData, req)
 	local chosen = {}
 	for _ = 1, (req.supports or 5) do
 		local calcFunc = build.calcsTab:GetMiscCalculator()
-		local bestDps, best = fastDps(calcFunc, nil, fastOpts) or skillDps(), nil
+		local bestDps, best = 0, nil
+		do
+			local ok0, o0 = pcall(calcFunc, nil, false, fastOpts)
+			bestDps = (ok0 and o0) and supportValue(o0, req) or skillDps()
+		end
 		local idx = #group.gemList + 1
 		for _, c in ipairs(candidates) do
 			if not chosen[c.id] then
-				group.gemList[idx] = { level = c.g.naturalMaxLevel, quality = 0, count = 1, enabled = true,
+				group.gemList[idx] = { level = supportLevel(c.g, req), quality = 0, count = 1, enabled = true,
 					enableGlobal1 = true, enableGlobal2 = true, gemId = c.id, nameSpec = c.g.name,
 					skillId = c.g.grantedEffectId, gemData = c.g }
 				local ok, o = pcall(calcFunc, nil, false, fastOpts)
 				if ok and o then
-					local v = o.CombinedDPS
-					if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+					local v = supportValue(o, req)
 					if v == v and v ~= math.huge and v > bestDps * 1.001 then bestDps, best = v, c end
 				end
 			end
@@ -701,7 +761,7 @@ local function scanOne(gemId, gemData, req)
 		group.gemList[idx] = nil
 		if not best then break end
 		chosen[best.id] = true
-		group.gemList[idx] = { level = best.g.naturalMaxLevel, quality = 0, count = 1, enabled = true,
+		group.gemList[idx] = { level = supportLevel(best.g, req), quality = 0, count = 1, enabled = true,
 			enableGlobal1 = true, enableGlobal2 = true, gemId = best.id, nameSpec = best.g.name,
 			skillId = best.g.grantedEffectId }
 		build.skillsTab:ProcessSocketGroup(group)
@@ -739,7 +799,7 @@ function commands.skill_scan(req)
 		for _, g in pairs(data.gems) do
 			if g.grantedEffect and not g.grantedEffect.support and not g.grantedEffect.hidden
 				and (g.gemType == "Attack" or g.gemType == "Spell" or g.gemType == "Minion")
-				and g.tags and g.tags.grants_active_skill then
+				and g.tags and g.tags.grants_active_skill and skillAllowed(g, req) then
 				names[#names + 1] = g.name
 			end
 		end
@@ -769,7 +829,11 @@ local function setupSkill(gemData, supportIds, req, classId, ascendId)
 		build.spec:SelectAscendClass(ascendId or 0)
 	end
 	build.characterLevel = req.level or 90
-	applyConfig(nil, req.templateMods or "")
+	applyConfig(req.enemyIsBoss and { enemyIsBoss = req.enemyIsBoss } or nil, req.templateMods or "")
+	-- a shapeshift skill is only used in its form: the form's own condition is always true
+	if req.impliedConditions and gemData.tags and gemData.tags.shapeshift then
+		build.configTab.input.conditionShapeshifted = true
+	end
 	if gemData.weaponRequirements then
 		local weaponType = gemData.weaponRequirements:match("^([^,]+)")
 		local baseName = weaponType and templateWeapon(weaponType, req.weaponLevel or 65)
@@ -778,13 +842,13 @@ local function setupSkill(gemData, supportIds, req, classId, ascendId)
 			build.itemsTab:AddDisplayItem()
 		end
 	end
-	build.skillsTab:PasteSocketGroup(gemData.name .. " " .. (req.gemLevel or 20) .. "/" .. (req.gemQuality or 20) .. "  1")
+	build.skillsTab:PasteSocketGroup(gemData.name .. " " .. gemLevelForReq(gemData, req) .. "/" .. (req.gemQuality or 20) .. "  1")
 	build.mainSocketGroup = 1
 	local group = build.skillsTab.socketGroupList[1]
 	for _, id in ipairs(supportIds or {}) do
 		local g = data.gems[id]
 		if g then
-			group.gemList[#group.gemList + 1] = { level = g.naturalMaxLevel, quality = 0, count = 1, enabled = true,
+			group.gemList[#group.gemList + 1] = { level = supportLevel(g, req), quality = 0, count = 1, enabled = true,
 				enableGlobal1 = true, enableGlobal2 = true, gemId = id, nameSpec = g.name, skillId = g.grantedEffectId }
 		end
 	end
@@ -811,8 +875,7 @@ local function greedyAscendancy(points)
 					for _, pn in ipairs(node.path) do add[pn] = true end
 					local ok, o = pcall(calcFunc, { addNodes = add }, false, fastOpts)
 					if ok and o then
-						local v = o.CombinedDPS
-						if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+						local v = outDps(o)
 						if v == v and v ~= math.huge then
 							local gain = (v - base) / cost
 							if not bestGain or gain > bestGain then best, bestGain, bestCost = node, gain, cost end
@@ -878,7 +941,7 @@ end
 --   bare gem -> supports -> ascendancy (8 pts) -> passive tree (N pts)
 ---------------------------------------------------------------------------
 local uniqueSweep -- defined below (unique_sweep)
-local function greedyTree(points, maxPath)
+local function greedyTree(points, maxPath, allowed)
 	local picks, spent = {}, 0
 	local fastOpts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
 	while spent < points do
@@ -887,15 +950,15 @@ local function greedyTree(points, maxPath)
 		local best, bestGain, bestCost, bestV
 		for _, node in pairs(build.spec.nodes) do
 			if not node.ascendancyName and not node.alloc and node.path
-				and (node.type == "Notable" or node.type == "Keystone") then
+				and (node.type == "Notable" or node.type == "Keystone")
+				and (not allowed or allowed[node.dn]) then
 				local cost = #node.path
 				if cost > 0 and cost <= (maxPath or 7) and spent + cost <= points then
 					local add = {}
 					for _, pn in ipairs(node.path) do add[pn] = true end
 					local ok, o = pcall(calcFunc, { addNodes = add }, false, fastOpts)
 					if ok and o then
-						local v = o.CombinedDPS
-						if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+						local v = outDps(o)
 						if v == v and v ~= math.huge and base > 0 then
 							local gain = math.log(v / base) / cost
 							if not bestGain or gain > bestGain then best, bestGain, bestCost, bestV = node, gain, cost, v end
@@ -970,6 +1033,222 @@ function commands.build_up(req)
 	return res
 end
 
+-- Campaign (pre-ascendancy) scan: which skill is strongest at a campaign stage, per class start.
+-- Phase 1 ranks every gem the stage allows on a class-less character (level-capped gem, tiered
+-- supports, a plain weapon base of the stage's level). Phase 2 takes the top skills and, for each
+-- class, spends the stage's passive points greedily from that class's start (no ascendancy).
+-- Classes do not restrict weapons or skills; only the tree start differs.
+function commands.campaign(req)
+	local scanRes = commands.skill_scan(req).results
+	local ranked = {}
+	for _, r in ipairs(scanRes) do
+		if r.supportedDPS and r.supportedDPS > 0 then ranked[#ranked + 1] = r end
+	end
+	table.sort(ranked, function(a, b) return a.supportedDPS > b.supportedDPS end)
+	local top = {}
+	for i = 1, math.min(req.top or 20, #ranked) do top[i] = ranked[i] end
+	local classes = {}
+	for cid, class in pairs(build.spec.tree.classes) do
+		if not req.classes or req.classes[class.name] then classes[#classes + 1] = { id = cid, name = class.name } end
+	end
+	table.sort(classes, function(a, b) return a.name < b.name end)
+	local rows = {}
+	for _, r in ipairs(top) do
+		local gemId, gemData = findGemByName(r.gem)
+		local supportIds = {}
+		for _, sp in ipairs(r.supports or {}) do
+			local sid = findGemByName(sp.name)
+			if sid then supportIds[#supportIds + 1] = sid end
+		end
+		local perClass = {}
+		for _, c in ipairs(classes) do
+			local ok, err = pcall(function()
+				setupSkill(gemData, supportIds, req, c.id, 0)
+				local before = skillDps()
+				local picks, spent = greedyTree(req.treePoints or 10, req.maxPath or 7)
+				perClass[#perClass + 1] = { class = c.name, before = before, dps = skillDps(), spent = spent,
+					picks = picks }
+			end)
+			if not ok then perClass[#perClass + 1] = { class = c.name, error = tostring(err) } end
+			collectgarbage("collect")
+		end
+		rows[#rows + 1] = { skill = r.gem, gemLevel = gemLevelForReq(gemData, req), weaponType = r.weaponType,
+			tags = r.tags, supports = r.supports, supportedDPS = r.supportedDPS, classes = perClass }
+		if req.progress then io.stderr:write("campaign ", r.gem, "\n") end
+	end
+	return { scanned = #scanRes, withDamage = #ranked, results = rows }
+end
+
+---------------------------------------------------------------------------
+-- Leveling probe: raw facts about one skill at a campaign stage, for scoring outside PoB.
+-- Every stat set of the main skill is measured (Essence Drain's DoT is its second stat set),
+-- minion output is included, and clear-related outputs (area, projectiles, pierce, chain,
+-- duration), mana sustain and attribute requirements are returned with the white monster life
+-- for the stage level.
+---------------------------------------------------------------------------
+local PROBE_FIELDS = { "CombinedDPS", "TotalDPS", "TotalDot", "TotalDotDPS", "WithDotDPS", "FullDPS", "AverageHit",
+	"AverageDamage", "Speed", "HitChance", "AreaOfEffectRadiusMetres", "ProjectileCount", "PierceCount", "ChainMax",
+	"Duration", "ManaCost", "ManaPerSecondCost", "ManaRegenRecovery", "Mana", "ManaUnreserved", "Str", "Dex", "Int",
+	"ReqStr", "ReqDex", "ReqInt", "Life", "TotalEHP", "ActiveMinionLimit", "Cooldown", "StoredUses" }
+local MINION_FIELDS = { "CombinedDPS", "TotalDPS", "TotalDot", "AverageHit", "Speed", "AreaOfEffectRadiusMetres",
+	"ProjectileCount", "Life" }
+
+local function probeOutputs()
+	local o = build.calcsTab.mainOutput or {}
+	local r = {}
+	for _, k in ipairs(PROBE_FIELDS) do
+		local v = num(o[k])
+		if v ~= nil then r[k] = v end
+	end
+	if o.Minion then
+		r.minion = {}
+		for _, k in ipairs(MINION_FIELDS) do
+			local v = num(o.Minion[k])
+			if v ~= nil then r.minion[k] = v end
+		end
+	end
+	r.dps = outDps(o)
+	return r
+end
+
+local skillTypeName
+local function mainSkillTypes()
+	if not skillTypeName then
+		skillTypeName = {}
+		for k, v in pairs(SkillType) do skillTypeName[v] = k end
+	end
+	local ms = build.calcsTab.mainEnv and build.calcsTab.mainEnv.player.mainSkill
+	local t = {}
+	for k, on in pairs(ms and ms.skillTypes or {}) do
+		if on and skillTypeName[k] then t[#t + 1] = skillTypeName[k] end
+	end
+	table.sort(t)
+	return t, ms and ms.activeEffect.grantedEffect.name
+end
+
+local function probeVariants(group)
+	local gi = group.gemList[1]
+	local ge = gi and gi.gemData and gi.gemData.grantedEffect
+	local out = {}
+	local sets = ge and ge.statSets or {}
+	for i = 1, math.max(#sets, 1) do
+		if ge and #sets > 0 then gi.statSet = { [ge.id] = i } end
+		recalc()
+		local row = probeOutputs()
+		row.set = i
+		row.label = sets[i] and sets[i].label
+		out[#out + 1] = row
+	end
+	if ge and ge.parts and #ge.parts > 1 then
+		gi.statSet = nil
+		for k = 2, #ge.parts do
+			gi.skillPart = k
+			recalc()
+			local row = probeOutputs()
+			row.part = k
+			row.label = ge.parts[k].name
+			out[#out + 1] = row
+		end
+		gi.skillPart = nil
+	end
+	gi.statSet = nil
+	recalc()
+	return out
+end
+
+-- Names of active skills a campaign stage allows (same filter as skill_scan).
+function commands.stage_skills(req)
+	local names = {}
+	for _, g in pairs(data.gems) do
+		if g.grantedEffect and not g.grantedEffect.support and not g.grantedEffect.hidden
+			and (g.gemType == "Attack" or g.gemType == "Spell" or g.gemType == "Minion")
+			and g.tags and g.tags.grants_active_skill and skillAllowed(g, req) then
+			names[g.name] = true
+		end
+	end
+	local out = {}
+	for n in pairs(names) do out[#out + 1] = n end
+	table.sort(out)
+	local classes = {}
+	for _, c in pairs(build.spec.tree.classes) do
+		classes[#classes + 1] = { name = c.name, str = c.base_str, dex = c.base_dex, int = c.base_int }
+	end
+	table.sort(classes, function(a, b) return a.name < b.name end)
+	return { skills = out, classes = classes }
+end
+
+function commands.leveling_probe(req)
+	local classId, ascendId
+	if req.class then
+		for cid, c in pairs(build.spec.tree.classes) do
+			if c.name == req.class then
+				classId = cid
+				for aid, a in pairs(c.classes) do
+					if aid ~= 0 and a.name == req.ascendancy then ascendId = aid end
+				end
+			end
+		end
+		if not classId then error("class not found: " .. req.class) end
+		if req.ascendancy and not ascendId then error("ascendancy not found: " .. req.ascendancy) end
+	end
+	local res = {}
+	for _, name in ipairs(req.skills or {}) do
+		local ok, r = pcall(function()
+			local gemId, gemData = findGemByName(name)
+			if not gemId then error("gem not found") end
+			local scan = scanOne(gemId, gemData, req)
+			local supportIds = {}
+			for _, sp in ipairs(scan.supports or {}) do
+				local sid = findGemByName(sp.name)
+				if sid then supportIds[#supportIds + 1] = sid end
+			end
+			local group = setupSkill(gemData, supportIds, req, classId, classId and (ascendId or 0) or nil)
+			group.includeInFullDPS = true
+			if req.impliedConditions and ascendId then
+				-- config checks gated on a flag an ascendancy node grants (Eldritch Empowerment: "Are you
+				-- Sacrificing?") describe what the node does every use; turn them on so the greedy pick sees it
+				local flags = {}
+				for _, node in pairs(build.spec.nodes) do
+					if node.ascendancyName == build.spec.curAscendClassName then
+						for _, mod in ipairs(node.modList or {}) do
+							if mod.type == "FLAG" then flags[mod.name] = true end
+						end
+					end
+				end
+				for _, opt in ipairs(configOptions) do
+					local f = opt.ifFlag
+					if opt.type == "check" and opt.var and type(f) == "string" and flags[f] then
+						build.configTab.input[opt.var] = true
+					end
+				end
+				recalc()
+			end
+			local ascNodes
+			if ascendId and (req.ascPoints or 0) > 0 then
+				ascNodes = greedyAscendancy(req.ascPoints)
+			end
+			local picks, spent
+			if classId and (req.treePoints or 0) > 0 then
+				local allowed
+				if req.targetNodes then
+					allowed = {}
+					for _, n in ipairs(req.targetNodes) do allowed[n] = true end
+				end
+				picks, spent = greedyTree(req.treePoints, req.maxPath or req.treePoints, allowed)
+			end
+			recalc()
+			local types, effectName = mainSkillTypes()
+			return { skill = name, effect = effectName, ascNodes = ascNodes, gemLevel = gemLevelForReq(gemData, req), tier = gemData.Tier,
+				weaponType = scan.weaponType, supports = scan.supports, picks = picks, spent = spent, types = types,
+				reqStr = gemData.reqStr, reqDex = gemData.reqDex, reqInt = gemData.reqInt,
+				variants = probeVariants(group), monsterLife = data.monsterLifeTable[req.level or 1] }
+		end)
+		res[#res + 1] = ok and r or { skill = name, error = tostring(r) }
+		collectgarbage("collect")
+	end
+	return { results = res }
+end
+
 function commands.ramp(req)
 	local info = mainSkillInfo()
 	if not info or not info.name then error("no main skill") end
@@ -1041,8 +1320,7 @@ function commands.decompose(req)
 	local function without(nodes)
 		local ok, o = pcall(calcFunc, { removeNodes = nodes }, false, fastOpts)
 		if not ok or not o then return nil end
-		local v = o.CombinedDPS
-		if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+		local v = outDps(o)
 		return v
 	end
 	-- The fast calc does not produce FullDPS for every build, so node ratios must use a baseline
@@ -1107,8 +1385,7 @@ function commands.synergy(req)
 	-- No requirementsItems here: it reuses the previous call's item state and ignores repItem.
 	local fastOpts = { requirementsGems = true, skipEHP = true }
 	local function dps(o)
-		local v = o.CombinedDPS
-		if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+		local v = outDps(o)
 		return v
 	end
 	-- evaluate DPS with a set of removals
@@ -1421,8 +1698,7 @@ uniqueSweep = function(slots, top, maxLevel)
 			if lvl <= (maxLevel or 100) and build.itemsTab:IsItemValidForSlot(item, slotName) then
 				local ok, o = pcall(calcFunc, { repSlotName = slotName, repItem = item }, false, fastOpts)
 				if ok and o then
-					local v = o.CombinedDPS
-					if not v or v == 0 then v = o.FullDPS or o.TotalDPS or 0 end
+					local v = outDps(o)
 					if v == v and v ~= math.huge and base > 0 and v > base * 1.01 then
 						rows[#rows + 1] = { name = name, mult = v / base }
 					end
