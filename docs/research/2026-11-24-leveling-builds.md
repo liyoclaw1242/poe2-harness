@@ -200,3 +200,78 @@ Lich, Infernalist and Blood Mage; pre_asc1 and act1 backtests unchanged (8/8, 8/
 Known limits: white monsters only (clear saturates once a DoT kills within its duration, so extra damage stops
 counting); no gear beyond a plain weapon base (Eldritch Empowerment's ES cost, Necromantic Conduit's mana drain
 are not checked); the backtest set is 8 classes x 1–8 picks, mostly from maxroll/poe-vault guides.
+
+### Round: magic and rare packs
+
+Monster life by rarity comes from the hidden rarity mods on poe2wiki: MonsterMagic2 gives 148% more life
+(x2.48), MonsterRare2 gives 700% more (x8). PoB has no rarity life table. Clear is now taken over a pack mix by
+count: total monsters / total time.
+
+The first try ranked the clear skill alone against tougher packs, and the backtest got worse as packs got harder:
+
+| mix (white/magic/rare) | pre_asc1 | act1 |
+|---|---|---|
+| white only | 8/8, 0.77 | 8/8, 0.71 |
+| 80/20/0 | 8/8, 0.65 | 8/8, 0.69 |
+| 60/30/10 | 7/8, 0.59 | 7/8, 0.68 |
+| rare only | 5/8, 0.51 | 5/8, 0.46 |
+
+It drags high single-target skills up. Community setups do not clear rares with the clear skill: they carry a
+boss skill. Modelled as a loadout, a rare-led pack is cleared by whichever is faster: the clear skill alone, or the
+clear skill on the whites plus the class's top boss skill on the rare. With that, 60/30/10 holds 8/8 on both stages
+(MRR 0.65 / 0.71) and 50/35/15 gives 8/8 (0.67 / 0.71).
+
+It still does not beat white-only on pre_asc1 (0.77). Sorceress moves from Contagion + ED to Living Bomb (2.40 vs
+2.27), and Mercenary from Explosive Grenade to Rapid Shot. The mix is an assumption; the pack counts were not
+measured. (This round first kept white-only ranking for its higher MRR; the review round below reverses that.)
+
+The mixed figure is still informative. For Witch it puts Contagion + ED (4.14) well above Essence Drain alone
+(2.05). On white packs alone the solo clear-support ED edged ahead of the pair (8.02 vs 7.80), which read wrong
+against how the build is played.
+
+### Round: independent review (Fable) and evaluation fixes
+
+An independent review, given the code and this log without conclusions, made these points. The numbers were checked
+before acting on them.
+
+- **Top-3 is a weak bar once the family filter is on.** Families hold 9–25 rows, so a random order within the family
+  passes about 4.3 of 8 classes on pre_asc1. Druid, with 7 accepted rows out of 13, passes by chance 93% of the time.
+  Top-1 was only 5/8 (pre_asc1) and 4/8 (act1).
+- **act1 is not held out.** It uses the same classes and answer key, and it was consulted throughout the loop; x0.25
+  was preferred over x0.35 on act1's word.
+- **Fire-and-forget scored a DoT at cast time however long it took to kill.** Vine Arrow (37 DoT DPS against 89-life
+  act1 monsters, 2.4s to kill) was scored at 0.65s. It ranked 1st for act1 Ranger and 2nd for act1 Warrior, despite
+  being off-family there.
+- **Keeping white-only ranking for MRR 0.77 vs 0.65 was fitting to the key.** The gap is two classes moving from rank
+  1 to rank 2 at n=8.
+
+Changes:
+
+1. **Evaluation.** The backtest now also reports:
+   - top-1;
+   - the rank within the class family against a uniformly random within-family order (expected top-1, top-3, MRR);
+   - a permutation p-value.
+
+   The answer key is frozen and a test pins its hash.
+2. **DoT.** A DoT that kills within its duration now costs `max(cast time, time to die − travel)`, and every pack adds
+   2s of walking. Travel of 1–5s gives the same backtest; 0s with the honest DoT drops to 7/8.
+3. **Ranking uses the campaign mix (60/30/10) with the clear + boss loadout.** White-only is a CLI column.
+
+| config | pre_asc1 top-3 / top-1 / MRR | family MRR (random) | p | act1 top-3 / top-1 / MRR | p |
+|---|---|---|---|---|---|
+| before (white, cast-time DoT) | 8/8, 5/8, 0.77 | 0.77 (0.44) | 0.003 | 8/8, 4/8, 0.71 | 0.009 |
+| honest DoT, no travel | 7/8, 3/8, 0.65 | 0.65 (0.44) | 0.038 | 7/8, 2/8, 0.62 | 0.09 |
+| + travel 2s | 8/8, 5/8, 0.75 | 0.75 (0.44) | 0.004 | 8/8, 4/8, 0.75 | 0.009 |
+| + campaign mix and boss loadout (shipped) | 8/8, 4/8, 0.69 | 0.69 (0.44) | 0.018 | 8/8, 4/8, 0.73 | 0.015 |
+
+The shipped config ranks Contagion + ED first for Witch and Sorceress, above ED alone. Vine Arrow leaves Warrior's
+top 4.
+
+Still open:
+
+- **Vine Arrow is still act1 Ranger's #1.** Its DoT is a planted ground area. Monsters that chase the player leave it,
+  but the model treats it like a debuff. A ground/debuff split for fire-and-forget is the principled fix; it was not
+  applied to one skill by hand.
+- **Mana and EHP** are next, as displayed vetoes rather than fitted factors.
+- **Independent labels are needed before more tuning.** Sources: asc1 picks for other classes, a second guide
+  source, or 0.4 vs 0.5 changes.

@@ -17,7 +17,8 @@ from pob_agent import leveling  # noqa: E402
 # each step adds one scoring term on top of the previous one
 OFF = {"sets": False, "no_conditional": False, "attrs": False, "attr_pool": False, "clear": False, "pairs": False,
        "mana": False, "class_weapon": False, "caster_family": False, "setup": False,
-       "rotation": 1, "burst": False, "fire_forget": False, "family": "weapon", "off_weapon_factor": 0.5}
+       "rotation": 1, "burst": False, "fire_forget": False, "family": "weapon", "off_weapon_factor": 0.5,
+       "travel": 0.0, "mix": {"white": (1.0, 1.0)}, "loadout": False}
 ABLATION = [
     ("v0 first stat set, single-target DPS", {**OFF}),
     ("+ all stat sets and minions", {**OFF, "sets": True}),
@@ -52,18 +53,24 @@ ABLATION = [
                                                   "rotation": 3, "burst": True, "fire_forget": True,
                                                   "family": "attr", "off_weapon_factor": 0.25}),
 ]
+_FAM = ABLATION[-1][1]
+ABLATION += [
+    ("+ travel 2s between packs (DoT pays its real time to die)", {**_FAM, "travel": 2.0}),
+    ("+ campaign pack mix, rares finished by the boss skill", {**_FAM, "travel": 2.0, "mix": leveling.MIX_CAMPAIGN,
+                                                               "loadout": True}),
+]
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("stage")
     ap.add_argument("--detail", action="store_true")
-    ap.add_argument("--only", help="run one ablation step by index")
+    ap.add_argument("--only", help="run one ablation step by index (-1 = shipped config)")
     args = ap.parse_args()
     steps = ABLATION if args.only is None else [ABLATION[int(args.only)]]
     classes = list(leveling.BACKTEST)
-    print("| step | passed | MRR | " + " | ".join(classes) + " |")
-    print("|---|---|---|" + "---|" * len(classes))
+    print("| step | top-3 | top-1 | MRR | family MRR (random) | p | " + " | ".join(classes) + " |")
+    print("|---|---|---|---|---|---|" + "---|" * len(classes))
     results = []
     for name, cfg in steps:
         bt = leveling.backtest(args.stage, cfg)
@@ -75,7 +82,9 @@ def main():
                 cells.append("—")
             else:
                 cells.append(f"{r['best_rank'] or '×'}{'' if r['pass'] else '✗'}")
-        print(f"| {name} | {bt['passed']}/{bt['total']} | {bt['mrr']:.2f} | " + " | ".join(cells) + " |")
+        f = bt["fam"]
+        print(f"| {name} | {bt['passed']}/{bt['total']} | {bt['top1']}/{bt['total']} | {bt['mrr']:.2f} | "
+              f"{f['mrr']:.2f} ({f['rand_mrr']:.2f}) | {f['p_value']:.3f} | " + " | ".join(cells) + " |")
     if args.detail:
         name, bt = results[-1]
         print(f"\n### top 5 per class ({name})")

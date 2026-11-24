@@ -208,3 +208,22 @@ def test_leveling_ascendancy_sees_node_implied_config():
     with Engine() as eng:
         res = eng.call("leveling_probe", skills=["Essence Drain"], **L.stage_params("asc1+asc-Lich", "Witch"))
     assert res["results"][0]["ascNodes"] == ["Eldritch Empowerment"]
+
+
+def test_leveling_mix_lets_boss_skill_finish_rares():
+    from pob_agent import leveling as L
+    cfg = {**L.DEFAULT, "mix": {"white": (1.0, 0.5), "rare": (8.0, 0.5, "leader")}, "travel": 0.0}
+    # clear skill alone: rare pack takes 8x as long as a white pack
+    assert abs(L.mix_clear(6, lambda m: m * 1.0, cfg, life=100) - 6 / 4.5) < 1e-9
+    # with a 400 DPS boss skill: clear the whites (1s), then 800 life / 400 DPS on the rare
+    assert abs(L.mix_clear(6, lambda m: m * 1.0, {**cfg, "boss_dps": 400}, life=100) - 3.0) < 1e-9
+
+
+def test_leveling_answer_key_is_frozen():
+    # the backtest answer key was frozen on 2026-11-24 (research note §6); changing it invalidates every
+    # number logged against it. Add new labels as a separate held-out set instead.
+    import hashlib
+    import json
+    from pob_agent import leveling as L
+    key = json.dumps([L.BACKTEST, L.NEGATIVE], sort_keys=True).encode()
+    assert hashlib.sha256(key).hexdigest()[:16] == "d84c824a64111d4b"

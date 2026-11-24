@@ -25,7 +25,9 @@ CACHE = Path(__file__).resolve().parents[2] / "data" / "results" / "leveling_cac
 # skills with no gem tier in PoB data that a stage still allows (talisman forms grant them)
 EXTRA_SKILLS = ["Shred", "Maul"]
 
-# community leveling picks (research note §1); a class passes when one of its clear picks ranks top 3
+# community leveling picks (research note §1); a class passes when one of its clear picks ranks top 3.
+# FROZEN 2026-11-24: tests/test_smoke.py pins a hash of this table. Do not widen it to make a class pass; new
+# labels go into a separate held-out table and are scored once.
 BACKTEST = {
     "Witch": {"clear": ["Essence Drain", "Contagion"], "boss": ["Bonestorm", "Essence Drain"]},
     "Sorceress": {"clear": ["Essence Drain", "Contagion", "Ember Fusillade"], "boss": ["Essence Drain"]},
@@ -45,9 +47,18 @@ NEGATIVE = {"Witch": ["Rapid Shot", "Galvanic Shards", "Living Bomb"]}
 # skills whose clear comes from spreading on death (PoB cannot see the spread)
 SPREAD = {"Contagion"}
 
+RARITY_LIFE = {"white": 1.0, "magic": 2.48, "rare": 8.0}
+# campaign pack mix by count (an assumption, not measured): whites, all-magic packs, rare-led packs
+MIX_CAMPAIGN = {"white": (1.0, 0.6), "magic": (RARITY_LIFE["magic"], 0.3), "rare": (RARITY_LIFE["rare"], 0.1, "leader")}
 DEFAULT = {"movement_factor": 0.2, "family": "attr", "area_default": 1.5, "fire_forget": True, "burst": True, "burst_rate": 1.0, "rotation": 3, "max_rate": 1.5, "caster_family": True, "setup": True, "setup_factor": 0.5, "class_weapon": True, "off_weapon_factor": 0.25, "no_conditional": True, "attr_pool": True, "pairs": True, "sets": True, "minion_cap": 3, "attrs": True, "attr_per_point": 5.0, "point_cost": 0.04,
            "clear": True, "pack": 6, "density": 0.3, "pierce_cap": 5, "mana": False, "mana_uses": 8,
-           "clear_weight": 1.0}
+           "clear_weight": 1.0,
+           # pack mix by count: (monster life multiplier, share of packs). Rarity life multipliers are the
+           # hidden MonsterMagic2 / MonsterRare2 mods (poe2wiki): magic 148% more, rare 700% more.
+           "mix": MIX_CAMPAIGN, "loadout": True,
+           # seconds walking between packs; a fire-and-forget DoT keeps ticking during it (2-5s backtest alike)
+           "travel": 2.0}
+WHITE_ONLY = {"mix": {"white": (1.0, 1.0)}, "loadout": False}
 
 
 # collection variants: a stage key may carry a suffix that changes how the engine builds each skill
@@ -160,6 +171,26 @@ def _targets(v: dict, cfg: dict, types: set | None = None) -> float:
     return max(t_area, t_proj, 1.0)
 
 
+def mix_clear(targets: float, pack_time, cfg: dict, life: float = 0.0) -> float:
+    """Monsters per second over a mix of packs: total monsters / total time, packs weighted by count.
+    `pack_time(mult)` is the time for the ranked skill to clear a pack whose monsters have `mult` x white life.
+    Mix entries are (life mult, share) or (life mult, share, "leader") for a pack of whites led by one tough
+    monster. With cfg["boss_dps"] set (the class's boss skill), tough monsters may be finished with that skill
+    instead: the leveling loadout is a clear skill plus a single-target skill."""
+    boss = cfg.get("boss_dps") or 0
+    n = t = 0.0
+    for e in cfg["mix"].values():
+        mult, share = e[0], e[1]
+        leader = len(e) > 2 and e[2] == "leader"
+        own = pack_time(mult)
+        if boss and life and mult > 1:
+            alt = (pack_time(1.0) + mult * life / boss) if leader else targets * mult * life / boss
+            own = min(own, alt + cfg.get("swap_time", 0.0))
+        n += share * targets
+        t += share * (own + cfg["travel"])
+    return n / t if t else 0.0
+
+
 def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
     """Single-target DPS, clear rate and penalties for one probed skill."""
     vs = r.get("variants") or []
@@ -207,28 +238,38 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
         targets = cfg["pack"]
     if "Minion" in types:
         targets = min(cfg["pack"], min(v0.get("ActiveMinionLimit") or 1, cfg["minion_cap"]))
-    speed = ref.get("Speed") or 1
+    speed0 = ref.get("Speed") or 1
     per_target = st / max(targets, 1) if "Minion" in types else st
-    kill_time = max(life / per_target, 1 / speed)
     uses = ref.get("StoredUses") or 0
-    if "Cooldown" in types and r["skill"] not in SPREAD:
-        hit_dmg = ref.get("AverageDamage") or ref.get("AverageHit") or (st / speed)
-        need = math.ceil(life / hit_dmg) if hit_dmg > 0 else 99
-        if cfg["burst"] and uses >= need:
-            # stored uses cover a pack: thrown back to back, the cooldown refills between packs
-            kill_time = need / cfg["burst_rate"]
-        elif cfg["rotation"] > 1:
-            # otherwise cooldown skills are used in rotation with others of the same kind
-            speed = min(speed * cfg["rotation"], cfg["max_rate"])
-            kill_time = max(life / per_target, 1 / speed)
+
+    def kill(hp):
+        """Seconds the player spends on a pack whose monsters have `hp` life, and the use rate."""
+        speed = speed0
+        t = max(hp / per_target, 1 / speed)
+        if "Cooldown" in types and r["skill"] not in SPREAD:
+            hit_dmg = ref.get("AverageDamage") or ref.get("AverageHit") or (st / speed)
+            need = math.ceil(hp / hit_dmg) if hit_dmg > 0 else 99
+            if cfg["burst"] and uses >= need:
+                # stored uses cover a pack: thrown back to back, the cooldown refills between packs
+                t = need / cfg["burst_rate"]
+            elif cfg["rotation"] > 1:
+                # otherwise cooldown skills are used in rotation with others of the same kind
+                speed = min(speed * cfg["rotation"], cfg["max_rate"])
+                t = max(hp / per_target, 1 / speed)
+        if cfg["fire_forget"] and dot and "Minion" not in types:
+            # a DoT that kills within its duration does not hold the player: cast, move on. The pack still
+            # takes hp / DoT DPS to die; only the part of that overlapping the walk to the next pack is free.
+            dur = dot.get("Duration") or 0
+            ddps = dot.get("dps") or 0
+            if dur and ddps * dur >= hp:
+                t = min(t, max(1 / speed, hp / ddps - cfg["travel"]))
+        return t, speed
+
+    kill_time, speed = kill(life)
     m["stored_uses"] = uses
-    if cfg["fire_forget"] and dot and not "Minion" in types:
-        # a DoT that kills within its duration does not hold the player: cast, move on
-        dur = dot.get("Duration") or 0
-        if dur and (dot.get("dps") or 0) * dur >= life:
-            kill_time = min(kill_time, 1 / speed)
     m["dot_duration"] = (dot.get("Duration") or 0) if dot else 0
-    m.update(targets=targets, kill_time=kill_time, clear=targets / kill_time, life=life, speed=speed)
+    clear = mix_clear(targets, lambda mult: kill(life * mult)[0], cfg, life)
+    m.update(targets=targets, kill_time=kill_time, clear=clear, life=life, speed=speed)
 
     # mana: uses per full pool
     cost = v0.get("ManaCost") or 0
@@ -271,14 +312,18 @@ def pair_metrics(spreader: dict, dotter: dict, cfg: dict) -> dict | None:
     if not spreader or not dotter or not dotter.get("dot") or "Chaos" not in dotter["types"]:
         return None
     dps = spreader["dot"] + dotter["dot"]
-    # Contagion is cast once per pack (it has a cooldown); the carried skill sets the pace
-    kill_time = max(spreader["life"] / dps, 1 / dotter["speed"])
-    if cfg["fire_forget"] and dotter.get("dot_duration") and dps * dotter["dot_duration"] >= spreader["life"]:
-        kill_time = 1 / dotter["speed"]
-    clear = cfg["pack"] / kill_time
+
+    def kill(hp):
+        # Contagion is cast once per pack (it has a cooldown); the carried skill sets the pace
+        if cfg["fire_forget"] and dotter.get("dot_duration") and dps * dotter["dot_duration"] >= hp:
+            return max(1 / dotter["speed"], hp / dps - cfg["travel"])
+        return max(hp / dps, 1 / dotter["speed"])
+    kill_time = kill(spreader["life"])
+    clear = mix_clear(cfg["pack"], lambda mult: kill(spreader["life"] * mult), cfg, spreader["life"])
     score = (clear * min(spreader["attr_factor"], dotter["attr_factor"]) * dotter.get("weapon_factor", 1.0)
              * spreader.get("weapon_factor", 1.0) * dotter.get("setup_factor", 1.0))
     return {"skill": f"{spreader['skill']} + {dotter['skill']}", "members": [spreader["skill"], dotter["skill"]],
+            "off_weapon": bool(spreader.get("off_weapon") or dotter.get("off_weapon")),
             "st": dotter["st"], "clear": clear, "score": score, "targets": cfg["pack"], "kill_time": kill_time,
             "attr_points": max(spreader["attr_points"], dotter["attr_points"]), "weapon": None, "types": set(),
             "asc_nodes": dotter.get("asc_nodes")}
@@ -291,6 +336,10 @@ def rank(stage: str, cls: str, cfg: dict | None = None, data: dict | None = None
     cfg = {**DEFAULT, **(cfg or {})}
     stages = stage.split(",")
     datas = [data] if data is not None else [load(st, cls) for st in stages]
+    if cfg.get("loadout") and data is None and len(cfg["mix"]) > 1:
+        # tough monsters can be left to the class's best boss skill (raw DPS of the top boss pick)
+        top = rank_boss(stage, cls, {**cfg, "loadout": False})
+        cfg = {**cfg, "boss_dps": top[0]["st"] if top else 0}
     per = [{m["skill"]: m for m in (metrics(r, cfg, cls) for r in d.values()) if m} for d in datas]
     solo = {}
     for p in per:
@@ -335,9 +384,25 @@ def backtest_boss(stage: str, cfg: dict | None = None) -> dict:
     return out
 
 
-def backtest(stage: str, cfg: dict | None = None, top: int = 3, classes=None) -> dict:
-    """Per class: best rank of a community clear pick; pass if within `top`; negatives must not be #1."""
-    out = {"classes": {}, "passed": 0, "total": 0, "mrr": 0.0}
+def _random_best(n: int, k: int) -> dict:
+    """Best rank of k accepted items among n under a uniformly random order: P(top1), P(top3), E[1/rank]."""
+    if n <= 0 or k <= 0:
+        return {"top1": 0.0, "top3": 0.0, "rr": 0.0, "dist": []}
+    # P(best > r) = C(n-k, r) / C(n, r)
+    surv = [math.comb(n - k, r) / math.comb(n, r) for r in range(n + 1)]
+    dist = [surv[r - 1] - surv[r] for r in range(1, n + 1)]
+    return {"top1": dist[0], "top3": sum(dist[:3]), "rr": sum(p / r for r, p in enumerate(dist, 1)), "dist": dist}
+
+
+def backtest(stage: str, cfg: dict | None = None, top: int = 3, classes=None, perms: int = 20000) -> dict:
+    """Per class: best rank of a community clear pick; pass if within `top`; negatives must not be #1.
+
+    Also scores the rank within the class family (off-family rows dropped) against a uniformly random
+    within-family order: expected top-1 / top-3 / MRR, and a permutation p-value for the observed family MRR."""
+    import random
+    out = {"classes": {}, "passed": 0, "total": 0, "mrr": 0.0, "top1": 0,
+           "fam": {"top1": 0, "top3": 0, "mrr": 0.0, "rand_top1": 0.0, "rand_top3": 0.0, "rand_mrr": 0.0}}
+    dists = []
     for cls, exp in BACKTEST.items():
         if classes and cls not in classes:
             continue
@@ -345,18 +410,59 @@ def backtest(stage: str, cfg: dict | None = None, top: int = 3, classes=None) ->
             continue
         rows = rank(stage, cls, cfg)
         names = [m["skill"] for m in rows]
+
+        def hit(m):
+            return any(s in exp["clear"] for s in (m.get("members") or [m["skill"]]))
         ranks = {}
         for i, m in enumerate(rows, 1):
             for s in m.get("members") or [m["skill"]]:
                 if s in exp["clear"] and s not in ranks:
                     ranks[s] = i
         best = min(ranks.values()) if ranks else None
+        fam = [m for m in rows if not m.get("off_weapon")]
+        fam_best = next((i for i, m in enumerate(fam, 1) if hit(m)), None)
+        rnd = _random_best(len(fam), sum(1 for m in fam if hit(m)))
+        dists.append(rnd["dist"])
         neg = [s for s in NEGATIVE.get(cls, []) if names and names[0] == s]
         ok = best is not None and best <= top and not neg
-        out["classes"][cls] = {"best_rank": best, "ranks": ranks, "top": names[:5], "negative_top": neg, "pass": ok}
+        out["classes"][cls] = {"best_rank": best, "ranks": ranks, "top": names[:5], "negative_top": neg, "pass": ok,
+                               "fam_rank": fam_best, "fam_size": len(fam), "fam_hits": sum(1 for m in fam if hit(m)),
+                               "rand_top3": rnd["top3"]}
         out["total"] += 1
         out["passed"] += ok
+        out["top1"] += best == 1
         out["mrr"] += (1 / best) if best else 0
+        f = out["fam"]
+        f["top1"] += fam_best == 1
+        f["top3"] += bool(fam_best and fam_best <= 3)
+        f["mrr"] += (1 / fam_best) if fam_best else 0
+        f["rand_top1"] += rnd["top1"]
+        f["rand_top3"] += rnd["top3"]
+        f["rand_mrr"] += rnd["rr"]
     if out["total"]:
-        out["mrr"] /= out["total"]
+        n = out["total"]
+        out["mrr"] /= n
+        out["fam"]["mrr"] /= n
+        out["fam"]["rand_mrr"] /= n
+        # permutation test: how often a random within-family order reaches the observed family MRR
+        rng = random.Random(0)
+        obs = out["fam"]["mrr"] - 1e-12
+        cum = []
+        for d in dists:
+            c, acc = [], 0.0
+            for p_ in d:
+                acc += p_
+                c.append(acc)
+            cum.append(c)
+        hits = 0
+        for _ in range(perms):
+            tot = 0.0
+            for c in cum:
+                if not c:
+                    continue
+                u = rng.random()
+                r = next((i for i, v in enumerate(c, 1) if u <= v), None)
+                tot += 1 / r if r else 0
+            hits += tot / n >= obs
+        out["fam"]["p_value"] = hits / perms
     return out

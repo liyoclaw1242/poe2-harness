@@ -402,8 +402,9 @@ def render_leveling(rows, cls, stage, top, boss=None):
           f"(skill tier <= {st['maxSkillTier']}), {st['supports']} supports of tier <= {st['maxSupportTier']}, "
           f"{st['treePoints']} passive points from the {cls} start, "
           + (f"{st['ascPoints']} ascendancy points" if st.get("ascPoints") else "no ascendancy"))
-    print("\n| # | skill | clear (packs/s x6) | single target DPS | monsters per use | time per pack | notes |")
-    print("|---|---|---|---|---|---|---|")
+    print("\n| # | skill | clear (monsters/s) | white packs only | single target DPS | monsters per use | "
+          "time per pack | notes |")
+    print("|---|---|---|---|---|---|---|---|")
     for i, m in enumerate(rows[:top], 1):
         notes = []
         if m.get("members"):
@@ -418,7 +419,9 @@ def render_leveling(rows, cls, stage, top, boss=None):
             notes.append("ascendancy: " + ", ".join(m["asc_nodes"]))
         if m.get("stored_uses") and m.get("stored_uses") > 1:
             notes.append(f"{m['stored_uses']:.0f} stored uses per pack")
-        print(f"| {i} | {m['skill']} | {m['clear']:.2f} | {fmt(m['st'])} | {m['targets']:.1f} | "
+        mx = m.get("clear_mixed")
+        mxs = f"{mx:.2f}" if mx is not None else "—"
+        print(f"| {i} | {m['skill']} | {m['clear']:.2f} | {mxs} | {fmt(m['st'])} | {m['targets']:.1f} | "
               f"{m['kill_time']:.2f}s | {'; '.join(notes)} |")
     if boss:
         print("\n### Boss skill (single target)")
@@ -434,9 +437,12 @@ def render_leveling(rows, cls, stage, top, boss=None):
             print(f"| {i} | {m['skill']} | {fmt(m['st'])} | {fmt(m['boss'])} | {'; '.join(notes)} |")
         print("\nboss DPS is measured against a level-matched monster with no boss resistances or armour, so "
               "physical attacks read high next to what a real act boss takes.")
+    print("\nclear: monsters per second over a campaign pack mix (60% white, 30% magic at 2.48x life, 10% rare-led "
+          "with the rare at 8x life, which the boss skill below may finish), with 2s walking between packs. "
+          "Off-family skills are scaled x0.25.")
     print("\nnote: PoB numbers on a plain weapon base with no gear mods against white monsters of the stage level; "
-          "clear = monsters reached per use / time to kill them (no credit for overkill, DoT counted as cast-and-move-"
-          "on when it kills within its duration). Backtested against community leveling picks: see "
+          "no credit for overkill; a DoT that kills within its duration lets the player move on, its time to kill "
+          "overlapping the walk. Backtested against community leveling picks: see "
           "docs/research/2026-11-24-leveling-builds.md §6.")
 
 
@@ -454,6 +460,11 @@ def cmd_leveling(args):
     cfg = {"off_weapon_factor": args.off_weapon}
     rows = leveling.rank(",".join(stages), args.cls, cfg)
     boss = leveling.rank_boss(",".join(stages), args.cls, cfg)
+    # same skills on white packs only, for comparison with the campaign-mix ranking
+    mixed = {m["skill"]: m["clear"] for m in
+             leveling.rank(",".join(stages), args.cls, {**cfg, **leveling.WHITE_ONLY})}
+    for m in rows:
+        m["clear_mixed"] = mixed.get(m["skill"])
 
     def plain(ms):
         return [{k: (sorted(v) if isinstance(v, set) else v) for k, v in m.items()} for m in ms[:args.top]]
