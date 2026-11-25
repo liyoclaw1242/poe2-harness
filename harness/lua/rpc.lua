@@ -463,10 +463,14 @@ local function templateWeapon(weaponType, maxLevel)
 	local best, bestLevel
 	local wantType, wantSub = weaponType, nil
 	if weaponType == "Quarterstaff" then wantType, wantSub = "Staff", "Warstaff" end
+	-- shield skills (Shield Wall, Shield Charge) need an armour shield, which is not a weapon base
+	local shield = weaponType == "Armoured Shield"
+	if shield then wantType = "Shield" end
 	for name, base in pairs(data.itemBases) do
 		if base.type == wantType and (not wantSub or base.subType == wantSub)
 			and not (wantType == "Staff" and not wantSub and base.subType == "Warstaff")
-			and not base.hidden and base.weapon then
+			and not (shield and not (base.subType or ""):find("Armour"))
+			and not base.hidden and (base.weapon or shield) then
 			local lvl = base.req and base.req.level or 1
 			if lvl <= maxLevel and (not bestLevel or lvl > bestLevel) then
 				best, bestLevel = name, lvl
@@ -1381,6 +1385,24 @@ function commands.skill_gates(req)
 		end
 	end
 	return { results = out }
+end
+
+-- The loaded build's passive tree: allocated notables/keystones (tree and ascendancy) and point counts.
+function commands.tree_nodes()
+	local tree, asc, points = {}, {}, 0
+	for _, node in pairs(build.spec.allocNodes) do
+		if node.type ~= "ClassStart" and node.type ~= "AscendClassStart" then
+			if node.ascendancyName then
+				if node.type == "Notable" then asc[#asc + 1] = node.dn end
+			else
+				points = points + 1
+				if node.type == "Notable" or node.type == "Keystone" then tree[#tree + 1] = node.dn end
+			end
+		end
+	end
+	table.sort(tree); table.sort(asc)
+	return { className = build.spec.curClassName, ascendancy = build.spec.curAscendClassName,
+		level = build.characterLevel, mainSkill = mainSkillInfo(), notables = tree, ascNotables = asc, points = points }
 end
 
 function commands.ramp(req)

@@ -20,6 +20,18 @@ Scoring, registered 2026-11-25 before the first run (switch-readiness checklist,
   S1 never early: the guide does not switch before our gate (numeric: guide level >= gate level - 3; else
   guide act >= our act).
   S2 same act: guide act == our act. Baseline for S2: "available from Act 1" for every target.
+
+Scoring, registered 2026-11-25 before the first run (target vs bridge, `bridge.compare`, free tree):
+  scorable entries: as for the switch checklist, and the target appears in the class-level probes.
+  For each stage (act1 12, pre_asc1 24, asc1 32, asc2 40) with class-level data: the guide plays the target
+  at that stage iff stage level >= guide switch level (numeric) or >= the first level of the named act
+  (Act 1 1, Act 2 16, Act 3 29, Act 4 41, Interludes 51, maps 65).
+  Rule A (gate only): play the target iff its gate is open. Rule B (gate + ratio): iff the gate is open and the
+  target clears at least as fast as the best bridge (ratio >= 1).
+  Report agreement of A and B with the guide over all (entry, stage) pairs; B is useful only if it beats A.
+
+Check, registered 2026-11-25 before running (bridge on a target build's tree): for each target build tried, the
+class's pre_asc1 leveling pick (leveling.BACKTEST) stays in the top 3 of the pre_asc1 ranking on that tree.
 """
 M = "https://maxroll.gg/poe2/build-guides/"
 V = "https://www.poe-vault.com/poe2/"

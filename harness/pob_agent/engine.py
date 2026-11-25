@@ -34,8 +34,10 @@ def find_luajit() -> str:
 class Engine:
     """One headless PoB process. Use as a context manager."""
 
-    def __init__(self, verbose: bool = False):
+    def __init__(self, verbose: bool = False, pob_src: Path | str | None = None):
         self.verbose = verbose
+        # another PoB-PoE2 checkout's src/ (e.g. the previous patch) for patch diffs
+        self.pob_src = Path(pob_src) if pob_src else POB_SRC
         self.proc: subprocess.Popen | None = None
         self._next_id = 1
         self.version: str | None = None
@@ -48,11 +50,11 @@ class Engine:
         self.close()
 
     def start(self) -> None:
-        if not (POB_SRC / "HeadlessWrapper.lua").exists():
-            raise EngineError(f"PoB-PoE2 source not found at {POB_SRC}; run scripts/setup.sh")
+        if not (self.pob_src / "HeadlessWrapper.lua").exists():
+            raise EngineError(f"PoB-PoE2 source not found at {self.pob_src}; run scripts/setup.sh")
         self.proc = subprocess.Popen(
             [find_luajit(), str(LUA_DIR / "rpc.lua")],
-            cwd=POB_SRC,
+            cwd=self.pob_src,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=None if self.verbose else subprocess.DEVNULL,

@@ -268,3 +268,11 @@ def test_switch_gates_from_game_data():
     assert w["off_class"] and "Armoured Shield" in w["detail"]
     t = switch.gates("Supporting Fire", "Mercenary")
     assert t["gates"][0]["node"] == "Unleash Hell!"
+
+
+def test_gate_diff_same_checkout_is_empty_and_respec_gold():
+    from pob_agent import bridge, patchdiff
+    from pob_agent.engine import POB_SRC
+    r = patchdiff.gate_diff(POB_SRC, POB_SRC, ["Essence Drain", "Shield Wall"])
+    assert r["changes"] == []
+    assert bridge.respec_gold(1) == 15 and bridge.respec_gold(24) == 344

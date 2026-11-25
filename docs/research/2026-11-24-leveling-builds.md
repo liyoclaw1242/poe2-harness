@@ -480,3 +480,51 @@ The three misses all switch later than the gate, for reasons the gates do not co
 - poe-vault Ice Nova in Act 2: waits for level-5 gems.
 
 The gate is the earliest point; whether to switch then is a build decision.
+
+## Target vs bridge, bridge on the target tree, patch tie-in (2026-11-25)
+
+### Fixes found on the way
+
+- Shield Wall and Shield Charge probed 0 DPS: the weapon template had no shield. `templateWeapon` now builds an
+  armour shield. Shockwave Totem probed 0 DPS: "Any Martial Weapon" now resolves to the class's martial weapon.
+  act1 and pre_asc1 caches were re-probed for these skills. The backtests did not move: pre_asc1 8/8 in top 5,
+  4 at #1, MRR 0.69, p 0.015; act1 MRR 0.73; second source 0.83.
+
+### Target vs bridge (`bridge`, free tree)
+
+For each stage the target skill, as played (no family factor), is compared with the best leveling skill
+probed the same way. Scoring was registered in `checkpoint_key.py` before the run: the guide plays the target
+at a stage iff the stage level is at or past its switch point. Rule A plays the target iff our gate is open;
+rule B also needs target clear >= bridge clear.
+
+Disclosure: a syntax check of the scoring script printed two rows from partly collected data. The rules were
+already written; nothing was changed after it.
+
+| rule | agreement with guides (44 entry-stage pairs, 11 builds) |
+|---|---|
+| always play the target | 36/44 |
+| A: gate only | **40/44** |
+| B: gate and ratio >= 1 | 14/44 |
+
+Rule B is worse than doing nothing. Guides switch as soon as the target is usable, even where our ratio puts it
+at x0.2–x0.9 of the bridge (Bleed Rake x0.19, Ice Strike x0.37, Arc x0.55–0.73). Either the guides take a
+slower skill to avoid a second respec and gem budget, or the model underrates targets on a leveling tree
+without their supports; this data cannot separate the two. `use_target` now follows rule A; the ratio is
+shown as information only.
+
+### Bridge on the target build's tree (`bridge --build`)
+
+`register_target` stores a build's notables; the class is re-probed with the tree restricted to them, and the
+free-tree bridge's notables off that path are priced with PoB's `goldRespecPrices`. Sample (Twister Gemling
+Legionnaire): free tree act1 x0.87 (10 points, 1,280 gold to respec), pre_asc1 x1.19 (25 points, 8,600 gold);
+on the target tree x1.15 and x1.49.
+
+Check registered before running: the class's pre_asc1 leveling pick stays in the top 3 on the target tree.
+Passed for both builds tried (Mercenary: Explosive Grenade #2; Witch on the Werewolf Lich tree: Contagion +
+Essence Drain #2). Two builds is a smoke test, not an evaluation.
+
+### Patch tie-in (`gate-diff`)
+
+`Engine(pob_src=...)` runs another PoB checkout; `gate_diff` compares each skill's tier, weapon types, spirit
+cost and ascendancy grant between two checkouts. Same-checkout diff is empty (test). A dry run against an
+older PoB-PoE2 has not been done: it needs a download.

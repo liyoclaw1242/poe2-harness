@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import analysis, checkpoints, decompose, switch, enablers, scan, scenario, sources, thresholds, trade
+from . import analysis, bridge, checkpoints, decompose, patchdiff, switch, enablers, scan, scenario, sources, thresholds, trade
 from .engine import Engine, EngineError
 
 ENV_STAMP = "PoE2 | PoB-PoE2 {ver} | values are PoB calculations, not in-game measurements"
@@ -585,6 +585,80 @@ def cmd_switch(args):
     emit(args, switch.gates(args.skill, args.cls), render_switch)
 
 
+def render_bridge(r):
+    g = r["gate"]
+    when = f"level {g['playable_from']} ({g['act']})" if g.get("playable_from") else "not from campaign drops"
+    print(f"## {r['target']} ({r['class']}): target vs bridge per stage — target usable from {when}")
+    for label, block in (("free tree", r["free"]), ("target build's tree (no respec)", r.get("on_path"))):
+        if not block:
+            continue
+        print(f"\n### Bridge on the {label}")
+        print("\n| stage | level | best bridge | bridge clear | target clear | target / bridge | respec to target |"
+              "\n|---|---|---|---|---|---|---|")
+        for s in block["stages"]:
+            if s.get("missing"):
+                print(f"| {s['stage']} | {s['level']} | (not collected) | | | | |")
+                continue
+            tc = f"{s['target_clear']:.2f}" if s.get("target_clear") is not None else "—"
+            ratio = ("not available yet" if s["gated"] else f"x{s['ratio']:.2f}" if s.get("ratio") else "—")
+            gold = (f"{s['off_path_points']} pts, {s['respec_gold']:,} gold" if s.get("off_path_points") is not None
+                    else "—")
+            print(f"| {s['stage']} | {s['level']} | {s['bridge']} | {s['bridge_clear']:.2f} | {tc} | {ratio} | {gold} |")
+    print("\nclear: monsters per second (see `leveling`). target / bridge > 1: the target already clears faster "
+          "than the best leveling skill at that stage. Switch when the target is available: build guides do, even where "
+          "this ratio is below 1 (matched 40/44 stage calls vs 14/44 when also requiring ratio >= 1). Both are probed the same way, so shared model errors "
+          "partly cancel; minions, totems and poison are still not modelled. respec: passive points the "
+          "free-tree bridge spends on notables outside the target build, times PoB's refund price at that level.")
+
+
+def cmd_bridge(args):
+    """Target skill vs the best leveling skill per stage, on the free tree and the target build's tree."""
+    from . import leveling
+    target, cls, nodes = args.skill, args.cls, None
+    if args.build:
+        with Engine(args.verbose) as eng:
+            load(eng, args.build)
+            t = eng.call("tree_nodes")
+        cls = cls or t["className"]
+        target = target or (t.get("mainSkill") or {}).get("name")
+        nodes = t["notables"]
+    if not target or not cls:
+        raise SystemExit("pass --skill and --class, or --build")
+    stages = args.stages.split(",")
+    sfx = [""] + ([f"+{leveling.register_target(nodes)}"] if nodes else [])
+    for st in stages:
+        for x in sfx:
+            for v in (st + x, st + "+clearsup" + x):
+                if not leveling.load(v, cls):
+                    print(f"collecting {v} for {cls} (about 8 minutes)...", file=sys.stderr)
+                    leveling.collect(v, [cls], verbose=args.verbose)
+    emit(args, bridge.plan(target, cls, nodes, stages), render_bridge)
+
+
+def render_gate_diff(r):
+    print(f"## Gate changes: PoB {r['old_version']} -> {r['new_version']} ({len(r['changes'])} skills)")
+    if not r["changes"]:
+        print("\nno gate changed")
+        return
+    print("\n| skill | change | detail |\n|---|---|---|")
+    for c in r["changes"]:
+        if c["change"] == "changed":
+            parts = [f"{k}: {a} -> {b}" for k, (a, b) in c["fields"].items()]
+            if c.get("level"):
+                parts.append(f"usable from ~level {c['level'][0]} -> {c['level'][1]}")
+            detail = "; ".join(parts)
+        else:
+            detail = str(c.get("new") or c.get("old"))
+        print(f"| {c['skill']} | {c['change']} | {detail} |")
+
+
+def cmd_gate_diff(args):
+    """Switch-readiness gates that moved between two PoB-PoE2 checkouts (patch diff)."""
+    from .engine import POB_SRC
+    skills = args.skills.split(",") if args.skills else None
+    emit(args, patchdiff.gate_diff(args.old, args.new or POB_SRC, skills), render_gate_diff)
+
+
 def cmd_profile_batch(args):
     """Load many builds; record ascendancy, main skill, DPS/EHP, dewatered ratio, ramp."""
     files = sorted(Path(args.dir).glob("*.code")) + sorted(Path(args.dir).glob("*.xml"))
@@ -792,6 +866,17 @@ def main(argv=None):
     p.add_argument("--skill", required=True)
     p.add_argument("--class", dest="cls", required=True)
     p.set_defaults(fn=cmd_switch)
+    p = sub.add_parser("bridge", help="target skill vs the best leveling skill per stage, with respec cost")
+    p.add_argument("--skill", help="target skill (default: the build's main skill)")
+    p.add_argument("--class", dest="cls")
+    p.add_argument("--build", help="target build (PoB code, file or URL): its notables limit the bridge's tree")
+    p.add_argument("--stages", default="act1,pre_asc1", help="comma list of stages (asc1, asc2 also available)")
+    p.set_defaults(fn=cmd_bridge)
+    p = sub.add_parser("gate-diff", help="patch diff: switch-readiness gates that moved between two PoB checkouts")
+    p.add_argument("--old", required=True, help="src/ of the older PoB-PoE2 checkout")
+    p.add_argument("--new", help="src/ of the newer checkout (default: the vendored one)")
+    p.add_argument("--skills", help="comma list (default: every active skill)")
+    p.set_defaults(fn=cmd_gate_diff)
     p = sub.add_parser("campaign", help="strongest pre-ascendancy skills per class start at a campaign stage")
     p.add_argument("--stage", choices=list(scan.STAGES), default="pre_asc1")
     p.add_argument("--top", type=int, default=15, help="skills taken to the per-class tree step")

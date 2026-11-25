@@ -153,8 +153,27 @@ WHITE_ONLY = {"mix": {"white": (1.0, 1.0)}, "loadout": False}
 
 # collection variants: a stage key may carry a suffix that changes how the engine builds each skill
 VARIANTS = {"clearsup": {"supportObjective": "clear"}}
-# "target:<file>" restricts the tree to the notables of a target build (a no-respec leveling path)
+# "target<id>" restricts the tree to the notables of a target build (a no-respec leveling path)
 TARGETS: dict[str, list[str]] = {}
+
+
+def register_target(notables: list[str]) -> str:
+    """Stage suffix for a tree restricted to these notables; persisted so cached probes stay readable."""
+    import hashlib
+    names = sorted(set(notables))
+    key = "target" + hashlib.sha256(json.dumps(names).encode()).hexdigest()[:10]
+    TARGETS[key] = names
+    f = CACHE / "targets" / f"{key}.json"
+    if not f.exists():
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(json.dumps(names))
+    return key
+
+
+def _target_nodes(key: str) -> list[str]:
+    if key not in TARGETS:
+        TARGETS[key] = json.loads((CACHE / "targets" / f"{key}.json").read_text())
+    return TARGETS[key]
 
 
 def stage_params(stage: str, cls: str | None = None) -> dict:
@@ -166,7 +185,7 @@ def stage_params(stage: str, cls: str | None = None) -> dict:
         elif part.startswith("asc-"):
             p["ascendancy"] = part[4:]
         elif part.startswith("target"):
-            p["targetNodes"] = TARGETS[part]
+            p["targetNodes"] = _target_nodes(part)
     p["maxPath"] = p["treePoints"]
     if cls:
         p["class"] = cls
