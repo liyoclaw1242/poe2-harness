@@ -441,3 +441,42 @@ The damage-greedy order does not reproduce guide orders. What the per-entry outp
 - A recommended order would need a survivability or utility score, which is not built.
 - The key is spent for order and is not tuned on. Its switch fields (bridge, switch level, gate) are still unscored,
   for the switch-readiness checklist.
+
+### Round: switch-readiness checklist, scored once (2026-11-25)
+
+**Tool.** `switch --skill X --class C` reads each gate from game data. Nothing is fitted.
+
+| gate | how it is read |
+|---|---|
+| skill gem | The tier is the uncut gem level the skill needs. poe2wiki gives the area level where each uncut level drops: L2 at 4, L5 at 15, L10 at 37, L14 at 58. Levels in between are interpolated, and character level is assumed to track area level. |
+| tier 0 | The ascendancy notable whose text grants the skill is named. It counts from the first trial, about level 22. With no granting notable, the skill comes from an item or reward. |
+| weapon | The weapon types the skill accepts, against the class's starting weapon. |
+| attributes | The gem's attribute requirement at the level usable then. |
+| spirit | The reservation is shown; spirit income is not modelled. |
+
+**Scoring.** The switch fields of `CHECKPOINT_KEY` were scored with metrics registered in its docstring before the
+run. 16 entries were scorable. Seven were skipped: three targets come from items or rewards, two are no-switch
+builds, and two give no switch point.
+
+| metric | result |
+|---|---|
+| S1: the guide never switches before our gate | 16/16 |
+| S2: the guide switches in the same act as our gate | 13/16 (a naive "Act 1 for everything" baseline: 6/16) |
+
+Numeric cases land within 3 levels:
+
+| build | our gate | guide switch |
+|---|---|---|
+| Ice Shot | 33 | 31 |
+| Walking Calamity | 53 | 52 |
+| Spiral Volley | 53 | 54 |
+| Shield Wall | 24 | 22 |
+| Arc | 15 | 14 |
+
+The three misses all switch later than the gate, for reasons the gates do not cover:
+
+- Supporting Fire (Tactician) at 36: respec gold and four supports.
+- Whirling Assault in maps: needs a 400+ physical DPS quarterstaff.
+- poe-vault Ice Nova in Act 2: waits for level-5 gems.
+
+The gate is the earliest point; whether to switch then is a build decision.

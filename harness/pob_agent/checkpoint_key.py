@@ -11,6 +11,15 @@ Scoring, registered before the first run (checkpoint order):
   M1 first pick: our 2-point notable == guide_first; baseline 1/k per entry, k = notables affordable at 2 points.
   M2 first two: |our first two notables & guide_first2| / 2; baseline from the same random draw (k candidates).
   Scored once; the key is not tuned on.
+
+Scoring, registered 2026-11-25 before the first run (switch-readiness checklist, `switch.gates`):
+  scorable: the target is a gem with tier >= 1 or granted by a named ascendancy notable, and the guide gives a
+  real switch (not "no switch") with a numeric level or an act ("Act N", "Interludes", "maps"/"early maps").
+  Our act = the act of the gate level (Act 1 1-15, Act 2 16-28, Act 3 29-40, Act 4 41-50, Interludes 51-64,
+  maps 65+). Guide act = act of switch.level if numeric, else the act named in switch.point.
+  S1 never early: the guide does not switch before our gate (numeric: guide level >= gate level - 3; else
+  guide act >= our act).
+  S2 same act: guide act == our act. Baseline for S2: "available from Act 1" for every target.
 """
 M = "https://maxroll.gg/poe2/build-guides/"
 V = "https://www.poe-vault.com/poe2/"

@@ -1321,6 +1321,68 @@ function commands.leveling_probe(req)
 	return { results = res }
 end
 
+-- Facts that gate when a skill becomes usable in the campaign, read from the gem data: skill tier (the uncut
+-- gem level needed), character level per gem level, attribute requirement per gem level, weapon types, spirit
+-- reservation. Duplicate gem names (an item- or ascendancy-granted copy) prefer the tiered gem.
+function commands.skill_gates(req)
+	local out = {}
+	for _, name in ipairs(req.skills or {}) do
+		local best
+		for id, g in pairs(data.gems) do
+			if g.name == name and g.grantedEffect and not g.grantedEffect.support then
+				if not best or ((g.Tier or 0) >= 1 and (best.Tier or 0) < 1) then best = g end
+			end
+		end
+		if not best then
+			out[#out + 1] = { skill = name, error = "gem not found" }
+		else
+			local levels = {}
+			for l = 1, best.naturalMaxLevel or 20 do
+				local lv = best.grantedEffect.levels and best.grantedEffect.levels[l]
+				if lv then
+					local lr = lv.levelRequirement or 0
+					levels[#levels + 1] = { level = l, charLevel = lr,
+						str = calcLib.getGemStatRequirement(lr, best.reqStr, false),
+						dex = calcLib.getGemStatRequirement(lr, best.reqDex, false),
+						int = calcLib.getGemStatRequirement(lr, best.reqInt, false),
+						spirit = lv.spiritReservationFlat }
+				end
+			end
+			-- lowest item level a base of each accepted weapon type needs
+			local weapons = {}
+			for w in (best.weaponRequirements or ""):gmatch("[^,]+") do
+				w = w:gsub("^%s+", ""):gsub("%s+$", "")
+				local lowest
+				for _, base in pairs(data.itemBases) do
+					local t = base.type
+					if (base.weapon or w == "Armoured Shield") and not base.hidden and (t == w or (w == "Quarterstaff" and base.subType == "Warstaff")
+						or (w == "Armoured Shield" and t == "Shield")) then
+						local lvl = base.req and base.req.level or 1
+						if not lowest or lvl < lowest then lowest = lvl end
+					end
+				end
+				weapons[#weapons + 1] = { type = w, minLevel = lowest }
+			end
+			-- tier 0 skills come from an item or a node: name the ascendancy notables whose text grants it
+			local grantedBy = {}
+			if (best.Tier or 0) < 1 then
+				for _, node in pairs(build.spec.tree.nodes) do
+					if node.ascendancyName and node.sd then
+						for _, line in ipairs(node.sd) do
+							if line:find(name, 1, true) and line:lower():find("grant") then
+								grantedBy[#grantedBy + 1] = { ascendancy = node.ascendancyName, node = node.dn }
+							end
+						end
+					end
+				end
+			end
+			out[#out + 1] = { skill = name, tier = best.Tier, gemType = best.gemType, tags = best.tagString,
+				weapon = best.weaponRequirements, weapons = weapons, grantedBy = grantedBy, levels = levels }
+		end
+	end
+	return { results = out }
+end
+
 function commands.ramp(req)
 	local info = mainSkillInfo()
 	if not info or not info.name then error("no main skill") end

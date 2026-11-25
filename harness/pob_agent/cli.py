@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import analysis, checkpoints, decompose, enablers, scan, scenario, sources, thresholds, trade
+from . import analysis, checkpoints, decompose, switch, enablers, scan, scenario, sources, thresholds, trade
 from .engine import Engine, EngineError
 
 ENV_STAMP = "PoE2 | PoB-PoE2 {ver} | values are PoB calculations, not in-game measurements"
@@ -563,6 +563,28 @@ def cmd_checkpoints(args):
     emit(args, r, render_checkpoints)
 
 
+def render_switch(r):
+    if r.get("error"):
+        print(f"{r['skill']}: {r['error']}")
+        return
+    when = (f"usable from about level {r['playable_from']} ({r['act']})" if r.get("playable_from")
+            else "not available from campaign gem drops")
+    print(f"## Switch readiness: {r['skill']} ({r['class']}) — {when}")
+    print("\n| gate | what | from level |\n|---|---|---|")
+    for g in r["gates"]:
+        print(f"| {g['gate']} | {g['detail']} | {g.get('level') or '—'} |")
+    print("\nGates are read from game data: skill tier against poe2wiki's uncut-gem drop table by area level, the "
+          "weapon types the skill accepts, the gem's attribute requirement, spirit reservation. Supports and "
+          "spirit income are not checked. Against 16 frozen guide builds, no guide switched before this level "
+          "and 13 switched in the same act (naive 'Act 1' baseline: 6). Guides switch later when the target "
+          "also needs a respec, supports or a weapon with enough damage.")
+
+
+def cmd_switch(args):
+    """Switch-readiness checklist: when a target skill becomes usable and what gates it."""
+    emit(args, switch.gates(args.skill, args.cls), render_switch)
+
+
 def cmd_profile_batch(args):
     """Load many builds; record ascendancy, main skill, DPS/EHP, dewatered ratio, ramp."""
     files = sorted(Path(args.dir).glob("*.code")) + sorted(Path(args.dir).glob("*.xml"))
@@ -766,6 +788,10 @@ def main(argv=None):
     p.add_argument("--ascendancy", help="only this ascendancy")
     p.add_argument("--stage", choices=list(scan.STAGES), default="asc2", help="character the skill is measured on")
     p.set_defaults(fn=cmd_checkpoints)
+    p = sub.add_parser("switch", help="switch readiness: when a target skill becomes usable and what gates it")
+    p.add_argument("--skill", required=True)
+    p.add_argument("--class", dest="cls", required=True)
+    p.set_defaults(fn=cmd_switch)
     p = sub.add_parser("campaign", help="strongest pre-ascendancy skills per class start at a campaign stage")
     p.add_argument("--stage", choices=list(scan.STAGES), default="pre_asc1")
     p.add_argument("--top", type=int, default=15, help="skills taken to the per-class tree step")

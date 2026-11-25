@@ -257,3 +257,14 @@ def test_checkpoint_key_is_frozen():
     import json
     from pob_agent.checkpoint_key import CHECKPOINT_KEY
     assert hashlib.sha256(json.dumps(CHECKPOINT_KEY, sort_keys=True).encode()).hexdigest()[:16] == "2d9c440b795f9b00"
+
+
+def test_switch_gates_from_game_data():
+    from pob_agent import switch
+    assert switch.level_for_tier(5) == 15 and switch.level_for_tier(10) == 37
+    r = switch.gates("Shield Wall", "Warrior")
+    assert r["act"] == "Act 2"
+    w = next(g for g in r["gates"] if g["gate"] == "weapon")
+    assert w["off_class"] and "Armoured Shield" in w["detail"]
+    t = switch.gates("Supporting Fire", "Mercenary")
+    assert t["gates"][0]["node"] == "Unleash Hell!"
