@@ -477,6 +477,14 @@ local function templateWeapon(weaponType, maxLevel)
 	return best
 end
 
+-- Weapon type a skill is probed with: the first type it accepts. "Any Martial Weapon" has no item base of
+-- its own; the caller names the martial weapon the class would hold (req.martialWeapon).
+local function requiredWeapon(gemData, req)
+	local w = gemData.weaponRequirements:match("^([^,]+)")
+	if w == "Any Martial Weapon" then w = req.martialWeapon or "One Hand Mace" end
+	return w
+end
+
 local function findGemByName(name)
 	for id, g in pairs(data.gems) do
 		if g.name == name then return id, g end
@@ -705,7 +713,7 @@ local function scanOne(gemId, gemData, req)
 	-- weapon for attacks
 	local weaponType
 	if gemData.weaponRequirements then
-		weaponType = gemData.weaponRequirements:match("^([^,]+)")
+		weaponType = requiredWeapon(gemData, req)
 		local baseName = weaponType and templateWeapon(weaponType, req.weaponLevel or 65)
 		if baseName then
 			build.itemsTab:CreateDisplayItemFromRaw("Rarity: RARE\nTemplate Weapon\n" .. baseName .. "\n" .. (req.weaponMods or ""))
@@ -835,7 +843,7 @@ local function setupSkill(gemData, supportIds, req, classId, ascendId)
 		build.configTab.input.conditionShapeshifted = true
 	end
 	if gemData.weaponRequirements then
-		local weaponType = gemData.weaponRequirements:match("^([^,]+)")
+		local weaponType = requiredWeapon(gemData, req)
 		local baseName = weaponType and templateWeapon(weaponType, req.weaponLevel or 65)
 		if baseName then
 			build.itemsTab:CreateDisplayItemFromRaw("Rarity: RARE\nTemplate Weapon\n" .. baseName .. "\n" .. (req.weaponMods or ""))
@@ -859,18 +867,33 @@ local function setupSkill(gemData, supportIds, req, classId, ascendId)
 	return group
 end
 
-local function greedyAscendancy(points)
-	local chosen, spent = {}, 0
+-- fill: spend every point the way a player does (a notable with the small node in front of it, never two
+-- small nodes when a notable fits), taking the notable that helps this skill most even when none does.
+local function greedyAscendancy(points, fill)
+	local chosen, spent, firstCandidates = {}, 0, nil
 	local fastOpts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
 	while spent < points do
 		local calcFunc = build.calcsTab:GetMiscCalculator()
 		local base = fastDps(calcFunc, {}, fastOpts) or skillDps()
 		local best, bestGain, bestCost
-		for _, node in pairs(build.spec.nodes) do
+		local candidates = 0
+		local notableFits = false
+		if fill then
+			for _, node in pairs(build.spec.nodes) do
+				if node.ascendancyName == build.spec.curAscendClassName and not node.alloc and node.path
+					and node.isNotable and #node.path > 0 and spent + #node.path <= points then notableFits = true end
+			end
+		end
+		local ids = {}
+		for id in pairs(build.spec.nodes) do ids[#ids + 1] = id end
+		table.sort(ids)
+		for _, id in ipairs(ids) do
+			local node = build.spec.nodes[id]
 			if node.ascendancyName == build.spec.curAscendClassName and not node.alloc and node.path
-				and not node.isAscendancyStart then
+				and not node.isAscendancyStart and (not notableFits or node.isNotable) then
 				local cost = #node.path
 				if cost > 0 and spent + cost <= points then
+					candidates = candidates + 1
 					local add = {}
 					for _, pn in ipairs(node.path) do add[pn] = true end
 					local ok, o = pcall(calcFunc, { addNodes = add }, false, fastOpts)
@@ -884,16 +907,18 @@ local function greedyAscendancy(points)
 				end
 			end
 		end
-		if not best or bestGain <= 0 then break end
+		firstCandidates = firstCandidates or candidates
+		if not best or (bestGain <= 0 and not fill) then break end
 		for _, pn in ipairs(best.path) do
-			if pn.isNotable or pn == best then chosen[#chosen + 1] = pn.dn end
+			if pn.isNotable then chosen[#chosen + 1] = pn.dn
+			elseif pn == best then chosen[#chosen + 1] = (fill and "small: " or "") .. pn.dn end
 		end
 		build.spec:AllocNode(best)
 		build.spec:BuildAllDependsAndPaths()
 		recalc()
 		spent = spent + bestCost
 	end
-	return chosen, spent
+	return chosen, spent, firstCandidates
 end
 
 function commands.ascendancy_lift(req)
@@ -1177,6 +1202,71 @@ function commands.stage_skills(req)
 	return { skills = out, classes = classes }
 end
 
+-- Config checks gated on a flag an ascendancy node grants (Eldritch Empowerment: "Are you Sacrificing?")
+-- describe what the node does every use; turn them on so the greedy pick sees it.
+local function applyAscendancyFlags()
+	local flags = {}
+	for _, node in pairs(build.spec.nodes) do
+		if node.ascendancyName == build.spec.curAscendClassName then
+			for _, mod in ipairs(node.modList or {}) do
+				if mod.type == "FLAG" then flags[mod.name] = true end
+			end
+		end
+	end
+	for _, opt in ipairs(configOptions) do
+		local f = opt.ifFlag
+		if opt.type == "check" and opt.var and type(f) == "string" and flags[f] then
+			build.configTab.input[opt.var] = true
+		end
+	end
+	recalc()
+end
+
+-- Ascendancy checkpoints: one skill on a class template, ascendancy points spent the way a player does
+-- (notable-first, all points), recording DPS, EHP and the nodes taken at each trial (2/4/6/8 points).
+function commands.ascendancy_checkpoints(req)
+	local gemId, gemData = findGemByName(req.skill or "")
+	if not gemId then error("gem not found: " .. tostring(req.skill)) end
+	local scan = scanOne(gemId, gemData, req)
+	local supportIds = {}
+	for _, sp in ipairs(scan.supports or {}) do
+		local sid = findGemByName(sp.name)
+		if sid then supportIds[#supportIds + 1] = sid end
+	end
+	local rows = {}
+	for classId, class in pairs(build.spec.tree.classes) do
+		for ascendId, asc in pairs(class.classes) do
+			if ascendId ~= 0 and (not req.ascendancies or req.ascendancies[asc.name])
+				and (not req.class or req.class == class.name) then
+				local ok, err = pcall(function()
+					setupSkill(gemData, supportIds, req, classId, ascendId)
+					if req.impliedConditions then applyAscendancyFlags() end
+					local before = skillDps()
+					local ehp0 = num((build.calcsTab.mainOutput or {}).TotalEHP)
+					local steps, spent = {}, 0
+					for _, target in ipairs(req.steps or { 2, 4, 6, 8 }) do
+						local picks, used, cand = greedyAscendancy(target - spent, true)
+						spent = spent + used
+						recalc()
+						steps[#steps + 1] = { points = target, spent = spent, nodes = picks, candidates = cand, dps = skillDps(),
+							ehp = num((build.calcsTab.mainOutput or {}).TotalEHP) }
+					end
+					rows[#rows + 1] = { ascendancy = asc.name, class = class.name, before = before, ehpBefore = ehp0,
+						steps = steps }
+				end)
+				if not ok then rows[#rows + 1] = { ascendancy = asc.name, class = class.name, error = tostring(err) } end
+				collectgarbage("collect")
+			end
+		end
+	end
+	table.sort(rows, function(a, b)
+		local la = a.steps and a.steps[#a.steps] and a.before and a.before > 0 and a.steps[#a.steps].dps / a.before or 0
+		local lb = b.steps and b.steps[#b.steps] and b.before and b.before > 0 and b.steps[#b.steps].dps / b.before or 0
+		return la > lb
+	end)
+	return { skill = req.skill, supports = scan.supports, weaponType = scan.weaponType, ascendancies = rows }
+end
+
 function commands.leveling_probe(req)
 	local classId, ascendId
 	if req.class then
@@ -1204,28 +1294,10 @@ function commands.leveling_probe(req)
 			end
 			local group = setupSkill(gemData, supportIds, req, classId, classId and (ascendId or 0) or nil)
 			group.includeInFullDPS = true
-			if req.impliedConditions and ascendId then
-				-- config checks gated on a flag an ascendancy node grants (Eldritch Empowerment: "Are you
-				-- Sacrificing?") describe what the node does every use; turn them on so the greedy pick sees it
-				local flags = {}
-				for _, node in pairs(build.spec.nodes) do
-					if node.ascendancyName == build.spec.curAscendClassName then
-						for _, mod in ipairs(node.modList or {}) do
-							if mod.type == "FLAG" then flags[mod.name] = true end
-						end
-					end
-				end
-				for _, opt in ipairs(configOptions) do
-					local f = opt.ifFlag
-					if opt.type == "check" and opt.var and type(f) == "string" and flags[f] then
-						build.configTab.input[opt.var] = true
-					end
-				end
-				recalc()
-			end
+			if req.impliedConditions and ascendId then applyAscendancyFlags() end
 			local ascNodes
 			if ascendId and (req.ascPoints or 0) > 0 then
-				ascNodes = greedyAscendancy(req.ascPoints)
+				ascNodes = greedyAscendancy(req.ascPoints, req.ascFill)
 			end
 			local picks, spent
 			if classId and (req.treePoints or 0) > 0 then

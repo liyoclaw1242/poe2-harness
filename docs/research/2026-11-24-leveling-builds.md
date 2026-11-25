@@ -275,3 +275,169 @@ Still open:
 - **Mana and EHP** are next, as displayed vetoes rather than fitted factors.
 - **Independent labels are needed before more tuning.** Sources: asc1 picks for other classes, a second guide
   source, or 0.4 vs 0.5 changes.
+
+### Round: held-out keys, scored once (2026-11-24)
+
+Two new answer keys were frozen before scoring (`HELDOUT_SOURCE2`, `HELDOUT_ASC1`; a test pins their hash). Each was
+scored once with the shipped config. Neither was used for tuning.
+
+| key | n | top-3 | top-1 | MRR | family MRR (random) | p |
+|---|---|---|---|---|---|---|
+| pre_asc1, second guide source | 8 classes | 8/8 | 6/8 | 0.83 | 0.83 (0.58) | 0.018 |
+| asc1 (level 32, 2 ascendancy points) | 19 ascendancies | 8/19 | 3/19 | 0.36 | 0.37 (0.32) | 0.20 |
+
+The pre-ascendancy model holds on an independent source. **At asc1 it is no better than chance.**
+
+Why, from the per-ascendancy output:
+
+- **The ascendancy barely moves the ranking.** Every ascendancy of a class gets nearly the same top 5. Witch's three
+  all show Contagion + ED, Living Bomb, Bonestorm. Monk's two are identical.
+- **Guides pick skills that the ascendancy is built around.** Those are the misses:
+
+  | ascendancy | guide pick | our rank |
+  |---|---|---|
+  | Blood Mage | Spark | 6 |
+  | Stormweaver | Ice Nova | 7 |
+  | Tactician | Galvanic Shards | 21 |
+  | Shaman | Fury of the Mountain | 45 |
+  | Acolyte of Chayula | Staggering Palm | 12 |
+  | Pathfinder | Poisonburst Arrow | 7 |
+  | Ritualist | Spearfield | 7 |
+
+  Two points of ascendancy at level 32 add little DPS in PoB. Guides still pick these skills because they scale with
+  the later ascendancy nodes and gear. Our model scores the level-32 snapshot only.
+- **Hits:** Infernalist and Lich (Contagion + ED, #1), Deadeye (Ice Shot, #1), Witchhunter and Gemling (Explosive
+  Grenade, #2), Titan and Warbringer (Leap Slam, #2), Oracle (Entangle, #3).
+- **Sorceress inherits Witch's list.** The family filter only checks gem colours and the starting weapon, so both
+  classes rank the same Intelligence spells.
+
+Conclusion: do not tune on this key; it is spent. The asc1 output should not be shown as a recommendation without a
+caveat. Candidate fixes need a fresh key: score with the ascendancy's full node set or a later stage (for example
+level 45, 4 points), or rank skills by the ascendancy's own tags.
+
+### Round: asc2 held-out, one tuning round, and a change of direction (2026-11-25)
+
+Changes before the asc2 run:
+
+- **asc1 is ranked per class.** It no longer uses an ascendancy.
+- **asc2 stage facts corrected from 0.5.x guides.** Trial of Chaos, Act 3, about level 38–40:
+
+  | setting | was | now |
+  |---|---|---|
+  | level | 45 | 40 |
+  | gem level | 11 | 10 |
+  | support tier | 4 | 3 |
+
+- **All four ascendancy points are spent, notable-first** (`ascFill`). The greedy pick used to stop at zero gain.
+- **"Any Martial Weapon" skills** are probed with the class weapon. Shockwave Totem had 0 DPS before.
+- **When two variants tie on DPS**, the one with an area is kept.
+
+`HELDOUT_ASC2` was frozen and hash-pinned before collection. It covers 21 ascendancies from maxroll and poe-vault
+0.5.x guides; Smith of Kitava has no current guide and is excluded.
+
+Scored once:
+
+| test | family MRR (random) | p |
+|---|---|---|
+| independent entries, as in earlier rounds | 0.52 (0.38) | 0.023 |
+| class-clustered: one random order per class | 0.52 (0.38) | **0.068** |
+| ascendancy-blind: per-class median across ascendancies | 0.55 (0.38) | 0.039 |
+
+The pass rests on Monk (Storm Wave, ×3) and Witch (Essence Drain, ×3). Huntress, Ranger and Sorceress score below
+random. The ascendancy-blind ranking does as well as the per-ascendancy one, so the ascendancy adds no measurable
+signal.
+
+**Tuning round 1.** The split was pre-registered by class:
+
+- tune half: Witch, Mercenary, Druid, Ranger;
+- check half: Sorceress, Huntress, Monk, Warrior.
+
+| change | result | decision |
+|---|---|---|
+| **DoT bug fix.** A DoT part's combined DPS can include the hit (Vine Arrow Vines: 684, of which 68 is DoT). The DoT part now counts only its DoT. | tune 0.554 → 0.562; check unchanged; no regression | kept |
+| no movement penalty for attack dashes | no change | dropped |
+| melee-strike reach default | no change | dropped |
+| pack cap 8 or 10 | asc2 clustered p falls to about 0.02, but pre_asc1 regresses (p 0.017 → 0.07) | rejected |
+
+A stage-specific pack size would have no source and would be fitted to the key, so it was not tried.
+
+After the round: family MRR 0.525 vs 0.382, clustered p 0.061.
+
+**Direction review (independent).** Ranking every skill by a PoB snapshot is the wrong model after ascendancy:
+
+- Before ascendancy, the decision is which class skill clears fastest now. The model answers that and holds on an
+  independent source.
+- After ascendancy, a player already has a target skill. The questions are:
+  - when that skill becomes playable;
+  - what bridges until then;
+  - what each ascendancy step buys.
+- The asc keys mix two things: the strongest skill now, and the build's identity skill. A correct snapshot model
+  could still fail them.
+- The known gaps form a long tail: minions counted as one body, totems, poison, melee targets, conditional variants,
+  ascendancy-granted skills, and a pack cap that saturates casters.
+
+Decision:
+
+- asc1 and asc2 leveling output is ascendancy-blind and labelled experimental.
+- Per-ascendancy lists are no longer shown.
+- No further tuning on `HELDOUT_ASC2`.
+- Post-ascendancy work moves to target-based tools, in this order:
+  1. ascendancy checkpoints at 2/4/6/8 points;
+  2. a switch-readiness checklist (discrete gates per stage);
+  3. target vs bridge ratio;
+  4. a bridge on the target's tree path, with respec gold;
+  5. a patch-diff re-run of gates and checkpoints.
+
+  Each is validated on a new key of about 15 guide builds, frozen before scoring.
+
+### Round: ascendancy checkpoints, scored once (2026-11-25)
+
+**Tool.** `checkpoints --skill X --class C` puts one skill on a class template at the asc2 stage. It spends two
+points per trial, notable-first, on the node that adds most DPS, and records the nodes and the DPS after 2/4/6/8
+points. A step that adds nothing is flagged "no DPS gain".
+
+**Key.** `pob_agent/checkpoint_key.py`, frozen and hash-pinned before the run:
+
+- 23 guide builds from maxroll and poe-vault 0.5.x, all 8 classes;
+- every node name checked against the PoB 0.5 tree.
+
+**Pre-registered metrics:**
+
+- **M1:** our first notable is the guide's first.
+- **M2:** overlap of the first two notables.
+
+There were 20 scorable entries. The two minion builds were skipped because their target is not a gem; Spiral Volley
+was skipped because its order is only in an image.
+
+| metric | ours | random |
+|---|---|---|
+| M1, first notable | 6/20 | 3.6 (p 0.13) |
+| M2, first two notables | 0.38 | ~0.36 |
+
+The damage-greedy order does not reproduce guide orders. What the per-entry output shows:
+
+- **Hits are damage-first notables:**
+  - Eldritch Empowerment (Essence Drain Lich);
+  - Constant Gale (Arc and Ice Nova Stormweaver);
+  - Unleash Hell! and A Solid Plan (Tactician);
+  - Critical Strike (Rake Amazon);
+  - the Gemling order, which matched all four.
+- **Misses are mostly defensive or utility firsts:**
+  - Soulless Form;
+  - Zealous Inquisition;
+  - Predatory Instinct;
+  - The Lesser Harm;
+  - Answered Call.
+
+  Survivability is not scored, so a damage-only order cannot match these.
+- **Many steps add no DPS**, and there the pick is arbitrary: tree order among equals.
+- **Three targets had zero DPS on the template** (Walking Calamity, Shield Wall ×2). They are now reported as errors
+  instead of arbitrary picks.
+
+**Decision.**
+
+- The tool is kept as a damage view: what each notable adds to this skill.
+- Its output now says it is not a recommended order and gives the score above.
+- A recommended order would need a survivability or utility score, which is not built.
+- The key is spent for order and is not tuned on. Its switch fields (bridge, switch level, gate) are still unscored,
+  for the switch-readiness checklist.

@@ -236,3 +236,24 @@ def test_leveling_heldout_keys_are_frozen():
     from pob_agent import leveling as L
     key = json.dumps([L.HELDOUT_SOURCE2, L.HELDOUT_ASC1], sort_keys=True).encode()
     assert hashlib.sha256(key).hexdigest()[:16] == "e5d178a626d061a2"
+    # asc2 key frozen 2026-11-24 before its collection run
+    assert hashlib.sha256(json.dumps(L.HELDOUT_ASC2, sort_keys=True).encode()).hexdigest()[:16] == "f9f8b4ba4863bac1"
+
+
+def test_checkpoints_spend_every_point_notable_first():
+    from pob_agent import checkpoints
+    r = checkpoints.run("Essence Drain", "Witch", ascendancy="Lich")
+    a = r["ascendancies"][0]
+    assert a["ascendancy"] == "Lich"
+    assert [s["spent"] for s in a["steps"]] == [2, 4, 6, 8]
+    # the sacrifice notable is the first pick for a chaos DoT spell (it matched the guides' order)
+    assert a["steps"][0]["nodes"] == ["Eldritch Empowerment"]
+    assert a["lift"] > 1.2
+
+
+def test_checkpoint_key_is_frozen():
+    # frozen 2026-11-25 before any run against it; scored once, never tuned on
+    import hashlib
+    import json
+    from pob_agent.checkpoint_key import CHECKPOINT_KEY
+    assert hashlib.sha256(json.dumps(CHECKPOINT_KEY, sort_keys=True).encode()).hexdigest()[:16] == "2d9c440b795f9b00"

@@ -97,6 +97,40 @@ HELDOUT_ASC1 = {
     "Warrior/Smith of Kitava": {"class": "Warrior", "asc": "Smith of Kitava", "clear": ["Rolling Slam",
                                                                                        "Boneshatter"]},
 }
+
+# (3) after the second ascendancy (stage asc2, Act 3, level ~40, 4 points), per ascendancy: maxroll and poe-vault
+# 0.5.x guides, collected 2026-11-24 by an independent reviewer and frozen before any run. Main clear skill
+# first, then alternatives the guides name. Smith of Kitava has no current guide (excluded); "Spectre: Vaal
+# Guard" (Acolyte) is a spectre, not a gem, and was dropped.
+HELDOUT_ASC2 = {
+    "Witch/Infernalist": {"class": "Witch", "asc": "Infernalist",
+                          "clear": ["Skeletal Sniper", "Raging Spirits", "Skeletal Arsonist", "Essence Drain"]},
+    "Witch/Blood Mage": {"class": "Witch", "asc": "Blood Mage", "clear": ["Spark", "Essence Drain", "Contagion", "Bone Cage"]},
+    "Witch/Lich": {"class": "Witch", "asc": "Lich", "clear": ["Essence Drain", "Contagion", "Bone Cage", "Skeletal Sniper"]},
+    "Sorceress/Stormweaver": {"class": "Sorceress", "asc": "Stormweaver", "clear": ["Arc", "Spark", "Ice Nova", "Orb of Storms"]},
+    "Sorceress/Disciple of Varashta": {"class": "Sorceress", "asc": "Disciple of Varashta",
+                                       "clear": ["Kelari, the Tainted Sands", "Skeletal Arsonist", "Entangle", "Raging Spirits"]},
+    "Sorceress/Chronomancer": {"class": "Sorceress", "asc": "Chronomancer", "clear": ["Spark", "Arc"]},
+    "Mercenary/Witchhunter": {"class": "Mercenary", "asc": "Witchhunter",
+                              "clear": ["Explosive Grenade", "Gas Grenade", "Oil Grenade", "Galvanic Shards"]},
+    "Mercenary/Gemling Legionnaire": {"class": "Mercenary", "asc": "Gemling Legionnaire",
+                                      "clear": ["Explosive Grenade", "Oil Grenade", "Gas Grenade"]},
+    "Mercenary/Tactician": {"class": "Mercenary", "asc": "Tactician", "clear": ["Explosive Grenade", "Gas Grenade", "Galvanic Shards"]},
+    "Huntress/Amazon": {"class": "Huntress", "asc": "Amazon", "clear": ["Rake", "Twister", "Whirling Slash", "Spearfield"]},
+    "Huntress/Ritualist": {"class": "Huntress", "asc": "Ritualist", "clear": ["Rake", "Spearfield", "Twister", "Whirling Slash"]},
+    "Huntress/Spirit Walker": {"class": "Huntress", "asc": "Spirit Walker", "clear": ["Rake", "Twister"]},
+    "Druid/Shaman": {"class": "Druid", "asc": "Shaman", "clear": ["Fury of the Mountain", "Bonestorm", "Oil Barrage", "Entangle"]},
+    "Druid/Oracle": {"class": "Druid", "asc": "Oracle", "clear": ["Shred", "Entangle", "Lunar Assault", "Thunderstorm"]},
+    "Monk/Invoker": {"class": "Monk", "asc": "Invoker", "clear": ["Ice Strike", "Storm Wave", "Falling Thunder", "Siphoning Strike"]},
+    "Monk/Acolyte of Chayula": {"class": "Monk", "asc": "Acolyte of Chayula", "clear": ["Staggering Palm", "Storm Wave"]},
+    "Monk/Martial Artist": {"class": "Monk", "asc": "Martial Artist", "clear": ["Storm Wave", "Ice Strike"]},
+    "Ranger/Deadeye": {"class": "Ranger", "asc": "Deadeye",
+                       "clear": ["Lightning Arrow", "Freezing Salvo", "Lightning Rod", "Explosive Grenade"]},
+    "Ranger/Pathfinder": {"class": "Ranger", "asc": "Pathfinder", "clear": ["Poisonburst Arrow", "Gas Arrow", "Explosive Grenade"]},
+    "Warrior/Titan": {"class": "Warrior", "asc": "Titan", "clear": ["Stampede", "Leap Slam", "Boneshatter"]},
+    "Warrior/Warbringer": {"class": "Warrior", "asc": "Warbringer",
+                           "clear": ["Sunder", "Volcanic Fissure", "Shield Wall", "Earthshatter"]},
+}
 # skills the research found no leveling evidence for; they should not be a class's top pick
 NEGATIVE = {"Witch": ["Rapid Shot", "Galvanic Shards", "Living Bomb"]}
 
@@ -136,6 +170,8 @@ def stage_params(stage: str, cls: str | None = None) -> dict:
     p["maxPath"] = p["treePoints"]
     if cls:
         p["class"] = cls
+        # "Any Martial Weapon" skills (Shockwave Totem...) are probed with the class's own weapon
+        p["martialWeapon"] = MARTIAL_WEAPON.get(cls, "One Hand Mace")
     return p
 
 
@@ -186,10 +222,15 @@ def load(stage: str, cls: str | None) -> dict:
 CLASS_WEAPON = {"Witch": "Wand", "Sorceress": "Staff", "Mercenary": "Crossbow", "Huntress": "Spear",
                 "Monk": "Quarterstaff", "Warrior": "Mace", "Ranger": "Bow", "Druid": "Talisman"}
 
+# item type the probe equips for skills that take any martial weapon (casters fall back to a mace)
+MARTIAL_WEAPON = {"Mercenary": "Crossbow", "Huntress": "Spear", "Monk": "Quarterstaff", "Warrior": "One Hand Mace",
+                  "Ranger": "Bow", "Druid": "Talisman"}
+
 # classes whose campaign tree and ascendancies build around spells (Druid: Volcano/Entangle are spells)
 CASTERS = {"Witch", "Sorceress", "Druid"}
 # a skill that needs something already there (corpses, a broken-armour or frozen target) cannot be the
-# skill that clears a fresh pack; it is a follow-up
+# skill that clears a fresh pack; it is a follow-up. Tried 2026-11-24: corpses only (armour/freeze consumes as
+# a bonus) lifts High Velocity Rounds and Snipe to #1 and drops pre_asc1 family MRR 0.69 -> 0.60; kept.
 SETUP_TYPES = {"TargetsDestructibleCorpses", "ConsumesFullyBrokenArmour", "SkillConsumesFreeze"}
 # movement skills (Lightning Warp) deal damage on arrival but are not what a character clears with
 NOT_MAIN_TYPES = {"Movement"}
@@ -208,9 +249,22 @@ def _main_variants(vs: list[dict], cfg: dict) -> tuple[dict | None, dict | None]
     pool = pool or vs[:1]
     hits = [v for v in pool if (v.get("TotalDot") or 0) == 0 or (v.get("AverageHit") or 0) > 0]
     dots = [v for v in pool if (v.get("TotalDot") or 0) > 0 and not (v.get("AverageHit") or 0) > 0]
-    hit = max(hits, key=lambda v: v.get("dps") or 0) if hits else None
-    dot = max(dots, key=lambda v: v.get("dps") or 0) if dots else None
+    # equal DPS (two forms of one hit, e.g. Poisonburst Arrow's arrow and burst): keep the one with an area
+    def best(xs):
+        return max(xs, key=lambda v: (round(v.get("dps") or 0, 6), v.get("AreaOfEffectRadiusMetres") or 0)) if xs else None
+    hit, dot = best(hits), best(dots)
     return hit, dot
+
+
+def _dot_dps(v: dict, cfg: dict) -> float:
+    """DoT DPS of a DoT variant. PoB's combined DPS for a DoT part can include the skill's hit as well
+    (Vine Arrow's Vines part: 684 combined, 68 of it DoT), which would count the hit twice."""
+    d = v.get("dps") or 0
+    if cfg.get("dot_only", True):
+        t = v.get("TotalDotDPS") or v.get("TotalDot") or 0
+        if t > 0:
+            return min(d, t)
+    return d
 
 
 def _targets(v: dict, cfg: dict, types: set | None = None) -> float:
@@ -260,14 +314,14 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
         hit = v0
     else:
         hit, dot = _main_variants(vs, cfg)
-        st = (hit.get("dps") or 0 if hit else 0) + (dot.get("dps") or 0 if dot and dot is not hit else 0)
+        st = (hit.get("dps") or 0 if hit else 0) + (_dot_dps(dot, cfg) if dot and dot is not hit else 0)
         if "Minion" in types and v0.get("minion"):
             per = v0["minion"].get("CombinedDPS") or v0["minion"].get("TotalDPS") or 0
             st = per * min(v0.get("ActiveMinionLimit") or 1, cfg["minion_cap"])
     if st <= 0:
         return None
     m = {"skill": r["skill"], "st": st, "weapon": r.get("weaponType"), "types": types, "asc_nodes": r.get("ascNodes"),
-         "dot": (dot.get("dps") or 0) if dot else (st if "DamageOverTime" in types and not (v0.get("AverageHit") or 0) else 0)}
+         "dot": _dot_dps(dot, cfg) if dot else (st if "DamageOverTime" in types and not (v0.get("AverageHit") or 0) else 0)}
 
     # attributes: tree attribute nodes are a free choice in PoE2 (PoB books them as Str), so what the
     # class gained over its base is a pool that can go to any requirement
@@ -316,7 +370,7 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
             # a DoT that kills within its duration does not hold the player: cast, move on. The pack still
             # takes hp / DoT DPS to die; only the part of that overlapping the walk to the next pack is free.
             dur = dot.get("Duration") or 0
-            ddps = dot.get("dps") or 0
+            ddps = _dot_dps(dot, cfg)
             if dur and ddps * dur >= hp:
                 t = min(t, max(1 / speed, hp / ddps - cfg["travel"]))
         return t, speed

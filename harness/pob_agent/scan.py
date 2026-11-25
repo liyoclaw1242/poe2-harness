@@ -50,9 +50,18 @@ STAGES = {
     # in Act 3; quest gems L9/L10 in Act 3; support tier 3 from area ~33, tier 4 from ~45; third socket from
     # Lesser Jeweller's Orbs (monster level 25+).
     "asc1": {"level": 32, "maxSkillTier": 9, "gemLevel": 9, "maxSupportTier": 2, "supports": 3,
-             "treePoints": 33, "weaponLevel": 30, "ascPoints": 2},
-    "asc2": {"level": 45, "maxSkillTier": 11, "gemLevel": 11, "maxSupportTier": 4, "supports": 3,
-             "treePoints": 47, "weaponLevel": 43, "ascPoints": 4},
+             "treePoints": 33, "weaponLevel": 30, "ascPoints": 2,
+             # held-out 2026-11-24: two points barely move PoB's numbers and the per-ascendancy ranking scored
+             # at chance (p 0.20), so this stage is ranked per class with no ascendancy
+             "ascScored": False},
+    # trial 2 (Trial of Chaos, Act 3) is done around level 38-40 with level 9-10 gems and tier-3 supports
+    # (maxroll / poe-vault 0.5.x leveling guides, read 2026-11-24); ~37 level + ~10 quest passive points
+    "asc2": {"level": 40, "maxSkillTier": 10, "gemLevel": 10, "maxSupportTier": 3, "supports": 3,
+             "treePoints": 47, "weaponLevel": 38, "ascPoints": 4,
+             # spend all four points as a player does: two notables, not the best-DPS small nodes (ascendancy
+             # checkpoints). Leveling ranking is per class here too: held-out 2026-11-25, an ascendancy-blind
+             # ranking scored as well as the per-ascendancy one (clustered p 0.068 vs blind 0.039)
+             "ascFill": True, "ascScored": False},
 }
 STAGE_COMMON = {"impliedConditions": True, "capGemByLevel": True, "gemQuality": 0, "enemyIsBoss": "None", "templateMods": "",
                 "weaponMods": ""}

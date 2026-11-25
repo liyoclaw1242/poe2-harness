@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import analysis, decompose, enablers, scan, scenario, sources, thresholds, trade
+from . import analysis, checkpoints, decompose, enablers, scan, scenario, sources, thresholds, trade
 from .engine import Engine, EngineError
 
 ENV_STAMP = "PoE2 | PoB-PoE2 {ver} | values are PoB calculations, not in-game measurements"
@@ -401,7 +401,14 @@ def render_leveling(rows, cls, stage, top, boss=None):
     print(f"## Leveling picks for {cls} — stage {base}: level {st['level']}, gems to level {st['gemLevel']} "
           f"(skill tier <= {st['maxSkillTier']}), {st['supports']} supports of tier <= {st['maxSupportTier']}, "
           f"{st['treePoints']} passive points from the {cls} start, "
-          + (f"{st['ascPoints']} ascendancy points" if st.get("ascPoints") else "no ascendancy"))
+          + ((f"{st['ascPoints']} ascendancy points" if st.get("ascScored", True)
+              else f"ascendancy not scored ({st['ascPoints']} points barely change PoB's numbers; ranked per class)")
+             if st.get("ascPoints") else "no ascendancy"))
+    if st.get("ascPoints"):
+        print("\n> **Experimental.** Strongest generic class skills at this snapshot, ascendancy-blind. Not a build "
+              "recommendation: at asc1 the per-ascendancy ranking scored at chance on a held-out key, and at asc2 it was "
+              "not robust (class-clustered p 0.068). Minions, totems and poison are not modelled. To plan a switch to "
+              "a target skill, see the ascendancy checkpoints.")
     print("\n| # | skill | clear (monsters/s) | white packs only | single target DPS | monsters per use | "
           "time per pack | notes |")
     print("|---|---|---|---|---|---|---|---|")
@@ -449,8 +456,12 @@ def render_leveling(rows, cls, stage, top, boss=None):
 def cmd_leveling(args):
     """Rank leveling skills for one class at a campaign stage (collects PoB data on first use)."""
     from . import leveling
-    asc = f"+asc-{args.ascendancy}" if args.ascendancy else ""
-    if scan.STAGES[args.stage].get("ascPoints") and not asc:
+    st_def = scan.STAGES[args.stage]
+    scored = st_def.get("ascPoints") and st_def.get("ascScored", True)
+    asc = f"+asc-{args.ascendancy}" if args.ascendancy and scored else ""
+    if args.ascendancy and not scored:
+        print(f"note: stage {args.stage} is ranked per class; --ascendancy is ignored", file=sys.stderr)
+    if scored and not asc:
         raise SystemExit(f"stage {args.stage} spends ascendancy points: pass --ascendancy")
     stages = [args.stage + asc, args.stage + "+clearsup" + asc]
     for st in stages:
@@ -519,6 +530,37 @@ def cmd_lift(args):
                     continue
                 print(f"| {a['ascendancy']} | x{a['lift']:.2f} | {fmt(a['after'])} | {', '.join(a['nodes'])} |")
     emit(args, res, render)
+
+
+def render_checkpoints(r):
+    st = scan.STAGES[r["stage"]]
+    sup = ", ".join(s["name"] for s in r.get("supports") or [])
+    print(f"## Ascendancy checkpoints: {r['skill']} ({r['class']}) — level {st['level']}, gem level "
+          f"{st['gemLevel']}, supports: {sup or 'none'}")
+    print("\n| ascendancy | x DPS at 8 | 2 points | 4 points | 6 points | 8 points |\n|---|---|---|---|---|---|")
+    for a in r["ascendancies"]:
+        if a.get("error"):
+            print(f"| {a['ascendancy']} | error | {a['error'][:60]} | | | |")
+            continue
+        cells = []
+        for s in a["steps"]:
+            nodes = ", ".join(s["nodes"]) or "—"
+            gain = "no DPS gain" if s["no_gain"] else f"x{s['step_lift']:.2f}"
+            cells.append(f"{nodes} ({gain})")
+        print(f"| {a['ascendancy']} | x{a['lift']:.2f} | " + " | ".join(cells) + " |")
+    print("\nEach step spends two points notable-first on the node that adds most DPS to this skill, on a class "
+          "template with no passive tree or gear. \"no DPS gain\": no notable helps this skill there; take it "
+          "for defence or utility, which is not scored. Conditions an ascendancy node sustains (e.g. Eldritch "
+          "Empowerment's sacrifice) are assumed on.")
+    print("\nThis is a damage-only order, not the guides' order: guides often take a defensive or utility notable "
+          "first. Against 20 frozen guide builds it matched the guide's first notable 6 times (random: 3.6, p 0.13) "
+          "and the first two no better than random. Read it as \"what each notable adds to this skill's damage\".")
+
+
+def cmd_checkpoints(args):
+    """Ascendancy checkpoints for one skill: nodes and DPS after each trial, per ascendancy."""
+    r = checkpoints.run(args.skill, args.cls, stage=args.stage, ascendancy=args.ascendancy, verbose=args.verbose)
+    emit(args, r, render_checkpoints)
 
 
 def cmd_profile_batch(args):
@@ -711,13 +753,19 @@ def main(argv=None):
     p.add_argument("--out", help="save raw scan results (JSON)")
     p.set_defaults(fn=cmd_scan)
 
-    p = sub.add_parser("leveling", help="rank leveling (pre-ascendancy) skills for a class, backtested scoring")
+    p = sub.add_parser("leveling", help="rank leveling skills for a class (backtested pre-ascendancy; asc1/asc2 experimental, per class)")
     p.add_argument("--class", dest="cls", required=True)
     p.add_argument("--stage", choices=list(scan.STAGES), default="pre_asc1")
     p.add_argument("--top", type=int, default=12)
     p.add_argument("--off-weapon", type=float, default=0.25, help="score factor for skills outside the class family")
-    p.add_argument("--ascendancy", help="for stages after a trial (asc1, asc2): which ascendancy spends the points")
+    p.add_argument("--ascendancy", help="ignored for leveling ranking (asc1/asc2 are ranked per class)")
     p.set_defaults(fn=cmd_leveling)
+    p = sub.add_parser("checkpoints", help="ascendancy checkpoints: nodes and DPS after each trial for one skill")
+    p.add_argument("--skill", required=True)
+    p.add_argument("--class", dest="cls", required=True)
+    p.add_argument("--ascendancy", help="only this ascendancy")
+    p.add_argument("--stage", choices=list(scan.STAGES), default="asc2", help="character the skill is measured on")
+    p.set_defaults(fn=cmd_checkpoints)
     p = sub.add_parser("campaign", help="strongest pre-ascendancy skills per class start at a campaign stage")
     p.add_argument("--stage", choices=list(scan.STAGES), default="pre_asc1")
     p.add_argument("--top", type=int, default=15, help="skills taken to the per-class tree step")
