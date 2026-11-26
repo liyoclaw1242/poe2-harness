@@ -460,7 +460,7 @@ local templateWeaponCache = {}
 local function templateWeapon(weaponType, maxLevel)
 	local key = weaponType .. ":" .. maxLevel
 	if templateWeaponCache[key] ~= nil then return templateWeaponCache[key] end
-	local best, bestLevel
+	local best, bestLevel, bestAvg
 	local wantType, wantSub = weaponType, nil
 	if weaponType == "Quarterstaff" then wantType, wantSub = "Staff", "Warstaff" end
 	-- shield skills (Shield Wall, Shield Charge) need an armour shield, which is not a weapon base
@@ -472,8 +472,14 @@ local function templateWeapon(weaponType, maxLevel)
 			and not (shield and not (base.subType or ""):find("Armour"))
 			and not base.hidden and (base.weapon or shield) then
 			local lvl = base.req and base.req.level or 1
-			if lvl <= maxLevel and (not bestLevel or lvl > bestLevel) then
-				best, bestLevel = name, lvl
+			-- ties on level (Wrapped vs Long Quarterstaff, both level 1) were broken by `pairs` order, which
+			-- changed between runs and moved attack DPS by up to x0.7: take the higher average physical damage,
+			-- then the name, so the template is the same every run
+			local w = base.weapon or {}
+			local avg = ((w.PhysicalMin or 0) + (w.PhysicalMax or 0)) / 2
+			if lvl <= maxLevel and (not bestLevel or lvl > bestLevel
+					or (lvl == bestLevel and (avg > bestAvg or (avg == bestAvg and name < best)))) then
+				best, bestLevel, bestAvg = name, lvl, avg
 			end
 		end
 	end
@@ -489,10 +495,19 @@ local function requiredWeapon(gemData, req)
 	return w
 end
 
-local function findGemByName(name)
+-- Four names are shared (Unleash is both a spell and a support; Lightning Bolt, Mace Strike, Spear Stab have
+-- variants). `pairs` order varies per process, so the lookup used to return either; a support named in a probe
+-- result sometimes resolved to the Unleash spell and did nothing. Prefer the requested kind, then the lowest id.
+local function findGemByName(name, support)
+	local best, bestG
 	for id, g in pairs(data.gems) do
-		if g.name == name then return id, g end
+		if g.name == name then
+			local isSup = g.grantedEffect and g.grantedEffect.support and true or false
+			local rank = (isSup == (support and true or false)) and 0 or 1
+			if not best or rank < best[1] or (rank == best[1] and id < best[2]) then best, bestG = { rank, id }, g end
+		end
 	end
+	if best then return best[2], bestG end
 end
 
 -- Highest gem level a character of `charLevel` can use (PoB's per-level requirement), capped at maxLevel.
@@ -539,8 +554,8 @@ end
 
 -- Value a support choice is judged by. "clear" weighs DPS by the monsters a use reaches in a pack
 -- (area radius, projectiles, pierce, chain), so supports that trade area for damage lose credit.
-function supportValue(o, req)
-	local v = outDps(o)
+function supportValue(o, req, v)
+	v = v or outDps(o)
 	if req.supportObjective ~= "clear" then return v end
 	local pack, density = req.pack or 6, req.density or 0.3
 	local r = o.AreaOfEffectRadiusMetres or 0
@@ -548,6 +563,75 @@ function supportValue(o, req)
 	local proj = o.ProjectileCount or 0
 	local tProj = proj > 0 and math.min(pack, proj * (1 + math.min(o.PierceCount or 0, 5)) + (o.ChainMax or 0)) or 1
 	return v * math.max(tArea, tProj, 1)
+end
+
+-- Value of the main skill for support, passive and ascendancy choices: the first stat set, plus the best
+-- DoT-only set when the skill has one (its DPS capped at the DoT, since a DoT part's combined DPS can repeat
+-- the hit). Judging the first set alone picked hit supports for Essence Drain, whose clear comes from its DoT
+-- set. Skills without a DoT-only set: identical to supportValue on one calc.
+-- Labels of stat sets the ranking treats as alternatives, not the normal use (leveling.CONDITIONAL).
+local CONDITIONAL_SETS = { "Charged", "Infused", "Enraged", "Empowered", "Frenzy", "Primed", "Fully", "Ground" }
+
+-- life one DoT cast should cover: a magic monster at the probe's level (leveling.RARITY_LIFE magic = 2.48)
+DOT_KILL_LIFE = nil
+local MAGIC_LIFE = 2.48
+
+-- setsValue's settings come from the request of the skill being set up, never from whichever command ran last:
+-- scanOne and setupSkill call this, so every command that picks supports or passives (skill_scan, build_up,
+-- campaign, ascendancy_lift, ascendancy_checkpoints, leveling_probe) values a DoT set the same way.
+local function setsContext(req)
+	SETS_FIRST_ONLY = req.firstSetOnly and true or nil
+	DOT_KILL_LIFE = (data.monsterLifeTable[req.level or 90] or 0) * MAGIC_LIFE
+end
+
+local function finite(v)
+	return v and v == v and v ~= math.huge and v ~= -math.huge
+end
+
+function setsValue(calcFunc, req, override, opts)
+	local group = build.skillsTab.socketGroupList[build.mainSocketGroup or 1]
+	local gi = group and group.gemList[1]
+	local ge = gi and gi.gemData and gi.gemData.grantedEffect
+	local n = ge and ge.statSets and #ge.statSets or 0
+	local ok, o1 = pcall(calcFunc, override, false, opts)
+	if not ok or not o1 then return nil end
+	local first = supportValue(o1, req)
+	if not finite(first) then first = nil end
+	if n <= 1 or req.firstSetOnly or SETS_FIRST_ONLY then return first end
+	-- DoT-only exactly as the ranking classifies it: TotalDot (not TotalDotDPS, which counts ailments) and no hit
+	local function dotOnly(o) return (o.TotalDot or 0) > 0 and not ((o.AverageHit or 0) > 0) end
+	-- same pool as leveling._main_variants: conditional sets dropped
+	local saved = gi.statSet
+	local bestDot
+	for i = 1, n do
+		local label = ge.statSets[i].label or ""
+		local cond = false
+		for _, k in ipairs(CONDITIONAL_SETS) do
+			if label:find(k, 1, true) then cond = true break end
+		end
+		if not cond then
+			gi.statSet = { [ge.id] = i }
+			local okI, o = pcall(calcFunc, override, false, opts)
+			if okI and o and dotOnly(o) then
+				-- capped at TotalDotDPS or TotalDot, as _dot_dps does
+				local d = (o.TotalDotDPS or 0) > 0 and o.TotalDotDPS or o.TotalDot or 0
+				d = d > 0 and math.min(outDps(o), d) or outDps(o)
+				-- clear counts a DoT whose one cast kills (leveling.metrics, fire and forget): DoT DPS gets full
+				-- credit only if DPS x duration covers a magic monster's life, so a support that buys DPS with
+				-- duration (Swift Affliction) does not win when it stops one cast from killing
+				local hp = DOT_KILL_LIFE
+				if hp and hp > 0 and (o.Duration or 0) > 0 then d = d * math.min(1, d * o.Duration / hp) end
+				local v = supportValue(o, req, d)
+				if finite(v) and (not bestDot or v > bestDot) then bestDot = v end
+			end
+		end
+	end
+	gi.statSet = saved
+	-- no DoT-only set: the first set alone, as before. Judging every hit set too was tried (round 4) and let
+	-- supports switch on enemy-state-gated sets (Siphoning Strike's Shockwave) and pick sets the ranking does
+	-- not use (Ember Fusillade's chaining Beam); hit sets stay on the first set.
+	if not bestDot then return first end
+	return (dotOnly(o1) and 0 or (first or 0)) + bestDot
 end
 
 local function skillDps()
@@ -708,6 +792,7 @@ end
 
 local function scanOne(gemId, gemData, req)
 	newBuild()
+	setsContext(req)
 	build.characterLevel = req.level or 90
 	applyConfig(req.enemyIsBoss and { enemyIsBoss = req.enemyIsBoss } or nil, req.templateMods or "")
 	-- a shapeshift skill is only used in its form: the form's own condition is always true
@@ -748,26 +833,23 @@ local function scanOne(gemId, gemData, req)
 			candidates[#candidates + 1] = { id = id, g = g }
 		end
 	end
+	-- fixed order: ties (Cold vs Fire Attunement on a physical attack) otherwise go to whichever `pairs` over
+	-- string keys yields first, which varies per process
+	table.sort(candidates, function(a, b) return a.id < b.id end)
 	local fastOpts = { nodeAlloc = true, requirementsItems = true, requirementsGems = true, skipEHP = true }
 	local chosen = {}
 	for _ = 1, (req.supports or 5) do
 		local calcFunc = build.calcsTab:GetMiscCalculator()
 		local bestDps, best = 0, nil
-		do
-			local ok0, o0 = pcall(calcFunc, nil, false, fastOpts)
-			bestDps = (ok0 and o0) and supportValue(o0, req) or skillDps()
-		end
+		bestDps = setsValue(calcFunc, req, nil, fastOpts) or skillDps()
 		local idx = #group.gemList + 1
 		for _, c in ipairs(candidates) do
 			if not chosen[c.id] then
 				group.gemList[idx] = { level = supportLevel(c.g, req), quality = 0, count = 1, enabled = true,
 					enableGlobal1 = true, enableGlobal2 = true, gemId = c.id, nameSpec = c.g.name,
 					skillId = c.g.grantedEffectId, gemData = c.g }
-				local ok, o = pcall(calcFunc, nil, false, fastOpts)
-				if ok and o then
-					local v = supportValue(o, req)
-					if v == v and v ~= math.huge and v > bestDps * 1.001 then bestDps, best = v, c end
-				end
+				local v = setsValue(calcFunc, req, nil, fastOpts)
+				if v and v == v and v ~= math.huge and v > bestDps * 1.001 then bestDps, best = v, c end
 			end
 		end
 		group.gemList[idx] = nil
@@ -836,6 +918,7 @@ end
 ---------------------------------------------------------------------------
 local function setupSkill(gemData, supportIds, req, classId, ascendId)
 	newBuild()
+	setsContext(req)
 	if classId then
 		build.spec:SelectClass(classId)
 		build.spec:SelectAscendClass(ascendId or 0)
@@ -878,7 +961,7 @@ local function greedyAscendancy(points, fill)
 	local fastOpts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
 	while spent < points do
 		local calcFunc = build.calcsTab:GetMiscCalculator()
-		local base = fastDps(calcFunc, {}, fastOpts) or skillDps()
+		local base = setsValue(calcFunc, {}, {}, fastOpts) or skillDps()
 		local best, bestGain, bestCost
 		local candidates = 0
 		local notableFits = false
@@ -900,9 +983,8 @@ local function greedyAscendancy(points, fill)
 					candidates = candidates + 1
 					local add = {}
 					for _, pn in ipairs(node.path) do add[pn] = true end
-					local ok, o = pcall(calcFunc, { addNodes = add }, false, fastOpts)
-					if ok and o then
-						local v = outDps(o)
+					local v = setsValue(calcFunc, {}, { addNodes = add }, fastOpts)
+					if v then
 						if v == v and v ~= math.huge then
 							local gain = (v - base) / cost
 							if not bestGain or gain > bestGain then best, bestGain, bestCost = node, gain, cost end
@@ -936,7 +1018,7 @@ function commands.ascendancy_lift(req)
 			local scan = scanOne(gemId, gemData, req)
 			local supportIds = {}
 			for _, s in ipairs(scan.supports or {}) do
-				local sid = findGemByName(s.name)
+				local sid = findGemByName(s.name, true)
 				if sid then supportIds[#supportIds + 1] = sid end
 			end
 			local rows = {}
@@ -975,9 +1057,13 @@ local function greedyTree(points, maxPath, allowed)
 	local fastOpts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
 	while spent < points do
 		local calcFunc = build.calcsTab:GetMiscCalculator()
-		local base = fastDps(calcFunc, {}, fastOpts) or skillDps()
+		local base = setsValue(calcFunc, {}, {}, fastOpts) or skillDps()
 		local best, bestGain, bestCost, bestV
-		for _, node in pairs(build.spec.nodes) do
+		local ids = {}
+		for id in pairs(build.spec.nodes) do ids[#ids + 1] = id end
+		table.sort(ids)
+		for _, id in ipairs(ids) do
+			local node = build.spec.nodes[id]
 			if not node.ascendancyName and not node.alloc and node.path
 				and (node.type == "Notable" or node.type == "Keystone")
 				and (not allowed or allowed[node.dn]) then
@@ -985,9 +1071,8 @@ local function greedyTree(points, maxPath, allowed)
 				if cost > 0 and cost <= (maxPath or 7) and spent + cost <= points then
 					local add = {}
 					for _, pn in ipairs(node.path) do add[pn] = true end
-					local ok, o = pcall(calcFunc, { addNodes = add }, false, fastOpts)
-					if ok and o then
-						local v = outDps(o)
+					local v = setsValue(calcFunc, {}, { addNodes = add }, fastOpts)
+					if v then
 						if v == v and v ~= math.huge and base > 0 then
 							local gain = math.log(v / base) / cost
 							if not bestGain or gain > bestGain then best, bestGain, bestCost, bestV = node, gain, cost, v end
@@ -1024,7 +1109,7 @@ function commands.build_up(req)
 	res.bareDPS = scan.baseDPS
 	local supportIds, prev = {}, scan.baseDPS
 	for _, sp in ipairs(scan.supports or {}) do
-		local sid = findGemByName(sp.name)
+		local sid = findGemByName(sp.name, true)
 		if sid then supportIds[#supportIds + 1] = sid end
 		res.steps[#res.steps + 1] = { layer = "support", name = sp.name, mult = prev > 0 and sp.dps / prev or nil }
 		prev = sp.dps
@@ -1086,7 +1171,7 @@ function commands.campaign(req)
 		local gemId, gemData = findGemByName(r.gem)
 		local supportIds = {}
 		for _, sp in ipairs(r.supports or {}) do
-			local sid = findGemByName(sp.name)
+			local sid = findGemByName(sp.name, true)
 			if sid then supportIds[#supportIds + 1] = sid end
 		end
 		local perClass = {}
@@ -1234,7 +1319,7 @@ function commands.ascendancy_checkpoints(req)
 	local scan = scanOne(gemId, gemData, req)
 	local supportIds = {}
 	for _, sp in ipairs(scan.supports or {}) do
-		local sid = findGemByName(sp.name)
+		local sid = findGemByName(sp.name, true)
 		if sid then supportIds[#supportIds + 1] = sid end
 	end
 	local rows = {}
@@ -1272,6 +1357,8 @@ function commands.ascendancy_checkpoints(req)
 end
 
 function commands.leveling_probe(req)
+	-- firstSetOnly: judge supports/passives on the first stat set, as before setsValue (a same-template baseline);
+	-- read per skill by setsContext in scanOne/setupSkill
 	local classId, ascendId
 	if req.class then
 		for cid, c in pairs(build.spec.tree.classes) do
@@ -1293,7 +1380,7 @@ function commands.leveling_probe(req)
 			local scan = scanOne(gemId, gemData, req)
 			local supportIds = {}
 			for _, sp in ipairs(scan.supports or {}) do
-				local sid = findGemByName(sp.name)
+				local sid = findGemByName(sp.name, true)
 				if sid then supportIds[#supportIds + 1] = sid end
 			end
 			local group = setupSkill(gemData, supportIds, req, classId, classId and (ascendId or 0) or nil)
@@ -1905,7 +1992,55 @@ local function respond(tbl)
 	out:flush()
 end
 
-respond({ id = 0, ok = true, result = { ready = true, version = launch.versionNumber } })
+-- A stat set can map two of its stats to the same skill data key, e.g. Earthquake's Aftershock: the generic
+-- active_skill_base_area_of_effect_radius -> radius and its own override tertiary radius -> radius. PoB merges
+-- stats in `pairs` order, which LuaJIT's seeded string hash varies per process, so the Aftershock radius came out
+-- 2.1 m or 3.0 m from run to run. Where a set deliberately remaps a stat (its key differs from the generic map),
+-- that mapping wins: generic stats in the set that write the same key are dropped.
+local function skillDataKeys(map)
+	local keys = {}
+	for _, m in ipairs(map or {}) do
+		for _, mod in ipairs(m.name and { m } or m) do
+			if mod.name == "SkillData" and type(mod.value) == "table" and mod.value.key then keys[mod.value.key] = true end
+		end
+	end
+	return keys
+end
+local function pinSkillDataOverrides()
+	local n = 0
+	for _, ge in pairs(data.skills) do
+		for _, set in ipairs(ge.statSets or {}) do
+			local present = {}
+			for _, s in ipairs(set.stats or {}) do present[s] = true end
+			for _, c in ipairs(set.constantStats or {}) do present[c[1]] = true end
+			local override = {}
+			for s in pairs(present) do
+				local own = rawget(set.statMap, s)
+				if own then
+					local generic = skillDataKeys(data.skillStatMap[s])
+					for k in pairs(skillDataKeys(own)) do
+						if not generic[k] then override[k] = s end
+					end
+				end
+			end
+			if next(override) then
+				for s in pairs(present) do
+					local generic = data.skillStatMap[s]
+					if generic and override[next(skillDataKeys(generic)) or ""] and override[next(skillDataKeys(generic))] ~= s then
+						rawset(set.statMap, s, {})
+						n = n + 1
+					end
+				end
+			end
+		end
+	end
+	return n
+end
+-- the count goes out with the ready message: a test pins it (1, Earthquake Aftershock) so a data update that
+-- pins more stat sets is noticed
+local pinnedStats = pinSkillDataOverrides()
+
+respond({ id = 0, ok = true, result = { ready = true, version = launch.versionNumber, pinnedStats = pinnedStats } })
 
 for line in io.lines() do
 	if line:match("%S") then

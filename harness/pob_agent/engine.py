@@ -65,6 +65,7 @@ class Engine:
         if not ready.get("ok"):
             raise EngineError(f"engine failed to start: {ready}")
         self.version = ready["result"].get("version")
+        self.pinned_stats = ready["result"].get("pinnedStats")
 
     def close(self) -> None:
         if self.proc:

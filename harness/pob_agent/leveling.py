@@ -140,7 +140,7 @@ SPREAD = {"Contagion"}
 RARITY_LIFE = {"white": 1.0, "magic": 2.48, "rare": 8.0}
 # campaign pack mix by count (an assumption, not measured): whites, all-magic packs, rare-led packs
 MIX_CAMPAIGN = {"white": (1.0, 0.6), "magic": (RARITY_LIFE["magic"], 0.3), "rare": (RARITY_LIFE["rare"], 0.1, "leader")}
-DEFAULT = {"movement_factor": 0.2, "family": "attr", "area_default": 1.5, "fire_forget": True, "burst": True, "burst_rate": 1.0, "rotation": 3, "max_rate": 1.5, "caster_family": True, "setup": True, "setup_factor": 0.5, "class_weapon": True, "off_weapon_factor": 0.25, "no_conditional": True, "attr_pool": True, "pairs": True, "sets": True, "minion_cap": 3, "attrs": True, "attr_per_point": 5.0, "point_cost": 0.04,
+DEFAULT = {"movement_factor": 0.2, "family": "attr", "area_default": 1.5, "fire_forget": True, "ff_soft": True, "burst": True, "burst_rate": 1.0, "rotation": 3, "max_rate": 1.5, "caster_family": True, "setup": True, "setup_factor": 0.5, "class_weapon": True, "off_weapon_factor": 0.25, "no_conditional": True, "attr_pool": True, "pairs": True, "sets": True, "minion_cap": 3, "attrs": True, "attr_per_point": 5.0, "point_cost": 0.04,
            "clear": True, "pack": 6, "density": 0.3, "pierce_cap": 5, "mana": False, "mana_uses": 8,
            "clear_weight": 1.0,
            # pack mix by count: (monster life multiplier, share of packs). Rarity life multipliers are the
@@ -320,6 +320,17 @@ def mix_clear(targets: float, pack_time, cfg: dict, life: float = 0.0) -> float:
     return n / t if t else 0.0
 
 
+def _ff_share(per_cast: float, hp: float, cfg: dict) -> float:
+    """How far a DoT counts as fire-and-forget: 1 if one cast's damage covers the monster's life. With
+    cfg["ff_soft"] a shortfall gets partial credit (per_cast / hp) instead of none, so missing the life by 2%
+    no longer costs the whole benefit (Essence Drain with Swift Affliction: 216 per cast vs 221 life)."""
+    if hp <= 0:
+        return 1.0
+    if per_cast >= hp:
+        return 1.0
+    return per_cast / hp if cfg.get("ff_soft") else 0.0
+
+
 def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
     """Single-target DPS, clear rate and penalties for one probed skill."""
     vs = r.get("variants") or []
@@ -390,8 +401,9 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
             # takes hp / DoT DPS to die; only the part of that overlapping the walk to the next pack is free.
             dur = dot.get("Duration") or 0
             ddps = _dot_dps(dot, cfg)
-            if dur and ddps * dur >= hp:
-                t = min(t, max(1 / speed, hp / ddps - cfg["travel"]))
+            f = _ff_share(ddps * dur, hp, cfg) if dur else 0.0
+            if f > 0:
+                t = f * min(t, max(1 / speed, hp / ddps - cfg["travel"])) + (1 - f) * t
         return t, speed
 
     kill_time, speed = kill(life)
@@ -444,9 +456,9 @@ def pair_metrics(spreader: dict, dotter: dict, cfg: dict) -> dict | None:
 
     def kill(hp):
         # Contagion is cast once per pack (it has a cooldown); the carried skill sets the pace
-        if cfg["fire_forget"] and dotter.get("dot_duration") and dps * dotter["dot_duration"] >= hp:
-            return max(1 / dotter["speed"], hp / dps - cfg["travel"])
-        return max(hp / dps, 1 / dotter["speed"])
+        stand = max(hp / dps, 1 / dotter["speed"])
+        f = _ff_share(dps * dotter["dot_duration"], hp, cfg) if cfg["fire_forget"] and dotter.get("dot_duration") else 0.0
+        return f * max(1 / dotter["speed"], hp / dps - cfg["travel"]) + (1 - f) * stand
     kill_time = kill(spreader["life"])
     clear = mix_clear(cfg["pack"], lambda mult: kill(spreader["life"] * mult), cfg, spreader["life"])
     score = (clear * min(spreader["attr_factor"], dotter["attr_factor"]) * dotter.get("weapon_factor", 1.0)

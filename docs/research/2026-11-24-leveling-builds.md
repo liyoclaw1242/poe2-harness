@@ -528,3 +528,123 @@ Essence Drain #2). Two builds is a smoke test, not an evaluation.
 `Engine(pob_src=...)` runs another PoB checkout; `gate_diff` compares each skill's tier, weapon types, spirit
 cost and ascendancy grant between two checkouts. Same-checkout diff is empty (test). A dry run against an
 older PoB-PoE2 has not been done: it needs a download.
+
+## Third source: devilcatpoe.com (2026-11-25)
+
+devilcatpoe.com is a Traditional Chinese guide site written by veteran players. From its build and leveling
+guides we took facts only: skill names, levels and acts. No text or tables were copied. Labels and scoring
+rules were registered before the run. Every guide is tagged 0.5 and marked under review, so these are weak
+labels.
+
+Guides used, one primary class each:
+- chaos/Bonestorm (Witch);
+- Oil Barrage (Huntress);
+- grenade crossbow (Mercenary);
+- Twister (Huntress);
+- Lightning Arrow into Ice Shot (Ranger);
+- Invoker (Monk);
+- Titan (Warrior);
+- Chronomancer (Sorceress);
+- dragon Druid.
+
+| check | result | random / baseline |
+|---|---|---|
+| act1 ranking: family top 3 | 7/8, MRR 0.52 | 3.0, 0.32 (p 0.029) |
+| pre_asc1 ranking: family top 3 | 6/8, MRR 0.60 | 3.3, 0.36 (p 0.019) |
+| switch: never before our gate | 9/9 | |
+| switch: same act as our gate | 9/9 | "Act 1 for all" 3/9 |
+
+**Ranking.** Most guide picks overlap the development key: Contagion + Essence Drain, Lightning Arrow,
+Rolling Slam, Twister and grenades. The ranking therefore mostly shows this source agrees with ones we tuned
+on, rather than testing it independently. The new picks are Flash Grenade (Mercenary, #2–3), Frozen Locus
+(Monk pre_asc1, #4) and Cross Slash (Druid, #6). Misses:
+- Monk's act1 "Contagion spells" has no setup given and ranks low.
+- Druid's Contagion and Essence Drain, from a speedrunner, rank low.
+- Huntress's Tear is not probed for Huntress.
+
+**Switch.** All 9 numeric switches fall within 2 levels of our gate:
+- Essence Drain: gate 8, guide 6.
+- Ember Fusillade: gate 15, guide 13.
+- Ice Shot and Oil Barrage: gate 33, guide 31.
+- Whirling Assault: gate 43, guide 45.
+
+**Ascendancy order.** Not scorable: only the Monk guide gives an order, and its node names cannot be verified.
+
+## DoT skills: support choice and run-to-run determinism (2026-11-26)
+
+**Problem.** PoB splits some skills into stat sets. Supports and passives were judged on the first set only. For
+Essence Drain that is the projectile hit, but its clear comes from the DoT set, so hit supports were picked.
+
+**Fix.** A skill with a DoT-only stat set (no hit, not one of the conditional labels the ranking skips) is now
+valued as the first set plus the best DoT-only set. The DoT set gets full credit only if one cast kills a magic
+monster at the stage level within its duration:
+
+`ddps × min(1, ddps × duration / magic life)`
+
+This stops supports that buy DoT DPS with a shorter duration (Swift Affliction) from winning. Every other skill
+is valued exactly as before. On the Python side, the fire-and-forget kill time is no longer a cliff. When one
+cast deals fraction f of a monster's life, the time is f × fire-and-forget + (1 − f) × standing (config
+`ff_soft`, default on).
+
+**Rounds.** Five rounds, each registered before its run, with gates fixed in advance and an independent review
+(Fable) after each.
+- **Round 3** failed: Swift Affliction cost the Contagion + Essence Drain pair its one-cast kill on act1 magic
+  packs.
+- **Round 4** valued every hit set as well. It failed for three reasons:
+  - Enemy-state-gated sets scored at full value (Shockwave on a Shocked, Marked or Primed enemy).
+  - Lua and Python disagreed on which hit set counts (Ember Fusillade's chaining Beam).
+  - A zero-DPS first set blinded the tree search (Frozen Locus).
+
+  These three are pre-existing model issues, filed separately.
+- **Round 5** is the narrow fix above.
+
+**Round 5 result.** Baseline and new code collected with the same template and the same determinism fixes, for 8
+classes across act1 and pre_asc1, with and without clear supports. Every gate passed:
+- **Rankings:** dev pre_asc1 0.771 = 0.771, dev act1 0.729 = 0.729, source2 0.771 = 0.771, devilcat pooled
+  0.656 = 0.656. No class moved.
+- **DoT-dominant skills:** pre_asc1 Essence Drain clear ×1.165 (Witch) and ×1.077 (Sorceress), Vine Arrow
+  ×1.36 / ×1.32. Nothing went down.
+- **Per-skill score:** 736 multi-set entries, none down more than 5%.
+- **One-cast kill:** the act1 pair now kills a magic pack per cast (276 and 271 against 221 life).
+- **Equality check:** 3136 of 3200 cache entries are identical. The 64 that differ are Essence Drain and Vine
+  Arrow, the only skills with a DoT-only set.
+
+The review then found the DoT factor was set only by `leveling_probe`. Checkpoints in a fresh engine had no
+factor, and a shared engine used whatever the last probe left. The factor is now set per skill, and a test
+checks that both commands pick the same supports.
+
+**Nondeterminism found on the way (all fixed).** LuaJIT seeds its string hash per process, so `pairs` order
+changes between runs:
+- **Earthquake's Aftershock radius:** the set has two stats both mapped to skill radius, so it came out 2.1 or
+  3.0 per run. The set's own mapping now wins. It is the only such stat in the data; a test pins the count.
+- **Exact ties:** support candidates (Cold vs Fire Attunement) and tree nodes went either way. Both are now
+  iterated in sorted order.
+- **Shared gem names:** four names are shared, e.g. Unleash is both a spell and a support. A chosen Unleash
+  support sometimes resolved to the spell and did nothing (Druid Arc act1: 39.6 or 32.2). Support lookups now
+  ask for a support.
+
+**Headline numbers move: a re-score, not tuning.** The determinism fixes and the new template change the
+committed act1/pre_asc1 caches in about half their entries:
+
+| metric | previous cache | after |
+|---|---|---|
+| dev pre_asc1 fam MRR | 0.646 | 0.771 |
+| dev act1 fam MRR | 0.583 | 0.729 |
+| source2 (held-out) fam MRR | 0.792 | 0.771 |
+
+On source2, Warrior 2 → 3, Druid 1 → 2, Monk 2 → 1. The DoT fix itself moved no rank metric; the baseline equals
+the new code on every one.
+
+**Still stale.** The asc1, asc2, ascendancy-specific and bridge-target caches were not recollected. Their
+numbers above (held-out asc1/asc2, devilcat 0.52 / 0.60) predate these fixes and are not reproducible until they
+are.
+
+**Open, not fixed here.**
+- **Vine Arrow counts poison and bleed twice.** The first set's combined DPS and the vines' DoT both include
+  them. The picker now prefers Poison I + Bleed I at act1, whose true combined DPS is slightly lower. Python's
+  `st` already had the same double count.
+- **Cooldown is ignored.** Vine Arrow with clear supports picks Hourglass + Prolonged Duration I, a 10 s
+  cooldown, because the DoT-set value does not account for it.
+- **Single-set DoT skills get no duration factor** (Contagion, Profane Ritual).
+- **Reports use a different measure than the picker.** Build-up, checkpoint and skill-scan reports show
+  first-set DPS while picks use the new value, so a DoT-only gain can read as "no gain".

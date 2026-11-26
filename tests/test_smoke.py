@@ -202,6 +202,29 @@ def test_leveling_probe_reads_dot_set_and_minions():
     assert all((v.get("ReqInt") or 0) < 100 for v in ed["variants"])
 
 
+def test_dot_set_value_same_in_every_command():
+    # setsValue's DoT duration factor is read per skill (setsContext), so the checkpoints command picks the same
+    # supports as leveling_probe, in a fresh engine and after a probe at another stage. Before, a fresh engine had no
+    # factor (Swift Affliction won) and a shared one used whatever the last probe left.
+    from pob_agent import leveling as L
+    p1, p2 = L.stage_params("act1", "Witch"), L.stage_params("pre_asc1", "Witch")
+    names = lambda r: [s["name"] if isinstance(s, dict) else s for s in r.get("supports") or []]
+    with Engine() as eng:
+        fresh = names(eng.call("ascendancy_checkpoints", skill="Essence Drain", **{**p1, "class": "Witch", "steps": [2]}))
+        eng.call("leveling_probe", skills=["Essence Drain"], **p2)
+        probe = names(eng.call("leveling_probe", skills=["Essence Drain"], **p1)["results"][0])
+        after = names(eng.call("ascendancy_checkpoints", skill="Essence Drain", **{**p1, "class": "Witch", "steps": [2]}))
+    assert fresh == probe == after
+    assert "Swift Affliction I" not in probe
+
+
+def test_only_earthquake_aftershock_radius_is_pinned():
+    # pinSkillDataOverrides: a stat set's own remapping of skill radius wins over the generic one (PoB merged both in
+    # hash order, radius 2.1 or 3.0 per run). One stat in today's data; a data update that adds more shows up here.
+    with Engine() as eng:
+        assert eng.pinned_stats == 1
+
+
 def test_leveling_ascendancy_sees_node_implied_config():
     # Eldritch Empowerment's 30% more needs PoB's "Are you Sacrificing?" box; the node implies it
     from pob_agent import leveling as L
