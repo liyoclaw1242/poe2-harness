@@ -69,7 +69,9 @@ def render_summary(info: dict, ver: str):
     if raw_ids:
         print(f"⚠ PoB shows {', '.join(raw_ids)} by internal id: a meta/granted effect it may not fully model "
               f"(e.g. Hollow Form images, totem/trigger wrappers). Treat DPS as a lower bound.")
-    print(f"DPS {fmt(analysis.dps_of(s))} (main skill; hit {fmt(s.get('TotalDPS'))}) | "
+    own = any(isinstance(s.get(k), (int, float)) and s[k] > 0 for k in ("CombinedDPS", "FullDPS", "TotalDPS"))
+    label = "main skill" if own or not s.get("MinionDPS") else "minion DPS, per minion"
+    print(f"DPS {fmt(analysis.dps_of(s))} ({label}; hit {fmt(s.get('TotalDPS'))}) | "
           f"speed {fmt(s.get('Speed'), 2)}/s | crit {fmt(s.get('CritChance'), 1)}% x{fmt(s.get('CritMultiplier'), 2)}")
     fd = info.get("full_dps") or {}
     if fd.get("full") and fd["full"] > 1.05 * analysis.dps_of(s):

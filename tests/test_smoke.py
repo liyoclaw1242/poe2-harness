@@ -441,6 +441,22 @@ def test_blank_item_uses_the_base_pob_reports():
     assert trade.blank_item(raw, None) is None
 
 
+def test_dps_falls_back_to_the_minion_only_without_player_dps():
+    # a minion main skill keeps CombinedDPS/FullDPS/TotalDPS at 0 in PoB; its DPS is the minion's (per minion)
+    from pob_agent.analysis import dps_of
+    assert dps_of({"CombinedDPS": 0, "FullDPS": 0, "TotalDPS": 0, "MinionDPS": 29190.4}) == 29190.4
+    assert dps_of({"CombinedDPS": 120.0, "MinionDPS": 29190.4}) == 120.0
+
+
+def test_summary_label_tolerates_non_numeric_stats(capsys):
+    # PoB can report NaN/inf, which the engine passes on as strings; the summary still prints and labels the source
+    from pob_agent import cli
+    for stats, label in (({"CombinedDPS": "inf", "TotalDPS": 0}, "main skill"),
+                         ({"CombinedDPS": 0, "FullDPS": 0, "TotalDPS": 0, "MinionDPS": 500.0}, "minion DPS, per minion")):
+        cli.render_summary({"stats": stats, "mainSkill": {"name": "X", "supports": []}, "level": 1}, "test")
+        assert label in capsys.readouterr().out
+
+
 def test_headroom_reports_a_slot_it_cannot_blank():
     # a slot with no base PoB knows is listed with a note, not dropped
     from pob_agent import trade

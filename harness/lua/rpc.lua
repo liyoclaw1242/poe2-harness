@@ -40,14 +40,25 @@ local function num(v)
 	return v
 end
 
-local function collectStats(fields)
-	local o = build.calcsTab.mainOutput or {}
+local function statsOf(o, fields)
 	local res = {}
+	local wantMinion = fields == nil
 	for _, k in ipairs(fields or STAT_FIELDS) do
+		if k == "MinionDPS" then wantMinion = true end
 		local v = num(o[k])
 		if v ~= nil then res[k] = v end
 	end
+	-- a minion main skill's damage is the minion's (PoB keeps CombinedDPS 0 unless the author ticks "include in
+	-- Full DPS"); per minion, as outDps reads it for the leveling probes
+	if wantMinion and o.Minion then
+		local m = num(o.Minion.CombinedDPS) or num(o.Minion.TotalDPS)
+		if type(m) == "number" and m > 0 then res.MinionDPS = m end   -- num() passes NaN/inf on as strings
+	end
 	return res
+end
+
+local function collectStats(fields)
+	return statsOf(build.calcsTab.mainOutput or {}, fields)
 end
 
 local function gemList(group)
@@ -348,16 +359,13 @@ function commands.try_items(req)
 		local ok, o = pcall(calcFunc, { repSlotName = cand.slot or req.slot, repItem = item })
 		local entry = { name = cand.name or item.name, ok = ok }
 		if ok then
-			entry.stats = {}
-			for _, k in ipairs(req.fields or STAT_FIELDS) do entry.stats[k] = num(o[k]) end
+			entry.stats = statsOf(o, req.fields)
 		else
 			entry.error = tostring(o)
 		end
 		res[#res + 1] = entry
 	end
-	local base = {}
-	for _, k in ipairs(req.fields or STAT_FIELDS) do base[k] = num(baseOut[k]) end
-	return { base = base, candidates = res }
+	return { base = statsOf(baseOut, req.fields), candidates = res }
 end
 
 function commands.paste_skill(req)

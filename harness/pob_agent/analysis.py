@@ -8,7 +8,9 @@ from .engine import Engine
 
 # Main-skill DPS first. FullDPS is the sum of every group the author ticked (gem counts, culling,
 # secondary skills) and is reported separately as "full_dps" composition.
-DPS_KEYS = ("CombinedDPS", "FullDPS", "TotalDPS")
+# MinionDPS (per minion) only counts when the player's own DPS keys are all 0: a minion main skill. This equals Lua's
+# outDps except when CombinedDPS and FullDPS are 0 but TotalDPS is not (no sample build has that).
+DPS_KEYS = ("CombinedDPS", "FullDPS", "TotalDPS", "MinionDPS")
 
 
 def dps_of(stats: dict) -> float:
