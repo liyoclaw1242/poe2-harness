@@ -603,6 +603,9 @@ function setsValue(calcFunc, req, override, opts)
 	-- same pool as leveling._main_variants: conditional sets dropped
 	local saved = gi.statSet
 	local bestDot
+	-- when the first set's hit is counted, its ailments (poison, bleed) are already in its combined DPS; a DoT-only
+	-- set's TotalDotDPS repeats them (Vine Arrow's Vines), so it adds only its own DoT (TotalDot)
+	local hitCounted = not dotOnly(o1)
 	for i = 1, n do
 		local label = ge.statSets[i].label or ""
 		local cond = false
@@ -613,8 +616,8 @@ function setsValue(calcFunc, req, override, opts)
 			gi.statSet = { [ge.id] = i }
 			local okI, o = pcall(calcFunc, override, false, opts)
 			if okI and o and dotOnly(o) then
-				-- capped at TotalDotDPS or TotalDot, as _dot_dps does
-				local d = (o.TotalDotDPS or 0) > 0 and o.TotalDotDPS or o.TotalDot or 0
+				-- capped at TotalDotDPS or TotalDot, as _dot_dps does (TotalDot alone next to a counted hit)
+				local d = (not hitCounted and (o.TotalDotDPS or 0) > 0) and o.TotalDotDPS or o.TotalDot or 0
 				d = d > 0 and math.min(outDps(o), d) or outDps(o)
 				-- clear counts a DoT whose one cast kills (leveling.metrics, fire and forget): DoT DPS gets full
 				-- credit only if DPS x duration covers a magic monster's life, so a support that buys DPS with

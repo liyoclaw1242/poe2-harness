@@ -275,12 +275,14 @@ def _main_variants(vs: list[dict], cfg: dict) -> tuple[dict | None, dict | None]
     return hit, dot
 
 
-def _dot_dps(v: dict, cfg: dict) -> float:
+def _dot_dps(v: dict, cfg: dict, with_hit: bool = False) -> float:
     """DoT DPS of a DoT variant. PoB's combined DPS for a DoT part can include the skill's hit as well
-    (Vine Arrow's Vines part: 684 combined, 68 of it DoT), which would count the hit twice."""
+    (Vine Arrow's Vines part: 684 combined, 68 of it DoT), which would count the hit twice. Next to a counted hit
+    (with_hit) only the part's own DoT counts: its TotalDotDPS repeats the hit's poison and bleed, which the hit's
+    combined DPS already has (Vine Arrow act1: Impact 20.64 incl. 5.52 ailment, Vines 15.98 + the same 5.52)."""
     d = v.get("dps") or 0
     if cfg.get("dot_only", True):
-        t = v.get("TotalDotDPS") or v.get("TotalDot") or 0
+        t = (v.get("TotalDot") or 0) if with_hit else (v.get("TotalDotDPS") or v.get("TotalDot") or 0)
         if t > 0:
             return min(d, t)
     return d
@@ -344,7 +346,7 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
         hit = v0
     else:
         hit, dot = _main_variants(vs, cfg)
-        st = (hit.get("dps") or 0 if hit else 0) + (_dot_dps(dot, cfg) if dot and dot is not hit else 0)
+        st = (hit.get("dps") or 0 if hit else 0) + (_dot_dps(dot, cfg, with_hit=bool(hit)) if dot and dot is not hit else 0)
         if "Minion" in types and v0.get("minion"):
             per = v0["minion"].get("CombinedDPS") or v0["minion"].get("TotalDPS") or 0
             st = per * min(v0.get("ActiveMinionLimit") or 1, cfg["minion_cap"])
@@ -400,7 +402,7 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
             # a DoT that kills within its duration does not hold the player: cast, move on. The pack still
             # takes hp / DoT DPS to die; only the part of that overlapping the walk to the next pack is free.
             dur = dot.get("Duration") or 0
-            ddps = _dot_dps(dot, cfg)
+            ddps = _dot_dps(dot, cfg, with_hit=bool(hit) and dot is not hit)
             f = _ff_share(ddps * dur, hp, cfg) if dur else 0.0
             if f > 0:
                 t = f * min(t, max(1 / speed, hp / ddps - cfg["travel"])) + (1 - f) * t

@@ -266,6 +266,20 @@ def test_checkup_clear_with_contagion_scores_the_pair():
     assert not {"Pierce I", "Multishot I", "Chain I"} & {p["name"] for p in sc["clear"]["best"]}
 
 
+def test_vine_arrow_counts_hit_ailment_once():
+    # Vine Arrow act1 (Ranger, Poison I + Bleed I): Impact's combined DPS 20.64 already holds the hit's poison/bleed
+    # (5.52); the Vines set's TotalDotDPS 21.50 repeats it on top of its own DoT 15.98. Total = PoB's Vines combined.
+    from pob_agent import leveling as L
+    r = {"skill": "Vine Arrow", "types": ["Attack", "Projectile", "DamageOverTime"], "monsterLife": 60,
+         "variants": [{"label": "Impact", "dps": 20.6397, "CombinedDPS": 20.6397, "TotalDPS": 15.1199, "TotalDot": 0,
+                       "TotalDotDPS": 5.5199, "Speed": 1.35},
+                      {"label": "Vines", "dps": 36.6231, "CombinedDPS": 36.6231, "TotalDPS": 15.1199,
+                       "TotalDot": 15.9833, "TotalDotDPS": 21.5032, "Duration": 8.019, "Speed": 1.35}]}
+    m = L.metrics(r, {**L.DEFAULT, "loadout": False})
+    assert abs(m["st"] - 36.6231) < 0.01
+    assert abs(m["dot"] - 21.5032) < 0.01   # the dot field (pairs, G8) is unchanged
+
+
 def test_leveling_ascendancy_sees_node_implied_config():
     # Eldritch Empowerment's 30% more needs PoB's "Are you Sacrificing?" box; the node implies it
     from pob_agent import leveling as L

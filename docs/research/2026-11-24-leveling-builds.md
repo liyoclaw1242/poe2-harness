@@ -640,11 +640,44 @@ numbers above (held-out asc1/asc2, devilcat 0.52 / 0.60) predate these fixes and
 are.
 
 **Open, not fixed here.**
-- **Vine Arrow counts poison and bleed twice.** The first set's combined DPS and the vines' DoT both include
-  them. The picker now prefers Poison I + Bleed I at act1, whose true combined DPS is slightly lower. Python's
-  `st` already had the same double count.
 - **Cooldown is ignored.** Vine Arrow with clear supports picks Hourglass + Prolonged Duration I, a 10 s
   cooldown, because the DoT-set value does not account for it.
 - **Single-set DoT skills get no duration factor** (Contagion, Profane Ritual).
 - **Reports use a different measure than the picker.** Build-up, checkpoint and skill-scan reports show
   first-set DPS while picks use the new value, so a DoT-only gain can read as "no gain".
+
+## Vine Arrow: hit ailments counted once (2026-11-27)
+
+**Problem.** PoB's hit set for Vine Arrow (Impact) already includes the hit's poison and bleed in its combined
+DPS. The DoT-only Vines set's TotalDotDPS repeats that same ailment on top of the vines' own DoT. Example, Ranger
+act1:
+- Impact: 20.64, of which 5.52 is the ailment.
+- Vines: 15.98 of its own DoT, plus the same 5.52.
+
+Both the support picker and the ranking added the two sets, so single-target DPS was overstated by up to 31%
+(mean 5%). Over the whole cache, only Vine Arrow has this gap. Essence Drain's DoT set has none.
+
+**Fix.** When a hit set is counted, a DoT-only set adds only its own DoT (TotalDot), in both Lua and Python.
+Vine Arrow's single-target DPS now equals PoB's Vines combined DPS. The `dot` field used by Contagion pairs is
+unchanged.
+
+**Gates and result.** Registered before the run, with gates approved and the result reviewed by Fable. All
+passed:
+- **Essence Drain:** entries identical to before.
+- **Vine Arrow:** single-target DPS equals PoB's total within 0.5% in all 32 entries.
+- **Picks:** the picker's own value never fell below the old picks'.
+- **Rankings:** unchanged (0.771 / 0.729 / 0.771, devilcat 0.656).
+- **Other skills:** over 37,212 metrics on the whole cache, nothing changed for any other skill.
+
+Ranger's Vine Arrow scores lower but keeps its rank: act1 served 0.999 → 0.903, still #1; pre_asc1 0.850 →
+0.801, still #2.
+
+**Exposed, not fixed here.** With the inflated ailment gone, Vine Arrow in the pre_asc1 clear-support collection
+now picks Prolonged Duration I + Hourglass in every class, as act1's already did. That pick puts the skill on a
+10 s cooldown, because the picker ignores cooldown (the next item). Python sees the cooldown and scores that
+entry lower, and every consumer takes the better of the plain and clear-support collections, so served ranks do
+not change. The other stages' Vine Arrow entries keep their old picks until the cooldown fix recollects them;
+their DPS is already counted correctly.
+
+**Filed.** Witchhunter's combined DPS carries a multiplier that TotalDot lacks. It affects 2 Vine Arrow asc2
+entries (single-target DPS 7.3% below PoB's total) and does not touch the gated stages.
