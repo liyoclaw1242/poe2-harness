@@ -84,7 +84,7 @@ def support_checks(eng, group: int, sup_tier: int, spreader: int | None = None) 
 def max_level_for(level: int, table) -> int:
     """Highest uncut gem level / support tier that can have dropped by this character level."""
     best = 1
-    for t in range(1, 21):
+    for t in range(1, table[-1][0] + 1):   # the table's last row is the highest tier/level there is
         if switch.level_for_tier(t, table) <= level:
             best = t
     return best

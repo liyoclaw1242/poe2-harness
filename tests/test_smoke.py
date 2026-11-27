@@ -457,6 +457,33 @@ def test_summary_label_tolerates_non_numeric_stats(capsys):
         assert label in capsys.readouterr().out
 
 
+def test_checkup_text_agrees_with_its_numbers(capsys):
+    # the support verdict follows the measured multiplier, a support the section recommends gets no swap advice,
+    # a boss gain stays visible when the two sets merge, a gem above the stage cap is not "the highest", and the
+    # support tier header stops at the last tier there is
+    from pob_agent import cli, checkup, switch
+    assert checkup.max_level_for(97, switch.SUPPORT_DROP) == switch.SUPPORT_DROP[-1][0]
+    g = {"skill": "Spark", "level": 20, "value": 100.0, "source": None, "levels": {"rows": []},
+         "supports": [{"name": "Multishot I", "mult": 0.6}, {"name": "Chain I", "mult": 1.0}, {"name": "Pierce I", "mult": 0.9}],
+         "support_checks": {"boss": {"best": [{"name": "Pierce I"}, {"name": "Fire Attunement"}], "current": ["Multishot I"],
+                                     "mult": 1.66},
+                            "clear": {"best": [{"name": "Pierce I"}, {"name": "Fire Attunement"}], "current": ["Multishot I"],
+                                      "mult": 1.30, "dpsMult": 1.1}}}
+    r = {"level": 13, "gem_max": 4, "support_tier": 1, "groups": [g], "main": [g], "minions": {}}
+    cli.render_checkup(r)
+    out = capsys.readouterr().out
+    assert "Multishot I (x0.60): costs single-target DPS" in out and "Chain I (x1.00): adds nothing" in out
+    assert "Pierce I (x" not in out                       # recommended in this section: no swap line
+    assert "x1.66" in out                                 # boss gain printed on the merged line
+    assert "already the highest" not in out and "above the level-4 cap" in out
+    # one objective already best, the other recommending a change: no "no better support found"
+    g2 = {**g, "support_checks": {"boss": {**g["support_checks"]["boss"]},
+                                  "clear": {"best": [], "current": ["Multishot I"], "unscored": True}}}
+    cli.render_checkup({**r, "groups": [g2], "main": [g2]})
+    out = capsys.readouterr().out
+    assert "no better support found" not in out and "Multishot I (x0.60): costs single-target DPS; swap it" in out
+
+
 def test_headroom_reports_a_slot_it_cannot_blank():
     # a slot with no base PoB knows is listed with a note, not dropped
     from pob_agent import trade

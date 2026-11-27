@@ -589,6 +589,11 @@ def render_switch(r):
           "also needs a respec, supports or a weapon with enough damage.")
 
 
+# check-up verdict bands: NOISE is the support search's own acceptance threshold (a support must add more than 0.1%),
+# REPORT the change the report calls out (2%)
+NOISE, REPORT = 0.001, 0.02
+
+
 def render_checkup(r):
     def x(m):
         return f"x{m:.2f}" if m else "—"
@@ -612,26 +617,32 @@ def render_checkup(r):
             print("gem level: granted by an item, no gem to level")
         elif g["levels"]["rows"]:
             print("gem level: " + ", ".join(f"{e['level']} -> {e['value']:.0f} ({x(e['mult'])})" for e in g["levels"]["rows"]))
+        elif g["level"] > r["gem_max"]:
+            print(f"gem level: {g['level']} is above the level-{r['gem_max']} cap for uncut gems found by this "
+                  "character level (a planner export?); its value is measured at the socketed level")
         else:
             print(f"gem level: {g['level']} is already the highest uncut gem by this level")
         checks = g.get("support_checks") or {}
         label = {"clear": "clearing packs", "boss": "bosses"}
         sets = {obj: frozenset(p["name"] for p in sc["best"]) for obj, sc in checks.items()}
-        if len(checks) == 2 and len(set(sets.values())) == 1:
+        side = lambda sc: bool(sc.get("mult") and sc["mult"] > 1 + REPORT)
+        if len(checks) == 2 and len(set(sets.values())) == 1 and len({side(sc) for sc in checks.values()}) == 1:
             label = {"clear": "clearing packs and bosses (same set)"}
-            checks = {"clear": checks["clear"]}
+            boss_m = checks["boss"].get("mult")
+            checks = {"clear": {**checks["clear"], "boss_mult": boss_m}}
         for obj, sc in checks.items():
             best = " + ".join(p["name"] + (" (socketed in another skill)" if p.get("elsewhere") else "") for p in sc["best"])
             cur = " + ".join(sc["current"]) or "none"
             if sc.get("unscored"):
                 print(f"supports for {label[obj]}: not estimated (the pack model has no value for this skill)")
                 continue
-            if sc.get("mult") and sc["mult"] > 1.02:
+            if sc.get("mult") and sc["mult"] > 1 + REPORT:
                 dps = f"; single-target DPS {x(sc['dpsMult'])}" if obj == "clear" and sc.get("dpsMult") else ""
                 what = "clear speed" if obj == "clear" else "DPS"
                 if obj == "clear" and sc.get("pair"):
                     what = f"clear speed as {sc['pair']}"
-                print(f"supports for {label[obj]}: now {cur}; best set found {best} ({what} {x(sc['mult'])}{dps})")
+                bm = f"; boss DPS {x(sc['boss_mult'])}" if sc.get("boss_mult") else ""
+                print(f"supports for {label[obj]}: now {cur}; best set found {best} ({what} {x(sc['mult'])}{dps}{bm})")
                 own = sc.get("own")
                 if own:
                     ob = " + ".join(p["name"] for p in own["best"])
@@ -640,9 +651,18 @@ def render_checkup(r):
             else:
                 pair = f" (scored as {sc['pair']})" if obj == "clear" and sc.get("pair") else ""
                 print(f"supports for {label[obj]}: {cur} is already the best set found{pair} (searched tier <= {r['support_tier']})")
+        recommended = {p["name"] for sc in (g.get("support_checks") or {}).values() for p in sc.get("best") or []}
+        scored = [sc for sc in (g.get("support_checks") or {}).values() if not sc.get("unscored")]
+        already = bool(scored) and all(not (sc.get("mult") and sc["mult"] > 1 + REPORT) for sc in scored)
         for s in g["supports"]:
-            if s.get("mult") and s["mult"] <= 1.001:
-                print(f"  - {s['name']}: adds nothing to this skill in PoB; swap it for a support that does")
+            m = s.get("mult")
+            if not m or m > 1 + NOISE or s["name"] in recommended:
+                continue
+            costs = m < 1 - REPORT
+            what = "costs single-target DPS" if costs else "adds nothing to this skill in PoB"
+            advice = (f"no better support found at tier <= {r['support_tier']}" if already
+                      else "swap it (see the sets above)" if costs else "swap it for a support that does")
+            print(f"  - {s['name']} ({x(m)}): {what}; {advice}")
     t = r.get("tree")
     if t:
         expected = max(0, r["level"] - 1)
