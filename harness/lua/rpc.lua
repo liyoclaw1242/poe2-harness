@@ -584,6 +584,14 @@ local function setsContext(req)
 	DOT_KILL_LIFE = (data.monsterLifeTable[req.level or 90] or 0) * MAGIC_LIFE
 end
 
+-- Sort helper for value-ranked lists built from `pairs` (string-keyed, so per-process order under LuaJIT's
+-- seeded hash): ties fall back to a name, then an id, so equal values come out in the same order every run.
+local function tieBreak(a, b)
+	local na, nb = tostring(a.name or a.ascendancy or a.gem or ""), tostring(b.name or b.ascendancy or b.gem or "")
+	if na ~= nb then return na < nb end
+	return (a.id or 0) < (b.id or 0)
+end
+
 local function finite(v)
 	return v and v == v and v ~= math.huge and v ~= -math.huge
 end
@@ -1040,7 +1048,10 @@ function commands.ascendancy_lift(req)
 					end
 				end
 			end
-			table.sort(rows, function(a, b) return (a.lift or 0) > (b.lift or 0) end)
+			table.sort(rows, function(a, b)
+				if (a.lift or 0) ~= (b.lift or 0) then return (a.lift or 0) > (b.lift or 0) end
+				return tieBreak(a, b)
+			end)
 			results[#results + 1] = { skill = name, supports = scan.supports, baseDPS = scan.supportedDPS, ascendancies = rows }
 		end
 		if req.progress then io.stderr:write("lift ", name, "\n") end
@@ -1161,7 +1172,10 @@ function commands.campaign(req)
 	for _, r in ipairs(scanRes) do
 		if r.supportedDPS and r.supportedDPS > 0 then ranked[#ranked + 1] = r end
 	end
-	table.sort(ranked, function(a, b) return a.supportedDPS > b.supportedDPS end)
+	table.sort(ranked, function(a, b)
+		if a.supportedDPS ~= b.supportedDPS then return a.supportedDPS > b.supportedDPS end
+		return tieBreak(a, b)
+	end)
 	local top = {}
 	for i = 1, math.min(req.top or 20, #ranked) do top[i] = ranked[i] end
 	local classes = {}
@@ -1362,7 +1376,8 @@ function commands.ascendancy_checkpoints(req)
 	table.sort(rows, function(a, b)
 		local la = a.steps and a.steps[#a.steps] and a.before and a.before > 0 and a.steps[#a.steps].dps / a.before or 0
 		local lb = b.steps and b.steps[#b.steps] and b.before and b.before > 0 and b.steps[#b.steps].dps / b.before or 0
-		return la > lb
+		if la ~= lb then return la > lb end
+		return tieBreak(a, b)
 	end)
 	return { skill = req.skill, supports = scan.supports, weaponType = scan.weaponType, ascendancies = rows }
 end
@@ -1615,7 +1630,8 @@ function commands.decompose(req)
 	local key = function(a, b)
 		local x = a.mult == "inf" and 1e9 or a.mult
 		local y = b.mult == "inf" and 1e9 or b.mult
-		return x > y
+		if x ~= y then return x > y end
+		return tieBreak(a, b)
 	end
 	table.sort(res.supports, key); table.sort(res.ascendancy, key); table.sort(res.tree, key)
 	return res
@@ -1959,7 +1975,10 @@ uniqueSweep = function(slots, top, maxLevel)
 				end
 			end
 		end
-		table.sort(rows, function(a, b) return a.mult > b.mult end)
+		table.sort(rows, function(a, b)
+			if a.mult ~= b.mult then return a.mult > b.mult end
+			return tieBreak(a, b)
+		end)
 		local cut = {}
 		for i = 1, math.min(top or 5, #rows) do cut[i] = rows[i] end
 		out[#out + 1] = { slot = slotName, uniques = cut }
@@ -2216,11 +2235,14 @@ function commands.checkup_tree(req)
 		if not node.ascendancyName and node.type ~= "ClassStart" and node.type ~= "AscendClassStart" then
 			n = n + 1
 			local v = setsValue(calcFunc, {}, { removeNodes = { [node] = true } }, opts) or 0
-			rows[#rows + 1] = { name = node.dn, type = node.type, share = base > 0 and (1 - v / base) or 0,
+			rows[#rows + 1] = { name = node.dn, id = node.id, type = node.type, share = base > 0 and (1 - v / base) or 0,
 				stats = node.sd }
 		end
 	end
-	table.sort(rows, function(a, b) return a.share > b.share end)
+	table.sort(rows, function(a, b)
+		if a.share ~= b.share then return a.share > b.share end
+		return tieBreak(a, b)
+	end)
 	return { allocated = n, level = build.characterLevel, base = base, nodes = rows }
 end
 
