@@ -105,11 +105,15 @@ def measure(eng: Engine, table: list[Enabler] | None = None, detect: bool = True
             slot = by_name.get(e.name)
             if not slot:
                 continue
-            sources.append({"kind": "slot", "slot": slot, "raw": blank_item(items[slot]["raw"])})
+            raw = blank_item(items[slot]["raw"], items[slot].get("base"))
+            if not raw:
+                continue
+            sources.append({"kind": "slot", "slot": slot, "raw": raw})
         if e.credit_slot:
             cs = next((s for s in slots if s.startswith(e.credit_slot) and s in items), None)
-            if cs:
-                extra.append({"kind": "slot", "slot": cs, "raw": blank_item(items[cs]["raw"])})
+            raw = cs and blank_item(items[cs]["raw"], items[cs].get("base"))
+            if raw:
+                extra.append({"kind": "slot", "slot": cs, "raw": raw})
         entries.append({"id": e.id, "sources": sources, "off": e.off, "extra": extra})
         meta[e.id] = e
 

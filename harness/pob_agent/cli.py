@@ -817,9 +817,9 @@ def cmd_decompose(args):
                     continue
                 if s["layer"] in ("notable", "keystone", "ascendancy"):
                     cands.append({"kind": "node", "name": s["name"]})
-                elif s["layer"] == "gear" and s.get("slot") in items:
+                elif s["layer"] == "gear" and s.get("slot") in items and items[s["slot"]].get("base"):
                     cands.append({"kind": "slot", "name": s["name"], "slot": s["slot"],
-                                  "raw": trade.blank_item(items[s["slot"]]["raw"])})
+                                  "raw": trade.blank_item(items[s["slot"]]["raw"], items[s["slot"]]["base"])})
                 elif s["layer"] == "support":
                     cands.append({"kind": "support", "name": s["name"]})
                 if len(cands) >= 10:
@@ -848,6 +848,9 @@ def cmd_decompose(args):
                 a = "∞" if s["alone"] == decompose.INF else f"x{s['alone']:.2f}"
                 name += f" (alone {a})"
             print(f"| {s['layer']} | {name} | {m} |")
+        if d.get("unmeasured"):
+            print("\nnot measured (PoB could not build a blank of the base): "
+                  + ", ".join(f"{u['slot']} ({u['item']})" for u in d["unmeasured"]))
         if d.get("synergy"):
             print("\n### Engines (pairs worth more together than apart)\n| A | B | together | synergy |\n|---|---|---|---|")
             for p in d["synergy"][:10]:

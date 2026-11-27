@@ -36,9 +36,9 @@ for bi, b in enumerate(an["builds"]):
                 continue
             if s["layer"] in ("notable", "keystone", "ascendancy", "jewel") and s["layer"] != "jewel":
                 cands.append({"kind": "node", "name": s["name"], "layer": s["layer"]})
-            elif s["layer"] == "gear" and s.get("slot") in items:
+            elif s["layer"] == "gear" and s.get("slot") in items and items[s["slot"]].get("base"):
                 cands.append({"kind": "slot", "name": s["name"], "slot": s["slot"], "layer": "gear",
-                              "raw": blank_item(items[s["slot"]]["raw"])})
+                              "raw": blank_item(items[s["slot"]]["raw"], items[s["slot"]]["base"])})
             elif s["layer"] == "support":
                 cands.append({"kind": "support", "name": s["name"], "layer": "support"})
             if len(cands) >= K:

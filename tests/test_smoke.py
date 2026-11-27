@@ -432,6 +432,37 @@ def test_leveling_boss_skill_is_in_family():
     assert used == {(b["st"], b["speed0"])}
 
 
+def test_blank_item_uses_the_base_pob_reports():
+    # a Magic item's raw text has no base line (the old third-line read took "Crafted: true" and PoB errored); the
+    # blank is built from PoB's base, and an item with no known base cannot be blanked
+    from pob_agent import trade
+    raw = "Rarity: MAGIC\nProfessor's Pearlescent Amulet of the Mage\nCrafted: true\nItem Level: 80\n"
+    assert trade.blank_item(raw, "Pearlescent Amulet") == "Rarity: RARE\nBlank\nPearlescent Amulet"
+    assert trade.blank_item(raw, None) is None
+
+
+def test_headroom_reports_a_slot_it_cannot_blank():
+    # a slot with no base PoB knows is listed with a note, not dropped
+    from pob_agent import trade
+
+    class NoBase:
+        def __init__(self, eng):
+            self.eng = eng
+
+        def call(self, cmd, **kw):
+            r = self.eng.call(cmd, **kw)
+            if cmd == "items":
+                for it in r["items"]:
+                    if it["slot"] == "Helmet":
+                        it["base"] = None
+            return r
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        rows = trade.slot_headroom(NoBase(eng))
+    helm = next(r for r in rows if r["slot"] == "Helmet")
+    assert helm.get("note") and helm["breaks"] == []
+
+
 def test_leveling_answer_key_is_frozen():
     # the backtest answer key was frozen on 2026-11-24 (research note §6); changing it invalidates every
     # number logged against it. Add new labels as a separate held-out set instead.

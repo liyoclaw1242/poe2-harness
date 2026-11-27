@@ -41,9 +41,9 @@ def sources_from_decompose(d: dict, items: dict, limit: int = 18, min_mult: floa
             continue
         if s["layer"] in ("notable", "keystone", "ascendancy"):
             out.append({"kind": "node", "name": s["name"], "layer": s["layer"]})
-        elif s["layer"] == "gear" and s.get("slot") in items:
+        elif s["layer"] == "gear" and s.get("slot") in items and items[s["slot"]].get("base"):
             out.append({"kind": "slot", "name": s["name"], "slot": s["slot"], "layer": "gear",
-                        "raw": blank_item(items[s["slot"]]["raw"])})
+                        "raw": blank_item(items[s["slot"]]["raw"], items[s["slot"]]["base"])})
         if len(out) >= limit:
             break
     return out

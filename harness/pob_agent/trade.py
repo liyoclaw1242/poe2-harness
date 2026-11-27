@@ -36,19 +36,13 @@ def weighted_query(eng: Engine, slot: str, league: str, weights=None, max_price=
                     maxPrice=max_price, maxPriceType=price_currency, topWeights=top)
 
 
-def blank_item(raw: str) -> str:
-    """Strip an item down to rarity + name + base so we can measure what its mods are worth."""
-    lines = [l for l in raw.splitlines() if l.strip()]
-    keep = []
-    for l in lines:
-        if l.startswith("Rarity:"):
-            keep.append("Rarity: RARE")
-        elif len(keep) == 1:
-            keep.append("Blank")
-        elif len(keep) == 2:
-            keep.append(l)  # base type line
-            break
-    return "\n".join(keep)
+def blank_item(raw: str, base: str | None) -> str | None:
+    """A rare with no mods on the item's base, to measure what its mods are worth. The base comes from PoB's item
+    (`items` returns it): a Magic or Normal item's raw text has no separate base line, so reading it from the text
+    picked up "Crafted: true" or the item's name. None when PoB knows no base: the slot cannot be measured."""
+    if not base:
+        return None
+    return f"Rarity: RARE\nBlank\n{base}"
 
 
 def slot_headroom(eng: Engine, weights=None) -> list[dict]:
@@ -65,10 +59,15 @@ def slot_headroom(eng: Engine, weights=None) -> list[dict]:
         if not it:
             continue
         # uniques are measured the same way: a blank of the same base loses the unique's mods
-        res = eng.call("try_items", slot=slot, candidates=[{"name": "blank", "raw": blank_item(it["raw"])}],
-                       fields=list(DPS_KEYS) + ["TotalEHP"] + thresholds.FIELDS)
-        cand = res["candidates"][0]
-        if not cand.get("ok"):
+        blank_raw = blank_item(it["raw"], it.get("base"))
+        cand = None
+        if blank_raw:
+            res = eng.call("try_items", slot=slot, candidates=[{"name": "blank", "raw": blank_raw}],
+                           fields=list(DPS_KEYS) + ["TotalEHP"] + thresholds.FIELDS)
+            cand = res["candidates"][0]
+        if not cand or not cand.get("ok"):
+            rows.append({"slot": slot, "item": it["name"], "rarity": it.get("rarity"),
+                         "note": "could not measure: PoB could not build a blank of this item's base", "breaks": []})
             continue
         base, blank = res["base"], cand["stats"]
         dps_share = pct(dps_of(base), dps_of(blank))

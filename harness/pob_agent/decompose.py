@@ -50,10 +50,12 @@ def decompose(eng: Engine, min_mult: float = 1.01, conditions: bool = True) -> d
         it = items.get(slot)
         if not it or not it.get("raw"):
             continue
-        res = eng.call("try_items", slot=slot, candidates=[{"name": "blank", "raw": blank_item(it["raw"])}],
-                       fields=list(DPS_KEYS))
-        c = res["candidates"][0]
+        blank_raw = blank_item(it["raw"], it.get("base"))
+        res = blank_raw and eng.call("try_items", slot=slot, candidates=[{"name": "blank", "raw": blank_raw}],
+                                     fields=list(DPS_KEYS))
+        c = res["candidates"][0] if res else {}
         if not c.get("ok"):
+            out.setdefault("unmeasured", []).append({"slot": slot, "item": it["name"]})
             continue
         b, n = dps_of(res["base"]), dps_of(c["stats"])
         mult = INF if n <= 0 else b / n
