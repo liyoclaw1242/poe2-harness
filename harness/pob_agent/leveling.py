@@ -353,6 +353,7 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
     if st <= 0:
         return None
     m = {"skill": r["skill"], "st": st, "weapon": r.get("weaponType"), "types": types, "asc_nodes": r.get("ascNodes"),
+         "supports": [x["name"] for x in r.get("supports") or []],
          "dot": _dot_dps(dot, cfg) if dot else (st if "DamageOverTime" in types and not (v0.get("AverageHit") or 0) else 0)}
 
     # attributes: tree attribute nodes are a free choice in PoE2 (PoB books them as Str), so what the
@@ -490,7 +491,8 @@ def pair_metrics(spreader: dict, dotter: dict, cfg: dict) -> dict | None:
             "off_weapon": bool(spreader.get("off_weapon") or dotter.get("off_weapon")),
             "st": dotter["st"], "clear": clear, "score": score, "targets": cfg["pack"], "kill_time": kill_time,
             "attr_points": max(spreader["attr_points"], dotter["attr_points"]), "weapon": None, "types": set(),
-            "asc_nodes": dotter.get("asc_nodes")}
+            "asc_nodes": dotter.get("asc_nodes"),
+            "supports": {spreader["skill"]: spreader.get("supports") or [], dotter["skill"]: dotter.get("supports") or []}}
 
 
 def rank(stage: str, cls: str, cfg: dict | None = None, data: dict | None = None) -> list[dict]:

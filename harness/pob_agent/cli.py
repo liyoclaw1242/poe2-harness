@@ -406,8 +406,8 @@ def render_leveling(rows, cls, stage, top, boss=None):
              if st.get("ascPoints") else "no ascendancy"))
     if st.get("ascPoints"):
         print("\n> **Experimental.** Strongest generic class skills at this snapshot, ascendancy-blind. Not a build "
-              "recommendation: at asc1 the per-ascendancy ranking scored at chance on a held-out key, and at asc2 it was "
-              "not robust (class-clustered p 0.068). Minions, totems and poison are not modelled. To plan a switch to "
+              "recommendation: at asc1 the per-ascendancy ranking scored at chance on a held-out key, and at asc2 the "
+              "held-out half of the key was not significant. Minions, totems and poison are not modelled. To plan a switch to "
               "a target skill, see the ascendancy checkpoints.")
     print("\n| # | skill | clear (monsters/s) | white packs only | single target DPS | monsters per use | "
           "time per pack | notes |")
@@ -426,6 +426,11 @@ def render_leveling(rows, cls, stage, top, boss=None):
             notes.append("ascendancy: " + ", ".join(m["asc_nodes"]))
         if m.get("stored_uses") and m.get("stored_uses") > 1:
             notes.append(f"{m['stored_uses']:.0f} stored uses per pack")
+        sup = m.get("supports")
+        if isinstance(sup, dict):
+            notes.append("supports: " + "; ".join(f"{k}: {' + '.join(v) or 'none'}" for k, v in sup.items()))
+        elif sup is not None:
+            notes.append("supports: " + (" + ".join(sup) or "none"))
         mx = m.get("clear_mixed")
         mxs = f"{mx:.2f}" if mx is not None else "—"
         print(f"| {i} | {m['skill']} | {m['clear']:.2f} | {mxs} | {fmt(m['st'])} | {m['targets']:.1f} | "

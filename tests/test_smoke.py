@@ -331,6 +331,23 @@ def test_vine_arrow_hit_and_vines_reach_their_own_targets():
     assert new["targets"] == b["targets"] and a["targets"] < b["targets"]   # B wins: the Vines' own reach
 
 
+def test_leveling_rows_show_their_supports(capsys):
+    # a ranked row says which supports its numbers assume (solo: the scored collection's set; pair: each member's)
+    from pob_agent import leveling as L, cli
+    rows = L.rank("act1,act1+clearsup", "Witch")
+    solo = next(m for m in rows if not m.get("members"))
+    pair = next(m for m in rows if m.get("members"))
+    assert isinstance(solo["supports"], list) and set(pair["supports"]) == set(pair["members"])
+    # a row won by the clear-support collection shows that collection's set
+    plain, clear = L.load("act1", "Witch"), L.load("act1+clearsup", "Witch")
+    names = lambda r: [x["name"] for x in r.get("supports") or []]
+    won = [m for m in rows if not m.get("members") and m["skill"] in plain and m["skill"] in clear
+           and names(plain[m["skill"]]) != names(clear[m["skill"]]) and m["supports"] == names(clear[m["skill"]])]
+    assert won
+    cli.render_leveling(rows, "Witch", "act1,act1+clearsup", 5)
+    assert "supports: " in capsys.readouterr().out
+
+
 def test_leveling_ascendancy_sees_node_implied_config():
     # Eldritch Empowerment's 30% more needs PoB's "Are you Sacrificing?" box; the node implies it
     from pob_agent import leveling as L
