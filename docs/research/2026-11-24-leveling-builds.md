@@ -750,3 +750,51 @@ A socketed Hourglass is still scored as it is. A real uptime factor is left for 
 - data/results/scan_start, scan_mid, lift_mid, analysis and profiles_055.
 
 The two orphan bridge-target caches for the Lich target (no target definition) were dropped.
+
+## Vine Arrow: hit and vines reach their own targets (2026-11-27)
+
+**Problem.** The ranking took the larger of the two sets' target counts and applied the combined hit + DoT to
+every target. Vine Arrow's Impact (a 0.8 m hit, about 1 monster) was therefore credited with the Vines area's
+5.4 monsters. The support picker already weighted each set by its own targets, so the two disagreed.
+
+**Fix.** When a hit set and a separate DoT-only set reach different numbers of monsters, the clear rate is the
+better of two estimates:
+- **(A')** both sets on the narrower set's targets;
+- **(B)** the wider set alone on its own targets. A DoT set then counts only its own DoT, with no hit ailments.
+
+Monsters outside the hit's reach take only the vines, so (B) is a lower bound for a pack that spans both.
+Single-target DPS, the `dot` field used by pairs, speed and all factors are unchanged.
+
+**Gates and result.** Registered before the run, with gates approved by Fable. All passed:
+- **Scope:** only Vine Arrow changes (146 entries). With the change switched off, every entry is identical to
+  before.
+- **Unchanged parts:** Vine Arrow's single-target DPS, DoT, speed and factors are unchanged, and its clear never
+  rises. Boss rankings and every Contagion pair row are identical.
+- **Other skills:** with Vine Arrow removed, every served list keeps its order, and no class other than Ranger
+  changes its #1.
+- **Rankings:**
+
+  | key | before | after |
+  |---|---|---|
+  | pre_asc1 | 0.771 | 0.771 |
+  | source2 | 0.771 | 0.771 |
+  | act1 | 0.719 | 0.781 |
+  | devilcat pooled | 0.656 | 0.687 (devilcat act1 0.604 → 0.667) |
+  | asc1 held-out (re-used key, informational) | 0.333 | 0.334 |
+
+  asc2 held-out (re-used key) is unchanged. The act1 and devilcat act1 gains are on development keys and are
+  not evidence of generalisation.
+
+**Ranger.**
+- **act1:** #1 is now Lightning Arrow, the community pick. Vine Arrow goes to #2.
+- **pre_asc1:** Vine Arrow falls from #2 to #11, further than the #3–4 estimated beforehand.
+  - Most of its pre_asc1 damage is Impact's hit: 131 DPS against the Vines' own 32.5 DoT. Neither estimate
+    gives much: (B) leaves only the DoT across the pack, and (A') covers about one monster.
+  - The true value lies between this lower bound and the old score.
+- **Which estimate wins:**
+  - act1 and pre_asc1: (B) in all entries.
+  - asc1: (B) in 35, (A') in 19.
+  - asc2: (B) in 19, (A') in 37.
+- **Collections:** Vine Arrow's clear-support collection now beats its plain one in 54 of 74 class × stage pairs
+  (was 6 of 74). (B) rewards the Vines' area and duration, which the clear supports raise.
+

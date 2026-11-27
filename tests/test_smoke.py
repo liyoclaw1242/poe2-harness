@@ -307,6 +307,30 @@ def test_vine_arrow_counts_hit_ailment_once():
     assert abs(m["dot"] - 21.5032) < 0.01   # the dot field (pairs, G8) is unchanged
 
 
+def test_vine_arrow_hit_and_vines_reach_their_own_targets():
+    # Ranger act1 Vine Arrow: Impact's 0.8 m hit reaches ~1 monster, the Vines' 2.4 m area ~5.4. Clear is the better
+    # of both sets on the narrow reach (A') and the Vines alone on their own reach with their own DoT (B); the old
+    # model credited the hit with the Vines' 5.4 targets. Single-target DPS does not change.
+    from pob_agent import leveling as L
+    imp = {"label": "Impact", "dps": 19.4075, "CombinedDPS": 19.4075, "TotalDot": 0, "TotalDotDPS": 0.0351,
+           "AverageDamage": 14.3499, "Duration": 10.428, "Speed": 1.35, "AreaOfEffectRadiusMetres": 0.8,
+           "ProjectileCount": 1, "PierceCount": 0.15, "ChainMax": 0}
+    vin = {**imp, "label": "Vines", "dps": 35.3908, "CombinedDPS": 35.3908, "TotalDot": 15.9833, "TotalDotDPS": 16.0185,
+           "AreaOfEffectRadiusMetres": 2.4}
+    r = {"skill": "Vine Arrow", "types": ["Area", "Attack", "Chaos", "DamageOverTime", "Duration", "Projectile"],
+         "monsterLife": 89, "variants": [imp, vin]}
+    cfg = {**L.DEFAULT, "loadout": False}
+    off = {**cfg, "split_targets": False}
+    new, old = L.metrics(r, cfg), L.metrics(r, off)
+    a = L.metrics({**r, "variants": [imp, {**vin, "AreaOfEffectRadiusMetres": 0.8}]}, off)   # both sets, narrow reach
+    b = L.metrics({**r, "variants": [{**vin, "TotalDotDPS": vin["TotalDot"]}]}, off)         # Vines alone
+    assert abs(b["st"] - 15.9833) < 1e-9
+    assert abs(new["clear"] - max(a["clear"], b["clear"])) < 1e-12
+    assert abs(new["clear"] - 0.4436) < 1e-3 and abs(old["clear"] - 0.7344) < 1e-3
+    assert new["st"] == old["st"] and new["dot"] == old["dot"]
+    assert new["targets"] == b["targets"] and a["targets"] < b["targets"]   # B wins: the Vines' own reach
+
+
 def test_leveling_ascendancy_sees_node_implied_config():
     # Eldritch Empowerment's 30% more needs PoB's "Are you Sacrificing?" box; the node implies it
     from pob_agent import leveling as L

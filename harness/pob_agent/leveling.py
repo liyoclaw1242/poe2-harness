@@ -380,12 +380,11 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
         targets = cfg["pack"]
     if "Minion" in types:
         targets = min(cfg["pack"], min(v0.get("ActiveMinionLimit") or 1, cfg["minion_cap"]))
-    speed0 = ref.get("Speed") or 1
-    per_target = st / max(targets, 1) if "Minion" in types else st
-    uses = ref.get("StoredUses") or 0
-
-    def kill(hp):
+    def kill(hp, targets=targets, st=st, ref=ref, dot=dot, ddps=None):
         """Seconds the player spends on a pack whose monsters have `hp` life, and the use rate."""
+        speed0 = ref.get("Speed") or 1
+        per_target = st / max(targets, 1) if "Minion" in types else st
+        uses = ref.get("StoredUses") or 0
         speed = speed0
         t = max(hp / per_target, 1 / speed)
         if "Cooldown" in types and r["skill"] not in SPREAD:
@@ -402,16 +401,38 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
             # a DoT that kills within its duration does not hold the player: cast, move on. The pack still
             # takes hp / DoT DPS to die; only the part of that overlapping the walk to the next pack is free.
             dur = dot.get("Duration") or 0
-            ddps = _dot_dps(dot, cfg, with_hit=bool(hit) and dot is not hit)
+            if ddps is None:
+                ddps = _dot_dps(dot, cfg, with_hit=bool(hit) and dot is not hit)
             f = _ff_share(ddps * dur, hp, cfg) if dur else 0.0
             if f > 0:
                 t = f * min(t, max(1 / speed, hp / ddps - cfg["travel"])) + (1 - f) * t
         return t, speed
 
     kill_time, speed = kill(life)
-    m["stored_uses"] = uses
+    m["stored_uses"] = ref.get("StoredUses") or 0
     m["dot_duration"] = (dot.get("Duration") or 0) if dot else 0
     clear = mix_clear(targets, lambda mult: kill(life * mult)[0], cfg, life)
+    if (cfg.get("split_targets", True) and hit and dot and dot is not hit and "Minion" not in types
+            and r["skill"] not in SPREAD):
+        # a hit set and a separate DoT-only set reaching different numbers of monsters (Vine Arrow: Impact's 0.8 m
+        # hit, the Vines' area of about 5 monsters). Monsters outside the narrower set's reach take only the wider
+        # set, so the clear is the better of: both sets on the narrower set's targets (A'), or the wider set alone
+        # on its own targets (B; a DoT set then counts only its own DoT, no hit ailments). B is a lower bound for
+        # a pack spanning both.
+        th, td = _targets(hit, cfg, types), _targets(dot, cfg, types)
+        if abs(th - td) > 1e-9:
+            narrow = min(th, td)
+            a = (mix_clear(narrow, lambda mult: kill(life * mult, targets=narrow)[0], cfg, life),
+                 narrow, kill(life, targets=narrow)[0])
+            if td > th:
+                own = _dot_dps(dot, cfg, with_hit=True)
+                kb = lambda hp: kill(hp, targets=td, st=own, ref=dot, ddps=own)[0]
+                wide = td
+            else:
+                kb = lambda hp: kill(hp, targets=th, st=hit.get("dps") or 0, dot=None)[0]
+                wide = th
+            b = (mix_clear(wide, lambda mult: kb(life * mult), cfg, life), wide, kb(life))
+            clear, targets, kill_time = max(a, b, key=lambda x: x[0])
     m.update(targets=targets, kill_time=kill_time, clear=clear, life=life, speed=speed)
 
     # mana: uses per full pool
