@@ -450,7 +450,8 @@ def render_leveling(rows, cls, stage, top, boss=None):
         print("\nboss DPS is measured against a level-matched monster with no boss resistances or armour, so "
               "physical attacks read high next to what a real act boss takes.")
     print("\nclear: monsters per second over a campaign pack mix (60% white, 30% magic at 2.48x life, 10% rare-led "
-          "with the rare at 8x life, which the boss skill below may finish), with 2s walking between packs. "
+          "with the rare at 8x life, which the first in-family boss skill below may finish, at least one use per "
+          "monster), with 2s walking between packs. "
           "Off-family skills are scaled x0.25.")
     print("\nnote: PoB numbers on a plain weapon base with no gear mods against white monsters of the stage level; "
           "no credit for overkill; a DoT that kills within its duration lets the player move on, its time to kill "

@@ -399,6 +399,39 @@ def test_leveling_mix_lets_boss_skill_finish_rares():
     assert abs(L.mix_clear(6, lambda m: m * 1.0, {**cfg, "boss_dps": 400}, life=100) - 3.0) < 1e-9
 
 
+def test_leveling_boss_skill_takes_at_least_one_use():
+    # a tough monster finished with the boss skill costs at least one use of it, in leader and plain packs
+    from pob_agent import leveling as L
+    cfg = {**L.DEFAULT, "mix": {"magic": (2.0, 0.5), "rare": (8.0, 0.5, "leader")}, "travel": 0.0, "boss_dps": 1000}
+    slow = lambda m: m * 10.0
+    free = L.mix_clear(6, slow, cfg, life=100)
+    floored = L.mix_clear(6, slow, {**cfg, "boss_speed": 0.5}, life=100)   # one use = 2 s > 0.2 s / 0.8 s of DPS
+    assert abs(free - 12 / (6 * 0.2 + 10 + 0.8)) < 1e-9
+    assert abs(floored - 12 / (6 * 2.0 + 10 + 2.0)) < 1e-9
+    assert L.mix_clear(6, slow, {**cfg, "boss_speed": 0}, life=100) == free
+
+
+def test_leveling_boss_skill_is_in_family():
+    # the loadout's boss skill is the best one the class is scored as using: off-family rows (x0.25 in the ranking)
+    # do not finish rares at full DPS; with the off-family penalty switched off the top row is used as before
+    from pob_agent import leveling as L
+    top = L.rank_boss("asc1,asc1+clearsup", "Huntress", {**L.DEFAULT, "loadout": False})
+    assert top[0].get("off_weapon")
+    b = L.boss_row(top, L.DEFAULT)
+    assert not b["off_weapon"] and b is next(m for m in top if not m.get("off_weapon"))
+    assert L.boss_row(top, {**L.DEFAULT, "off_weapon_factor": 1.0}) is top[0]
+    # rank() hands that row's DPS and raw use rate to the clear model
+    seen = []
+    orig = L.mix_clear
+    L.mix_clear = lambda t, p, cfg, life=0.0: (seen.append((cfg.get("boss_dps"), cfg.get("boss_speed"))), orig(t, p, cfg, life))[1]
+    try:
+        L.rank("asc1,asc1+clearsup", "Huntress")
+    finally:
+        L.mix_clear = orig
+    used = {x for x in seen if x[0]}   # rank_boss's own scoring runs without a boss skill
+    assert used == {(b["st"], b["speed0"])}
+
+
 def test_leveling_answer_key_is_frozen():
     # the backtest answer key was frozen on 2026-11-24 (research note §6); changing it invalidates every
     # number logged against it. Add new labels as a separate held-out set instead.

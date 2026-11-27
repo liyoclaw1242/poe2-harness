@@ -309,13 +309,16 @@ def mix_clear(targets: float, pack_time, cfg: dict, life: float = 0.0) -> float:
     monster. With cfg["boss_dps"] set (the class's boss skill), tough monsters may be finished with that skill
     instead: the leveling loadout is a clear skill plus a single-target skill."""
     boss = cfg.get("boss_dps") or 0
+    boss_speed = cfg.get("boss_speed") or 0
     n = t = 0.0
     for e in cfg["mix"].values():
         mult, share = e[0], e[1]
         leader = len(e) > 2 and e[2] == "leader"
         own = pack_time(mult)
         if boss and life and mult > 1:
-            alt = (pack_time(1.0) + mult * life / boss) if leader else targets * mult * life / boss
+            # each tough monster takes at least one use of the boss skill (no overkill credit, as for the clear skill)
+            per = max(mult * life / boss, 1 / boss_speed) if boss_speed else mult * life / boss
+            alt = (pack_time(1.0) + per) if leader else (targets * per if boss_speed else targets * mult * life / boss)
             own = min(own, alt + cfg.get("swap_time", 0.0))
         n += share * targets
         t += share * (own + cfg["travel"])
@@ -434,7 +437,7 @@ def metrics(r: dict, cfg: dict, cls: str | None = None) -> dict | None:
                 wide = th
             b = (mix_clear(wide, lambda mult: kb(life * mult), cfg, life), wide, kb(life))
             clear, targets, kill_time = max(a, b, key=lambda x: x[0])
-    m.update(targets=targets, kill_time=kill_time, clear=clear, life=life, speed=speed)
+    m.update(targets=targets, kill_time=kill_time, clear=clear, life=life, speed=speed, speed0=ref.get("Speed") or 1)
 
     # mana: uses per full pool
     cost = v0.get("ManaCost") or 0
@@ -503,9 +506,9 @@ def rank(stage: str, cls: str, cfg: dict | None = None, data: dict | None = None
     stages = stage.split(",")
     datas = [data] if data is not None else [load(st, cls) for st in stages]
     if cfg.get("loadout") and data is None and len(cfg["mix"]) > 1:
-        # tough monsters can be left to the class's best boss skill (raw DPS of the top boss pick)
-        top = rank_boss(stage, cls, {**cfg, "loadout": False})
-        cfg = {**cfg, "boss_dps": top[0]["st"] if top else 0}
+        # tough monsters can be left to the class's best in-family boss skill (its raw DPS, at least one use each)
+        b = boss_row(rank_boss(stage, cls, {**cfg, "loadout": False}), cfg)
+        cfg = {**cfg, "boss_dps": b["st"] if b else 0, "boss_speed": b["speed0"] if b else 0}
     per = [{m["skill"]: m for m in (metrics(r, cfg, cls) for r in d.values()) if m} for d in datas]
     solo = {}
     for p in per:
@@ -523,6 +526,14 @@ def rank(stage: str, cls: str, cfg: dict | None = None, data: dict | None = None
                         rows.append(p)
     rows.sort(key=lambda m: -m["score"])
     return rows
+
+
+def boss_row(top: list[dict], cfg: dict) -> dict | None:
+    """The boss skill a leveling loadout finishes tough monsters with: the best boss row the class is scored as
+    using. Off-family skills are scaled down in the ranking, so they do not finish rares at full DPS either."""
+    if cfg.get("class_weapon") and cfg.get("off_weapon_factor", 1.0) < 1:
+        return next((m for m in top if not m.get("off_weapon")), None)
+    return top[0] if top else None
 
 
 def rank_boss(stage: str, cls: str, cfg: dict | None = None) -> list[dict]:

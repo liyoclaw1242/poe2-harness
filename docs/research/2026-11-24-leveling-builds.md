@@ -819,3 +819,28 @@ skill picker and to the check-up; socketed supports are still scored as they are
 - **Contagion + Essence Drain:** keeps its score in all 19 lists it leads.
 - **Top 3:** one change, Druid Shaman asc1, where Thunderstorm enters at #2.
 
+## The loadout's boss skill is in-family and takes at least one use (2026-11-27)
+
+The leveling loadout lets the class's boss skill finish the tough monster in a pack. The audit found two gaps:
+- **Family.** The loadout took the top boss row even when that skill is off-family. Such a skill is scaled ×0.25
+  in its own ranking, yet it finished rares at full DPS:
+  - act1 Ranger: Wing Blast
+  - asc1 Huntress: Detonating Arrow, 3,709 DPS against the best in-family 703
+  - asc2 Monk: Oil Barrage
+- **No use-time floor.** A 2.4 s Perfect Strike "killed" a magic monster in 0.44 s, while the clear skill's own
+  kill time is floored at one use.
+
+**Fix.** The boss skill is the first in-family boss row, and each monster it finishes costs at least one use at
+its raw use rate. With the off-family penalty switched off, the top row is used as before.
+
+**Gates.** Registered before the run, with gates approved by Fable. All passed:
+- **Boss row:** changes in exactly those three cells.
+- **Isolation:** no score rises. With the loadout off, every row is identical. With the use floor forced off,
+  the 29 other cells are identical.
+- **Rankings:** all unchanged.
+- **Served #1:** no change.
+- **Rows moved:** 725 rows in 7 of 32 cells. In four of those cells (asc1/asc2 Ranger and Warrior) only the floor
+  is responsible. Some moves are large; asc2 Warrior's Voltaic Grenade scores ×0.6.
+- **Top 3:** one change, act1 Ranger, where Escape Shot and Vine Arrow swap #2 and #3.
+- **Top 5:** asc1 Warrior #5 Rolling Slam → Earthshatter; asc2 Monk #5 Ice Strike → Oil Barrage.
+
