@@ -1316,6 +1316,14 @@ end
 
 -- Ascendancy checkpoints: one skill on a class template, ascendancy points spent the way a player does
 -- (notable-first, all points), recording DPS, EHP and the nodes taken at each trial (2/4/6/8 points).
+-- DPS a checkpoint reports: the first stat set plus the best DoT-only set (as picks are judged), without the
+-- one-cast-kill factor (boss) or clear weighting, so a DoT skill's lift counts its DoT (Essence Drain) in plain DPS.
+-- Equal to skillDps() for skills without a DoT-only set.
+local function reportDps()
+	local opts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
+	return setsValue(build.calcsTab:GetMiscCalculator(), { boss = true }, {}, opts) or skillDps()
+end
+
 function commands.ascendancy_checkpoints(req)
 	local gemId, gemData = findGemByName(req.skill or "")
 	if not gemId then error("gem not found: " .. tostring(req.skill)) end
@@ -1333,14 +1341,14 @@ function commands.ascendancy_checkpoints(req)
 				local ok, err = pcall(function()
 					setupSkill(gemData, supportIds, req, classId, ascendId)
 					if req.impliedConditions then applyAscendancyFlags() end
-					local before = skillDps()
+					local before = reportDps()
 					local ehp0 = num((build.calcsTab.mainOutput or {}).TotalEHP)
 					local steps, spent = {}, 0
 					for _, target in ipairs(req.steps or { 2, 4, 6, 8 }) do
 						local picks, used, cand = greedyAscendancy(target - spent, true)
 						spent = spent + used
 						recalc()
-						steps[#steps + 1] = { points = target, spent = spent, nodes = picks, candidates = cand, dps = skillDps(),
+						steps[#steps + 1] = { points = target, spent = spent, nodes = picks, candidates = cand, dps = reportDps(),
 							ehp = num((build.calcsTab.mainOutput or {}).TotalEHP) }
 					end
 					rows[#rows + 1] = { ascendancy = asc.name, class = class.name, before = before, ehpBefore = ehp0,

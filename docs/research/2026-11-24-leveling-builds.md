@@ -643,8 +643,11 @@ are.
 - **Cooldown is ignored.** Vine Arrow with clear supports picks Hourglass + Prolonged Duration I, a 10 s
   cooldown, because the DoT-set value does not account for it.
 - **Single-set DoT skills get no duration factor** (Contagion, Profane Ritual).
-- **Reports use a different measure than the picker.** Build-up, checkpoint and skill-scan reports show
-  first-set DPS while picks use the new value, so a DoT-only gain can read as "no gain".
+- **Reports use a different measure than the picker.** Fixed for ascendancy checkpoints (2026-11-27). Their DPS
+  is now the first set plus the DoT set, with no kill factor, so Essence Drain Lich's 8-point lift reads x1.43
+  instead of x1.59. Infernalist goes 2.39 → 1.96 and Blood Mage 1.11 → 1.05. Picks and the checkpoint-key score
+  are unchanged. Build-up, campaign and ascendancy-lift still report first-set DPS: switching them needs the
+  support scan's numbers in the same unit.
 
 ## Vine Arrow: hit ailments counted once (2026-11-27)
 

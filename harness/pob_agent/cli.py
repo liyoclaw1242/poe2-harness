@@ -551,7 +551,8 @@ def render_checkpoints(r):
     print("\nEach step spends two points notable-first on the node that adds most DPS to this skill, on a class "
           "template with no passive tree or gear. \"no DPS gain\": no notable helps this skill there; take it "
           "for defence or utility, which is not scored. Conditions an ascendancy node sustains (e.g. Eldritch "
-          "Empowerment's sacrifice) are assumed on.")
+          "Empowerment's sacrifice) are assumed on. DPS counts a skill's DoT part where it has one (Essence Drain: "
+          "the projectile hit plus the drain).")
     print("\nThis is a damage-only order, not the guides' order: guides often take a defensive or utility notable "
           "first. Against 20 frozen guide builds it matched the guide's first notable 6 times (random: 3.6, p 0.13) "
           "and the first two no better than random. Read it as \"what each notable adds to this skill's damage\".")

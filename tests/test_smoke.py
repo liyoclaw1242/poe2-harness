@@ -329,6 +329,18 @@ def test_checkpoints_spend_every_point_notable_first():
     assert a["lift"] > 1.2
 
 
+def test_checkpoint_dps_counts_the_dot_set():
+    # checkpoint DPS is the first stat set plus the DoT-only set (plain DPS, no kill factor); for Essence Drain the
+    # first set alone is only the projectile hit
+    from pob_agent import leveling as L
+    p = L.stage_params("asc2", "Witch")
+    with Engine() as eng:
+        a = eng.call("ascendancy_checkpoints", skill="Essence Drain", **{**p, "class": "Witch",
+                     "ascendancies": {"Lich": True}, "steps": [2]})["ascendancies"][0]
+        first = eng.call("eval", code="return skillDps()")
+    assert a["steps"][0]["dps"] > first * 1.2
+
+
 def test_checkpoint_key_is_frozen():
     # frozen 2026-11-25 before any run against it; scored once, never tuned on
     import hashlib
