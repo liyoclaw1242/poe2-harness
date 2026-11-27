@@ -78,9 +78,10 @@ def margins(eng: Engine, resist_slack: float = 5, attr_slack: float = 10, spirit
     elif s < spirit_slack:
         edges.append({"kind": "spirit", "broken": False, "text": f"only {s:.0f} Spirit unreserved"})
     for a, r in t["attributes"].items():
-        slack = r["value"] - r["req"]
-        if r["req"] <= 0:
+        # PoB omits "req" when nothing equipped or socketed has a requirement for this attribute
+        if (r.get("req") or 0) <= 0:
             continue
+        slack = r["value"] - r["req"]
         if slack < 0:
             edges.append({"kind": "attribute", "broken": True,
                           "text": f"{a} {r['value']:.0f} is below the requirement {r['req']:.0f}"})

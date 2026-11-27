@@ -619,7 +619,7 @@ function setsValue(calcFunc, req, override, opts)
 				-- clear counts a DoT whose one cast kills (leveling.metrics, fire and forget): DoT DPS gets full
 				-- credit only if DPS x duration covers a magic monster's life, so a support that buys DPS with
 				-- duration (Swift Affliction) does not win when it stops one cast from killing
-				local hp = DOT_KILL_LIFE
+				local hp = not req.boss and DOT_KILL_LIFE
 				if hp and hp > 0 and (o.Duration or 0) > 0 then d = d * math.min(1, d * o.Duration / hp) end
 				local v = supportValue(o, req, d)
 				if finite(v) and (not bestDot or v > bestDot) then bestDot = v end
@@ -1240,8 +1240,8 @@ local function mainSkillTypes()
 	return t, ms and ms.activeEffect.grantedEffect.name
 end
 
-local function probeVariants(group)
-	local gi = group.gemList[1]
+local function probeVariants(group, gi)
+	gi = gi or group.gemList[1]
 	local ge = gi and gi.gemData and gi.gemData.grantedEffect
 	local out = {}
 	local sets = ge and ge.statSets or {}
@@ -1972,6 +1972,271 @@ function commands.full_dps()
 	end
 	return { full = num(o.FullDPS), combined = num(o.CombinedDPS), skills = rows,
 		extras = { culling = num(o.CullingDPS), ignite = num(o.IgniteDPS), bleed = num(o.BleedDPS), poison = num(o.PoisonDPS) } }
+end
+
+-- ---------------------------------------------------------------------------
+-- Leveling check-up: what to change on a campaign character, measured on its own build.
+-- Value of a skill = best hit stat set + best DoT-only stat set (setsValue, as the leveling ranking scores it).
+-- ---------------------------------------------------------------------------
+local function groupValue(i, vreq)
+	build.mainSocketGroup = i
+	build.configTab:BuildModList()
+	local calcFunc = build.calcsTab:GetMiscCalculator()
+	return setsValue(calcFunc, vreq or {}, {}, { requirementsItems = true, requirementsGems = true, skipEHP = true }) or 0
+end
+
+-- What a support set is judged by in the check-up. clear: DPS weighted by the monsters a use reaches in a pack,
+-- with a DoT set fully credited only if one cast kills a magic monster (the leveling ranking's value). boss: plain
+-- single-target DPS; a DoT is not expected to kill a boss in one cast, so duration counts only through DPS.
+local function objectiveReq(objective)
+	if objective == "boss" then return { boss = true } end
+	if objective == "clear" then return { supportObjective = "clear" } end
+	return {}
+end
+
+local function activeGem(g)
+	for _, gi in ipairs(g.gemList or {}) do
+		local ge = gi.gemData and gi.gemData.grantedEffect
+		if ge and not ge.support and gi.enabled ~= false then return gi end
+	end
+end
+
+-- PoB counts minions in presence only for minion skills with a minion-limit stat, so a sceptre's granted
+-- Skeletal Warrior counts as none and Minion Pact reads x1.00. When the build has a minion skill but PoB counts
+-- none, assume one (PoB's own "# of Minions in your Presence" setting) for the whole check-up and say so.
+function commands.checkup_prepare()
+	recalc()
+	SETS_FIRST_ONLY = nil
+	DOT_KILL_LIFE = (data.monsterLifeTable[build.characterLevel or 1] or 0) * MAGIC_LIFE
+	local hasMinion = {}
+	for _, g in ipairs(build.skillsTab.socketGroupList) do
+		local s = g.displaySkillList and g.displaySkillList[1]
+		if g.enabled ~= false and s and s.minion then hasMinion[#hasMinion + 1] = s.activeEffect.grantedEffect.name end
+	end
+	local env = build.calcsTab.mainEnv
+	local counted = env and env.player and env.player.modDB:Sum("BASE", nil, "Multiplier:MinionPresenceCount") or 0
+	local assumed = false
+	if #hasMinion > 0 and counted == 0 and not build.configTab.input.multiplierMinionsInPresence then
+		build.configTab.input.multiplierMinionsInPresence = 1
+		recalc()
+		assumed = true
+	end
+	return { minionSkills = hasMinion, counted = counted, assumedOne = assumed }
+end
+
+-- Damaging socket groups with their value, supports, and what each support adds.
+function commands.checkup_groups()
+	local saved = build.mainSocketGroup
+	local out = {}
+	for i, g in ipairs(build.skillsTab.socketGroupList) do
+		local gi = activeGem(g)
+		if gi and g.enabled ~= false then
+			local v = groupValue(i)
+			if v > 0 then
+				local row = { index = i, skill = gi.gemData.name, level = gi.level, value = v, slot = g.slot,
+					source = g.source, supports = {} }
+				for _, s in ipairs(g.gemList) do
+					local sge = s.gemData and s.gemData.grantedEffect
+					if sge and sge.support and s.enabled ~= false then
+						s.enabled = false
+						local without = groupValue(i)
+						s.enabled = true
+						local entry = { name = s.gemData.name, level = s.level, mult = without > 0 and v / without or nil }
+						row.supports[#row.supports + 1] = entry
+					end
+				end
+				out[#out + 1] = row
+			end
+		end
+	end
+	build.mainSocketGroup = saved
+	recalc()
+	return { groups = out }
+end
+
+-- Value of the group's skill at higher gem levels.
+function commands.checkup_gem_levels(req)
+	local g = build.skillsTab.socketGroupList[req.group]
+	local gi = activeGem(g)
+	local base, lvl0, rows = groupValue(req.group), gi.level, {}
+	for l = lvl0 + 1, math.min(req.maxLevel or lvl0, lvl0 + 4) do
+		gi.level = l
+		build.skillsTab:ProcessSocketGroup(g)
+		rows[#rows + 1] = { level = l, value = groupValue(req.group), mult = nil }
+		rows[#rows].mult = base > 0 and rows[#rows].value / base or nil
+	end
+	gi.level = lvl0
+	build.skillsTab:ProcessSocketGroup(g)
+	recalc()
+	return { base = base, level = lvl0, rows = rows }
+end
+
+-- Best support set of the current size (at least `slots`) for one group, greedy over tier-capped supports,
+-- with each single swap measured as well. Supports socketed in other groups are flagged, not excluded:
+-- whether PoE2 lets one support sit in two skills is not modelled.
+function commands.checkup_supports(req)
+	local i = req.group
+	local g = build.skillsTab.socketGroupList[i]
+	local gi = activeGem(g)
+	local vreq = objectiveReq(req.objective)
+	build.mainSocketGroup = i
+	recalc()
+	local active = g.displaySkillList and g.displaySkillList[1]
+	local current = {}
+	local keep = { gi }
+	for _, s in ipairs(g.gemList) do
+		local sge = s.gemData and s.gemData.grantedEffect
+		if sge and sge.support and s.enabled ~= false then current[#current + 1] = s.gemData.name end
+	end
+	local elsewhere = {}
+	for j, og in ipairs(build.skillsTab.socketGroupList) do
+		if j ~= i then
+			for _, s in ipairs(og.gemList or {}) do
+				if s.gemData and s.gemData.grantedEffect and s.gemData.grantedEffect.support then elsewhere[s.gemData.name] = true end
+			end
+		end
+	end
+	local base = groupValue(i, vreq)
+	local baseDps = groupValue(i)
+	local saved = g.gemList
+	local candidates = {}
+	for id, cg in pairs(data.gems) do
+		local ge = cg.grantedEffect
+		if ge and ge.support and not ge.hidden and not (cg.tags and cg.tags.lineage)
+			and cg.Tier and cg.Tier >= 1 and cg.Tier <= (req.maxSupportTier or 1)
+			and active and calcLib.canGrantedEffectSupportActiveSkill(ge, active) then
+			candidates[#candidates + 1] = { id = id, g = cg }
+		end
+	end
+	table.sort(candidates, function(a, b) return a.id < b.id end)
+	local function gemEntry(c)
+		return { level = math.min(c.g.naturalMaxLevel or 1, req.supportLevel or 1), quality = 0, count = 1, enabled = true,
+			enableGlobal1 = true, enableGlobal2 = true, gemId = c.id, nameSpec = c.g.name, skillId = c.g.grantedEffectId,
+			gemData = c.g }
+	end
+	-- greedy from the bare skill
+	g.gemList = { gi }
+	build.skillsTab:ProcessSocketGroup(g)
+	local chosen, picks = {}, {}
+	local slots = math.max(req.slots or 2, #current)
+	local opts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
+	local bare = groupValue(i, vreq)
+	for _ = 1, slots do
+		local calcFunc = build.calcsTab:GetMiscCalculator()
+		local bestV, best = setsValue(calcFunc, vreq, {}, opts) or 0, nil
+		local idx = #g.gemList + 1
+		for _, c in ipairs(candidates) do
+			if not chosen[c.id] and not (req.excludeElsewhere and elsewhere[c.g.name]) then
+				g.gemList[idx] = gemEntry(c)
+				local v = setsValue(calcFunc, vreq, {}, opts)
+				if v and v == v and v ~= math.huge and v > bestV * 1.001 then bestV, best = v, c end
+			end
+		end
+		g.gemList[idx] = nil
+		if not best then break end
+		chosen[best.id] = true
+		g.gemList[idx] = gemEntry(best)
+		build.skillsTab:ProcessSocketGroup(g)
+		recalc()
+		picks[#picks + 1] = { name = best.g.name, tier = best.g.Tier, value = groupValue(i, vreq), elsewhere = elsewhere[best.g.name] or nil }
+	end
+	local bestSet = groupValue(i, vreq)
+	local bestDps = groupValue(i)
+	g.gemList = saved
+	build.skillsTab:ProcessSocketGroup(g)
+	recalc()
+	-- mult: on the objective's own measure; dpsMult: on the check-up's value column, for comparison
+	return { group = i, skill = gi.gemData.name, objective = req.objective, current = current, value = base, bare = bare,
+		best = picks, bestValue = bestSet, mult = base > 0 and bestSet / base or nil,
+		dpsMult = baseDps > 0 and bestDps / baseDps or nil }
+end
+
+-- Probe rows (as leveling_probe returns them) for the group's skill with each listed support set, so the
+-- check-up scores pack clear with the leveling ranking's own model. A set is a list of support names; nil
+-- (json null / missing) keeps the supports socketed now.
+function commands.checkup_probe_sets(req)
+	local i = req.group
+	local g = build.skillsTab.socketGroupList[i]
+	local gi = activeGem(g)
+	build.mainSocketGroup = i
+	local saved = g.gemList
+	-- probeVariants clears the gem's stat set / part selection; an export can carry a chosen one, so keep it
+	local savedSet, savedPart = gi.statSet, gi.skillPart
+	local out = {}
+	for k = 1, #(req.sets or {}) do
+		local names = req.sets[k]
+		if type(names) == "table" and names ~= json.null then
+			local list = { gi }
+			for _, n in ipairs(names) do
+				local id = findGemByName(n, true)
+				local cg = id and data.gems[id]
+				if cg then
+					list[#list + 1] = { level = math.min(cg.naturalMaxLevel or 1, req.supportLevel or 1), quality = 0, count = 1,
+						enabled = true, enableGlobal1 = true, enableGlobal2 = true, gemId = id, nameSpec = cg.name,
+						skillId = cg.grantedEffectId, gemData = cg }
+				end
+			end
+			g.gemList = list
+		else
+			g.gemList = saved
+		end
+		build.skillsTab:ProcessSocketGroup(g)
+		recalc()
+		local types = mainSkillTypes()
+		out[k] = { skill = gi.gemData.name, types = types, variants = probeVariants(g, gi),
+			monsterLife = data.monsterLifeTable[build.characterLevel or 1] }
+	end
+	g.gemList = saved
+	gi.statSet, gi.skillPart = savedSet, savedPart
+	build.skillsTab:ProcessSocketGroup(g)
+	recalc()
+	return { rows = out }
+end
+
+-- Passive points: allocated count and each allocated node's share of the main group's value.
+function commands.checkup_tree(req)
+	build.mainSocketGroup = req.group
+	recalc()
+	local calcFunc = build.calcsTab:GetMiscCalculator()
+	local opts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
+	local base = setsValue(calcFunc, {}, {}, opts) or 0
+	local rows, n = {}, 0
+	for _, node in pairs(build.spec.allocNodes) do
+		if not node.ascendancyName and node.type ~= "ClassStart" and node.type ~= "AscendClassStart" then
+			n = n + 1
+			local v = setsValue(calcFunc, {}, { removeNodes = { [node] = true } }, opts) or 0
+			rows[#rows + 1] = { name = node.dn, type = node.type, share = base > 0 and (1 - v / base) or 0,
+				stats = node.sd }
+		end
+	end
+	table.sort(rows, function(a, b) return a.share > b.share end)
+	return { allocated = n, level = build.characterLevel, base = base, nodes = rows }
+end
+
+-- Main group value with the build as is (used around Spirit probes that paste a group in).
+function commands.checkup_value(req)
+	local o = build.calcsTab.mainOutput or {}
+	local v = groupValue(req.group)
+	recalc()
+	o = build.calcsTab.mainOutput or {}
+	return { value = v, spirit = o.Spirit, spiritUnreserved = o.SpiritUnreserved }
+end
+
+-- Persistent / Spirit skills a campaign character could add with its free Spirit.
+function commands.checkup_spirit_gems(req)
+	local l, seen = {}, {}
+	for _, gd in pairs(data.gems) do
+		local ge = gd.grantedEffect
+		if ge and not ge.support and gd.Tier and gd.Tier >= 1 and gd.Tier <= (req.maxTier or 1) and not seen[gd.name] then
+			local lv = ge.levels and ge.levels[1]
+			local res = lv and lv.spiritReservationFlat
+			if res and res > 0 and res <= (req.spirit or math.huge) then
+				seen[gd.name] = true
+				l[#l + 1] = { name = gd.name, tier = gd.Tier, spirit = res }
+			end
+		end
+	end
+	return { gems = l }
 end
 
 function commands.eval(req)

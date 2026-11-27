@@ -225,6 +225,47 @@ def test_only_earthquake_aftershock_radius_is_pinned():
         assert eng.pinned_stats == 1
 
 
+def test_checkup_clear_and_boss_supports():
+    # check-up support advice, once for bosses (PoB greedy on single-target DPS) and once for packs (the leveling
+    # ranking's clear model over current / DPS-best / area-best sets). The current set is probed as socketed: a JSON
+    # null once decoded to an empty set and scored the bare skill.
+    from pob_agent import checkup
+    sel = ("for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Witch' then build.spec:SelectClass(cid) end end "
+           "recalc() return true")
+    with Engine() as eng:
+        eng.call("new", level=14)
+        eng.call("eval", code=sel)
+        eng.call("paste_skill", text="Essence Drain 5/0  1\nSwift Affliction I 1/0  1\nControlled Destruction 1/0  1\n",
+                 main=True)
+        eng.call("checkup_prepare")
+        g = eng.call("checkup_groups")["groups"][0]
+        sc = checkup.support_checks(eng, g["index"], 1)
+    cur = next(c for c in sc["clear"]["candidates"] if c["label"] == "current")
+    assert abs(cur["st"] - g["value"]) <= 0.02 * g["value"]
+    assert sc["boss"]["mult"] >= 1 and sc["clear"]["mult"] >= 1
+    assert all(p["tier"] <= 1 for p in sc["boss"]["best"])
+
+
+def test_checkup_clear_with_contagion_scores_the_pair():
+    # with Contagion in the build, Essence Drain's clear is the pair's (Contagion covers the pack), so reach supports
+    # that cost DPS (Pierce, Multishot, Chain) must not win; solo they looked like x3-5
+    from pob_agent import checkup
+    sel = ("for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Witch' then build.spec:SelectClass(cid) end end "
+           "recalc() return true")
+    with Engine() as eng:
+        eng.call("new", level=14)
+        eng.call("eval", code=sel)
+        eng.call("paste_skill", text="Essence Drain 5/0  1\nSwift Affliction I 1/0  1\n", main=True)
+        eng.call("paste_skill", text="Contagion 5/0  1\n", main=False)
+        eng.call("checkup_prepare")
+        groups = eng.call("checkup_groups")["groups"]
+        ed = next(g for g in groups if g["skill"] == "Essence Drain")
+        sp = next(g for g in groups if g["skill"] == "Contagion")
+        sc = checkup.support_checks(eng, ed["index"], 1, sp["index"])
+    assert sc["clear"]["pair"] == "Contagion + Essence Drain"
+    assert not {"Pierce I", "Multishot I", "Chain I"} & {p["name"] for p in sc["clear"]["best"]}
+
+
 def test_leveling_ascendancy_sees_node_implied_config():
     # Eldritch Empowerment's 30% more needs PoB's "Are you Sacrificing?" box; the node implies it
     from pob_agent import leveling as L

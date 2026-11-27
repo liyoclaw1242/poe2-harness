@@ -580,6 +580,95 @@ def render_switch(r):
           "also needs a respec, supports or a weapon with enough damage.")
 
 
+def render_checkup(r):
+    def x(m):
+        return f"x{m:.2f}" if m else "—"
+    print(f"## Leveling check-up — level {r['level']}: uncut gems up to level {r['gem_max']}, supports up to tier "
+          f"{r['support_tier']} can have dropped by now")
+    print("\nvalue = PoB DPS of the skill as the leveling ranking counts it: best hit part + best DoT part.")
+    m = r.get("minions") or {}
+    if m.get("assumedOne"):
+        print(f"PoB counts no minion in your presence although you use {', '.join(m['minionSkills'])} (it only counts "
+              "minion skills with a minion limit, e.g. not a sceptre's Skeletal Warrior); this check-up assumes one, "
+              "so minion-draining supports such as Minion Pact are valued as in game.")
+    print("\n### Damaging skills\n\n| skill | gem level | value | supports (what each adds) |\n|---|---|---|---|")
+    for g in r["groups"]:
+        sup = ", ".join(f"{s['name']} {x(s.get('mult'))}" for s in g["supports"]) or "none"
+        print(f"| {g['skill']} | {g['level']} | {g['value']:.0f} | {sup} |")
+    if not r["groups"]:
+        print("\nNo socketed skill deals damage in PoB yet, so there is nothing to compare.")
+    for g in r["main"]:
+        print(f"\n### {g['skill']}")
+        if g.get("source"):
+            print("gem level: granted by an item, no gem to level")
+        elif g["levels"]["rows"]:
+            print("gem level: " + ", ".join(f"{e['level']} -> {e['value']:.0f} ({x(e['mult'])})" for e in g["levels"]["rows"]))
+        else:
+            print(f"gem level: {g['level']} is already the highest uncut gem by this level")
+        checks = g.get("support_checks") or {}
+        label = {"clear": "clearing packs", "boss": "bosses"}
+        sets = {obj: frozenset(p["name"] for p in sc["best"]) for obj, sc in checks.items()}
+        if len(checks) == 2 and len(set(sets.values())) == 1:
+            label = {"clear": "clearing packs and bosses (same set)"}
+            checks = {"clear": checks["clear"]}
+        for obj, sc in checks.items():
+            best = " + ".join(p["name"] + (" (socketed in another skill)" if p.get("elsewhere") else "") for p in sc["best"])
+            cur = " + ".join(sc["current"]) or "none"
+            if sc.get("unscored"):
+                print(f"supports for {label[obj]}: not estimated (the pack model has no value for this skill)")
+                continue
+            if sc.get("mult") and sc["mult"] > 1.02:
+                dps = f"; single-target DPS {x(sc['dpsMult'])}" if obj == "clear" and sc.get("dpsMult") else ""
+                what = "clear speed" if obj == "clear" else "DPS"
+                if obj == "clear" and sc.get("pair"):
+                    what = f"clear speed as {sc['pair']}"
+                print(f"supports for {label[obj]}: now {cur}; best set found {best} ({what} {x(sc['mult'])}{dps})")
+                own = sc.get("own")
+                if own:
+                    ob = " + ".join(p["name"] for p in own["best"])
+                    print(f"  without supports already socketed elsewhere: {ob} ({x(own.get('mult'))}); "
+                          "whether one support gem can sit in two skills is not checked")
+            else:
+                pair = f" (scored as {sc['pair']})" if obj == "clear" and sc.get("pair") else ""
+                print(f"supports for {label[obj]}: {cur} is already the best set found{pair} (searched tier <= {r['support_tier']})")
+        for s in g["supports"]:
+            if s.get("mult") and s["mult"] <= 1.001:
+                print(f"  - {s['name']}: adds nothing to this skill in PoB; swap it for a support that does")
+    t = r.get("tree")
+    if t:
+        expected = max(0, r["level"] - 1)
+        print(f"\n### Passives\n{t['allocated']} allocated; levels alone give {expected} by level {r['level']} "
+              f"(quest points come on top)." + (" Check for unspent points." if t["allocated"] < expected else ""))
+        idle = [n for n in t["nodes"] if abs(n["share"]) < 0.001]
+        top = [n for n in t["nodes"] if n["share"] >= 0.001][:5]
+        if top:
+            print("largest share of the main skill: " + ", ".join(f"{n['name']} {100 * n['share']:.1f}%" for n in top))
+        if idle:
+            print(f"{len(idle)} nodes add nothing to the main skill (attributes, defence or path): "
+                  + ", ".join(sorted({n['name'] for n in idle})))
+    if r.get("spirit_free"):
+        print(f"\n### Spirit\n{r['spirit_free']:.0f} Spirit unreserved.")
+        for o in r["spirit_options"][:3]:
+            print(f"- {o['name']} (tier {o['tier']}, {o['spirit']:.0f} Spirit): main skill {x(o['mult'])}")
+        if not r.get("spirit_checked", True):
+            print("Spirit skills were not checked (--no-spirit).")
+        elif not r["spirit_options"]:
+            print("No Spirit skill available by this level raises the main skill in PoB. Defensive buffs (e.g. Arctic "
+                  "Armour) and minions' own damage are not scored here.")
+    th = (r.get("thresholds") or {}).get("resists") or {}
+    if th:
+        print("\n### Resistances\n" + ", ".join(f"{e} {v['value']:.0f}%" for e, v in th.items()))
+    print("\nPoB calculations on the imported character, except clear speed: that is the leveling ranking's pack model "
+          "(pack of 6, every projectile and pierce reaching another monster), an estimate. Gem and support availability "
+          "from drop tables by area level.")
+
+
+def cmd_checkup(args):
+    """What to change on a leveling character, measured on its own build."""
+    from . import checkup
+    emit(args, checkup.run(args.build, top=args.top, spirit=not args.no_spirit, verbose=args.verbose), render_checkup)
+
+
 def cmd_switch(args):
     """Switch-readiness checklist: when a target skill becomes usable and what gates it."""
     emit(args, switch.gates(args.skill, args.cls), render_switch)
@@ -862,6 +951,11 @@ def main(argv=None):
     p.add_argument("--ascendancy", help="only this ascendancy")
     p.add_argument("--stage", choices=list(scan.STAGES), default="asc2", help="character the skill is measured on")
     p.set_defaults(fn=cmd_checkpoints)
+    p = sub.add_parser("checkup", help="leveling character check-up: supports, gem levels, Spirit, passives")
+    p.add_argument("build", help="file (.code/.xml), share code, pobb.in link")
+    p.add_argument("--top", type=int, default=2, help="main skills to examine")
+    p.add_argument("--no-spirit", action="store_true", help="skip the Spirit skill sweep (slow)")
+    p.set_defaults(fn=cmd_checkup)
     p = sub.add_parser("switch", help="switch readiness: when a target skill becomes usable and what gates it")
     p.add_argument("--skill", required=True)
     p.add_argument("--class", dest="cls", required=True)
