@@ -497,6 +497,47 @@ def test_checkup_text_agrees_with_its_numbers(capsys):
     assert "no better support found" not in out and "Multishot I (x0.60): costs single-target DPS; swap it" in out
 
 
+def test_checkup_keeps_the_skill_behind_a_meta_gem():
+    # a group whose skill sits behind a totem or meta gem is checked as that skill, and the check-up's what-ifs
+    # leave the group's selected skill in place (it used to fall back to the totem and measure 0 from then on)
+    sel = ("for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Sorceress' then build.spec:SelectClass(cid) end end "
+           "recalc() return true")
+    fp = ("recalc() local g = build.skillsTab.socketGroupList[build.mainSocketGroup] "
+          "local ms = build.calcsTab.mainEnv.player.mainSkill return {g.mainActiveSkill, ms.activeEffect.grantedEffect.name}")
+    with Engine() as eng:
+        eng.call("new", level=40)
+        eng.call("eval", code=sel)
+        eng.call("paste_skill", text="Spell Totem 5/0  1\nArc 10/0  1\n", main=True)
+        eng.call("eval", code="build.skillsTab.socketGroupList[1].mainActiveSkill = 2 recalc() return true")
+        before = eng.call("eval", code=fp)
+        eng.call("checkup_prepare")
+        g = eng.call("checkup_groups")["groups"][0]
+        rows = eng.call("checkup_probe_sets", group=g["index"], sets=[None, []])["rows"]
+        sc = eng.call("checkup_supports", group=g["index"], objective="boss", maxSupportTier=2)
+        after = eng.call("eval", code=fp)
+    assert before == after == [2, "Arc"] and g["skill"] == "Arc" and sc["bare"] > 0
+    assert all(r["skill"] == "Arc" for r in rows)
+
+
+def test_checkup_keeps_a_support_that_grants_the_selected_skill():
+    # Impending Doom grants Doom Blast; with Doom Blast selected, a what-if that dropped the support used to move the
+    # selection onto Despair and measure 0
+    sel = ("for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Witch' then build.spec:SelectClass(cid) end end "
+           "recalc() return true")
+    fp = ("recalc() local g = build.skillsTab.socketGroupList[build.mainSocketGroup] "
+          "return {g.mainActiveSkill, g.displaySkillList[g.mainActiveSkill].activeEffect.grantedEffect.name}")
+    with Engine() as eng:
+        eng.call("new", level=60)
+        eng.call("eval", code=sel)
+        eng.call("paste_skill", text="Despair 15/0  1\nImpending Doom 1/0  1\nSpell Cascade 1/0  1\n", main=True)
+        eng.call("eval", code="build.skillsTab.socketGroupList[1].mainActiveSkill = 2 recalc() return true")
+        eng.call("checkup_prepare")
+        g = eng.call("checkup_groups")["groups"][0]
+        sc = eng.call("checkup_supports", group=g["index"], objective="boss", maxSupportTier=3)
+        after = eng.call("eval", code=fp)
+    assert after == [2, "Doom Blast"] and sc["bare"] > 0 and "Impending Doom" not in sc["current"]
+
+
 def test_headroom_reports_a_slot_it_cannot_blank():
     # a slot with no base PoB knows is listed with a note, not dropped
     from pob_agent import trade

@@ -2074,11 +2074,49 @@ local function objectiveReq(objective)
 	return {}
 end
 
+-- The skill a group is used for: the one PoB has selected (mainActiveSkill indexes displaySkillList, not gemList), so
+-- a triggered or totem skill behind a meta gem is the group's skill; otherwise the first enabled active gem.
 local function activeGem(g)
+	local ds = g.displaySkillList and g.mainActiveSkill and g.displaySkillList[g.mainActiveSkill]
+	local src = ds and ds.activeEffect and ds.activeEffect.srcInstance
+	local sge = src and src.gemData and src.gemData.grantedEffect
+	if sge and not sge.support and src.enabled ~= false then return src end
 	for _, gi in ipairs(g.gemList or {}) do
 		local ge = gi.gemData and gi.gemData.grantedEffect
 		if ge and not ge.support and gi.enabled ~= false then return gi end
 	end
+end
+
+-- Gems a what-if must keep so the group's selected skill keeps its place: the sources of every skill PoB lists up to
+-- and including the selected one. A support can grant a skill of its own (Impending Doom grants Doom Blast), and
+-- dropping it would shift the selection onto another skill.
+local function pinnedGems(g)
+	local keep = {}
+	for k = 1, (g.mainActiveSkill or 1) do
+		local ds = g.displaySkillList and g.displaySkillList[k]
+		local src = ds and ds.activeEffect and ds.activeEffect.srcInstance
+		if src then keep[src] = true end
+	end
+	return keep
+end
+
+-- A group's gem list with its supports replaced: every enabled non-support gem (the skill, and a meta or totem gem
+-- it sits behind) and every pinned gem stays, in order, so a what-if measures the same skill the group is used for.
+local function withSupports(gems, supports, keep)
+	local list = {}
+	for _, s in ipairs(gems or {}) do
+		local ge = s.gemData and s.gemData.grantedEffect
+		if ge and s.enabled ~= false and (not ge.support or (keep and keep[s])) then list[#list + 1] = s end
+	end
+	for _, s in ipairs(supports or {}) do list[#list + 1] = s end
+	return list
+end
+
+-- Reprocess a group after a gem-list swap and restore PoB's selected skill: a MAIN calc clamps mainActiveSkill to
+-- the list it sees, which a what-if with fewer skills shortens.
+local function reprocess(g, mas, masc)
+	build.skillsTab:ProcessSocketGroup(g)
+	g.mainActiveSkill, g.mainActiveSkillCalcs = mas, masc
 end
 
 -- PoB counts minions in presence only for minion skills with a minion-limit stat, so a sceptre's granted
@@ -2161,12 +2199,13 @@ function commands.checkup_supports(req)
 	local vreq = objectiveReq(req.objective)
 	build.mainSocketGroup = i
 	recalc()
-	local active = g.displaySkillList and g.displaySkillList[1]
+	local active = g.displaySkillList and g.displaySkillList[g.mainActiveSkill or 1]
+	local mas, masc = g.mainActiveSkill, g.mainActiveSkillCalcs
+	local keep = pinnedGems(g)
 	local current = {}
-	local keep = { gi }
 	for _, s in ipairs(g.gemList) do
 		local sge = s.gemData and s.gemData.grantedEffect
-		if sge and sge.support and s.enabled ~= false then current[#current + 1] = s.gemData.name end
+		if sge and sge.support and s.enabled ~= false and not keep[s] then current[#current + 1] = s.gemData.name end
 	end
 	local elsewhere = {}
 	for j, og in ipairs(build.skillsTab.socketGroupList) do
@@ -2195,8 +2234,8 @@ function commands.checkup_supports(req)
 			gemData = c.g }
 	end
 	-- greedy from the bare skill
-	g.gemList = { gi }
-	build.skillsTab:ProcessSocketGroup(g)
+	g.gemList = withSupports(saved, nil, keep)
+	reprocess(g, mas, masc)
 	local chosen, picks = {}, {}
 	local slots = math.max(req.slots or 2, #current)
 	local opts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
@@ -2216,14 +2255,14 @@ function commands.checkup_supports(req)
 		if not best then break end
 		chosen[best.id] = true
 		g.gemList[idx] = gemEntry(best)
-		build.skillsTab:ProcessSocketGroup(g)
+		reprocess(g, mas, masc)
 		recalc()
 		picks[#picks + 1] = { name = best.g.name, tier = best.g.Tier, value = groupValue(i, vreq), elsewhere = elsewhere[best.g.name] or nil }
 	end
 	local bestSet = groupValue(i, vreq)
 	local bestDps = groupValue(i)
 	g.gemList = saved
-	build.skillsTab:ProcessSocketGroup(g)
+	reprocess(g, mas, masc)
 	recalc()
 	-- mult: on the objective's own measure; dpsMult: on the check-up's value column, for comparison
 	return { group = i, skill = gi.gemData.name, objective = req.objective, current = current, value = base, bare = bare,
@@ -2240,27 +2279,31 @@ function commands.checkup_probe_sets(req)
 	local gi = activeGem(g)
 	build.mainSocketGroup = i
 	local saved = g.gemList
+	local mas, masc = g.mainActiveSkill, g.mainActiveSkillCalcs
+	local keep = pinnedGems(g)
 	-- probeVariants clears the gem's stat set / part selection; an export can carry a chosen one, so keep it
 	local savedSet, savedPart = gi.statSet, gi.skillPart
 	local out = {}
 	for k = 1, #(req.sets or {}) do
 		local names = req.sets[k]
 		if type(names) == "table" and names ~= json.null then
-			local list = { gi }
-			for _, n in ipairs(names) do
+			local sups, kept = {}, {}
+			for s in pairs(keep) do if s.gemData then kept[s.gemData.name] = true end end
+			for _, n in ipairs(names) do if kept[n] then goto continue end
 				local id = findGemByName(n, true)
 				local cg = id and data.gems[id]
 				if cg then
-					list[#list + 1] = { level = math.min(cg.naturalMaxLevel or 1, req.supportLevel or 1), quality = 0, count = 1,
+					sups[#sups + 1] = { level = math.min(cg.naturalMaxLevel or 1, req.supportLevel or 1), quality = 0, count = 1,
 						enabled = true, enableGlobal1 = true, enableGlobal2 = true, gemId = id, nameSpec = cg.name,
 						skillId = cg.grantedEffectId, gemData = cg }
 				end
+				::continue::
 			end
-			g.gemList = list
+			g.gemList = withSupports(saved, sups, keep)
 		else
 			g.gemList = saved
 		end
-		build.skillsTab:ProcessSocketGroup(g)
+		reprocess(g, mas, masc)
 		recalc()
 		local types = mainSkillTypes()
 		out[k] = { skill = gi.gemData.name, types = types, variants = probeVariants(g, gi),
@@ -2268,7 +2311,7 @@ function commands.checkup_probe_sets(req)
 	end
 	g.gemList = saved
 	gi.statSet, gi.skillPart = savedSet, savedPart
-	build.skillsTab:ProcessSocketGroup(g)
+	reprocess(g, mas, masc)
 	recalc()
 	return { rows = out }
 end
