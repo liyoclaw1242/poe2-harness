@@ -635,13 +635,12 @@ committed act1/pre_asc1 caches in about half their entries:
 On source2, Warrior 2 → 3, Druid 1 → 2, Monk 2 → 1. The DoT fix itself moved no rank metric; the baseline equals
 the new code on every one.
 
-**Still stale.** The asc1, asc2, ascendancy-specific and bridge-target caches were not recollected. Their
-numbers above (held-out asc1/asc2, devilcat 0.52 / 0.60) predate these fixes and are not reproducible until they
-are.
+**Recollected since.** The asc1, asc2, ascendancy-specific and bridge-target caches were recollected on
+2026-11-27; see "Recollection and one-time re-score" below for the re-scored held-out numbers.
 
 **Open, not fixed here.**
-- **Cooldown is ignored.** Vine Arrow with clear supports picks Hourglass + Prolonged Duration I, a 10 s
-  cooldown, because the DoT-set value does not account for it.
+- **Hourglass picks.** Vine Arrow with clear supports picks Hourglass + Prolonged Duration I. This was first
+  blamed on cooldown; the actual cause is target attribution (see the Vine Arrow section below).
 - **Single-set DoT skills get no duration factor** (Contagion, Profane Ritual).
 - **Reports use a different measure than the picker.** Fixed for ascendancy checkpoints (2026-11-27). Their DPS
   is now the first set plus the DoT set, with no kill factor, so Essence Drain Lich's 8-point lift reads x1.43
@@ -676,11 +675,37 @@ Ranger's Vine Arrow scores lower but keeps its rank: act1 served 0.999 → 0.903
 0.801, still #2.
 
 **Exposed, not fixed here.** With the inflated ailment gone, Vine Arrow in the pre_asc1 clear-support collection
-now picks Prolonged Duration I + Hourglass in every class, as act1's already did. That pick puts the skill on a
-10 s cooldown, because the picker ignores cooldown (the next item). Python sees the cooldown and scores that
-entry lower, and every consumer takes the better of the plain and clear-support collections, so served ranks do
-not change. The other stages' Vine Arrow entries keep their old picks until the cooldown fix recollects them;
-their DPS is already counted correctly.
+now picks Prolonged Duration I + Hourglass in every class, as act1's already did. Python scores that entry
+lower, and every consumer takes the better of the plain and clear-support collections, so served ranks do not
+change (the plain entry wins in all 75 Vine Arrow class × stage pairs).
+
+The cause was first thought to be cooldown. It is target attribution: the Lua picker weights Impact's hit by
+its own target count (1) and the Vines by their area (5.4 targets), while Python multiplies hit plus DoT by the
+larger count, so it credits Impact's 0.8 m hit with 5.4 targets. Fixing that moves served ranks (Vine Arrow is
+Ranger #1 / #2), so it is left for a decision. Hourglass is also picked for other skills in served stages
+(Contagion, Profane Ritual, Rain of Arrows, Thunderstorm), where uptime against its cooldown is not checked.
 
 **Filed.** Witchhunter's combined DPS carries a multiplier that TotalDot lacks. It affects 2 Vine Arrow asc2
 entries (single-target DPS 7.3% below PoB's total) and does not touch the gated stages.
+
+## Recollection and one-time re-score (2026-11-27)
+
+Every leveling cache other than act1 / pre_asc1 (and their clear-support variants, already current) was
+recollected with the committed code: 116 class × stage files. Vine Arrow was then re-probed in all of them with
+the hit-ailment fix. Two bridge-target files for the Lich target cannot be recollected because their target
+definition no longer exists; they keep their old entries. 6,430 entries changed.
+
+The held-out keys were then scored once, frozen, with no tuning. "Before" is the live cache immediately before
+the swap, so it differs from the asc2 figures published earlier in this note:
+
+| test | before | after |
+|---|---|---|
+| asc2 class-clustered fam MRR (random 0.38) | 0.549, p 0.038 | 0.571, p 0.024 |
+| asc2 tune half | 0.613 | 0.662 |
+| asc2 check half (random 0.36) | 0.491, p 0.148 | 0.488, p 0.154 |
+| asc1 per-class fam MRR (random 0.31) | 0.346, p 0.30 | 0.342, p 0.32 |
+
+The gain is all in the tune half; the check half is flat and still not significant, so it is not evidence of
+better generalisation. asc1 stays at chance. The pre_asc1 / act1 numbers (0.771 / 0.729 / source2 0.771,
+devilcat act1 0.60, pre_asc1 0.76) and the ascendancy checkpoint key (M1 6/19, random 3.4) do not read these
+caches and are unchanged.
