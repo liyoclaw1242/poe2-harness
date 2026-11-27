@@ -844,3 +844,63 @@ its raw use rate. With the off-family penalty switched off, the top row is used 
 - **Top 3:** one change, act1 Ranger, where Escape Shot and Vine Arrow swap #2 and #3.
 - **Top 5:** asc1 Warrior #5 Rolling Slam → Earthshatter; asc2 Monk #5 Ice Strike → Oil Barrage.
 
+## Harness audit (2026-11-27)
+
+Three independent reviews covered the harness:
+- support selection;
+- the ranking math;
+- the character-facing commands.
+
+Every finding was required to come with a reproducing script. Fixes went through pre-registered gates and a
+separate code review.
+
+**Fixed:**
+- **Cooldown supports.** Every support that grants a cooldown is now excluded, not only Hourglass.
+- **Visible supports.** Leveling rows show the supports their numbers assume.
+- **Loadout boss skill.** The loadout's boss skill must be in-family, and each kill takes at least one use.
+- **Magic and Normal items.** headroom and decompose now measure them. Before, 9 slots were silently dropped.
+- **Minion main skills.** Character reports now use the minion's DPS. Before, 10 of 126 sample builds read
+  "DPS 0".
+- **Check-up text.** It now agrees with its own numbers: 19 contradictions on 5 sample builds before.
+- **trade-query.** It now prints the heaviest weights in the link.
+- **Check-up with meta gems.** The check-up measures the skill a group is used for, including one behind a totem,
+  trigger or meta gem, and its what-ifs no longer leave the build changed: 16 of 93 sample main groups were
+  affected before. A support that grants the selected skill (Impending Doom granting Doom Blast) is kept in place.
+
+**Open, for a decision.** The items up to and including the delayed hit sets change served ranks or need a cache
+rebuild; the rest are reporting or character-tool items:
+- **Contagion pairs** are timed with one cast, not two. Adding the spreader's cast flips #1 in 7 of 32 lists to
+  Living Bomb, which is a negative control in the devilcat key. Living Bomb's own explosion condition is not
+  modelled.
+- **Stored-use skills** ignore their cooldown. pre_asc1 Mercenary's Explosive Grenade scores the same from ×0.9
+  to ×1.1 damage and jumps from #2 to #1 at ×1.2. Fixing it would change asc2 Mercenary's #1.
+- **Travel** is charged per monster reached, not per pack, so clear is roughly proportional to target count. One
+  #1 changes, and the fix needs design for DoTs.
+- **The support picker** maximises a different quantity from the ranking score. "Lua generates, Python judges"
+  would flip Ranger act1 #1.
+- **Fresh Clip** is valued at PoB's continuous-fire uptime, and Mercenary asc1 #1 rests on it.
+- **Costs.** The mana factor is off, and Extraction's life sacrifice and Deliberation's movement penalty are not
+  counted. Turning mana on changes #1 in 8 of 32 lists.
+- **Area supports** on area skills without a PoB radius change nothing. Fixing it needs a new probe field and a
+  full recollection, and changes 3 served top-3 lists.
+- **Stage drop tables.** The stage drop table (scan) and the switch / check-up table disagree: act1 tier-5 skills
+  require level 14–15 at stage level 12.
+- **Delayed and charge-gated hit sets** are scored as instant (Earthquake's Aftershock, Glacial Lance's
+  Explosion). Related to the open question of which hit sets a skill can actually reach.
+- **Held-out keys** largely re-test development labels. On source2's new labels only, family MRR is 0.35 against
+  random 0.39, so source2 should not be read as generalisation.
+- **Main socket group.** A non-damaging exported main group (for example a buff) still gives an all-zero report
+  on 15 of 126 sample builds; automatic selection needs care around totems.
+- **trade-query** still emits an off-hand link when the main hand is two-handed.
+- **Smaller items:**
+  - The check-up can recommend supports with a condition PoB does not model: Hit and Run's movement gate, and
+    Inexorable Critical credited at its cap.
+  - Its support slots (2) differ from the ranking's 3 from asc1.
+  - Its gem cap differs from the stage table.
+  - The attribute pool ignores unspent passive points (no rank change).
+  - diagnose shows two "map monsters" numbers when the author set enemy stats.
+  - A skill granted by a support (Doom Blast) is labelled in the check-up with the group's first gem (Despair),
+    although every number is the granted skill's.
+  - The devilcat scoring script reads the plain collection, while the served ranking also uses the clear-support
+    collection (0.667 / 0.760 against 0.650 / 0.671).
+
