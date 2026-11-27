@@ -594,6 +594,85 @@ def render_switch(r):
 NOISE, REPORT = 0.001, 0.02
 
 
+def _mana_line(m, short=False):
+    """Mana sustain of the main skill: PoB's mana cost per second against net mana regeneration."""
+    low = f"{100 * m['low']:.0f}%"
+    if m["state"] == "no_cost":
+        life = f" (life cost {m['life_cost_ps']:.0f}/s)" if m.get("life_cost_ps") else ""
+        return "no mana cost" + life if short else f"mana: the main skill has no mana cost{life}"
+    if m["state"] == "sustained":
+        what = "sustained"
+    elif m["state"] == "already_low":
+        what = f"already at low mana ({low} of maximum)"
+    else:
+        t = m["secs_to_low"]
+        secs = "within 1 s" if t < 1 else f"after {t:.1f} s" if t < 10 else f"after {t:.0f} s"
+        what = f"low mana ({low} of maximum) {secs} of casting"
+        if t < 5 and not short:
+            what += " (a drain this fast means the build relies on leech, mana on hit or flasks, which this ignores)"
+    if short:
+        return what
+    return (f"mana: cost {m['cost_ps']:.1f}/s, net regeneration {m['net']:.1f}/s -> {what}. Nonstop casting of the main "
+            "skill only; ignores other skills, flasks, leech and mana on kill. PoB's cost per second is cost x cast "
+            "speed, which overstates a fire-and-forget DoT.")
+
+
+def _render_next(nx):
+    def x(m):
+        return f"x{m:.3f}" if m else "—"
+
+    def defence(n):
+        parts = [f"{k} {n[v]:+.0f}" for k, v in (("life", "life"), ("ES", "es")) if abs(n[v]) >= 0.5]
+        if abs(n["res"]) >= 0.5:
+            parts.append(f"elemental res (capped) {n['res']:+.0f}")
+        return ", ".join(parts) or "—"
+
+    rows = nx["passives"]
+    dmg = sorted((n for n in rows if n.get("mult") and n["mult"] > 1 + nx["noise"]),
+                 key=lambda n: -(n["mult"] - 1) / n["cost"])[:5]
+    tough = sorted((n for n in rows if n["life"] + n["es"] > 0), key=lambda n: -(n["life"] + n["es"]) / n["cost"])[:3]
+    res = sorted((n for n in rows if n["res"] > 0), key=lambda n: -n["res"] / n["cost"])[:3]
+    print("\n### Next passives (notables within 7 points)")
+    if not rows:
+        print("No notable within 7 points adds to the main skill or to life, energy shield or resistances.")
+    for title, lst in (("for the main skill", dmg), ("for life + energy shield", tough), ("for resistances", res)):
+        if lst:
+            print(f"{title}: " + "; ".join(f"{n['name']} ({n['cost']} pts, main skill {x(n.get('mult'))}, {defence(n)})"
+                                           for n in lst))
+    if nx["jewels"]:
+        print("jewel sockets allocated without a jewel: " + ", ".join(j["name"] for j in nx["jewels"])
+              + " (normal early on; any jewel there adds stats)")
+    print("Each notable is measured alone with its shortest path from the current tree; rows are not additive when "
+          "paths overlap, and attribute nodes on a path count as unchosen.")
+    name = nx.get("ascendancyName")
+    if not name or name == "None":
+        return
+    print(f"\n### Next ascendancy trial ({name}, {nx['ascUsed']}/{nx['ascMax']} points spent)")
+    if nx["ascUsed"] >= nx["ascMax"]:
+        print("All ascendancy points are spent.")
+        return
+    if not nx["ascendancy"]:
+        print(f"No unallocated notable is reachable with the next {min(2, nx['ascMax'] - nx['ascUsed'])} point(s).")
+        return
+    print("| notable | points | main skill | defence | mana regen | mana |\n|---|---|---|---|---|---|")
+    now_cost, cost_changed = nx["sustain"]["cost_ps"], False
+    for n in sorted(nx["ascendancy"], key=lambda n: (-(n.get("mult") or 0), n["name"])):
+        m = n["sustain"]
+        cell = _mana_line(m, short=True)
+        if m["state"] != "no_cost" and abs(m["cost_ps"] - now_cost) > 0.05:
+            cell += f" (cost {m['cost_ps']:.1f}/s, now {now_cost:.1f}/s)"
+            cost_changed = True
+        print(f"| {n['name']}{' (valued without its option)' if n.get('multipleChoice') else ''} | {n['cost']} | "
+              f"{x(n.get('mult'))} | {defence(n)} | {n['regen']:+.1f}/s | {cell} |")
+    print("Conditions an ascendancy notable sustains are assumed on, as in checkpoints. A notable that needs mana "
+          "(e.g. Unholy Might while not on low mana) loses that effect once mana runs low; the mana column is "
+          "nonstop casting of the main skill only.")
+    if cost_changed:
+        print("A changed mana cost comes from the notable's own text as PoB applies it under the build's configuration "
+              "(e.g. a cost that applies \"if you have no Energy Shield\" counts unless PoB's \"Do you always have "
+              "Energy Shield?\" option is ticked).")
+
+
 def render_checkup(r):
     def x(m):
         return f"x{m:.2f}" if m else "—"
@@ -622,6 +701,9 @@ def render_checkup(r):
                   "character level (a planner export?); its value is measured at the socketed level")
         else:
             print(f"gem level: {g['level']} is already the highest uncut gem by this level")
+        nx = r.get("next")
+        if nx and g is r["main"][0]:
+            print(_mana_line(nx["sustain"]))
         checks = g.get("support_checks") or {}
         label = {"clear": "clearing packs", "boss": "bosses"}
         sets = {obj: frozenset(p["name"] for p in sc["best"]) for obj, sc in checks.items()}
@@ -675,6 +757,8 @@ def render_checkup(r):
         if idle:
             print(f"{len(idle)} nodes add nothing to the main skill (attributes, defence or path): "
                   + ", ".join(sorted({n['name'] for n in idle})))
+    if r.get("next"):
+        _render_next(r["next"])
     if r.get("spirit_free"):
         print(f"\n### Spirit\n{r['spirit_free']:.0f} Spirit unreserved.")
         for o in r["spirit_options"][:3]:
@@ -695,7 +779,7 @@ def render_checkup(r):
 def cmd_checkup(args):
     """What to change on a leveling character, measured on its own build."""
     from . import checkup
-    emit(args, checkup.run(args.build, top=args.top, spirit=not args.no_spirit, verbose=args.verbose), render_checkup)
+    emit(args, checkup.run(args.build, top=args.top, spirit=not args.no_spirit, verbose=args.verbose, nxt=not args.no_next), render_checkup)
 
 
 def cmd_switch(args):
@@ -987,6 +1071,7 @@ def main(argv=None):
     p.add_argument("build", help="file (.code/.xml), share code, pobb.in link")
     p.add_argument("--top", type=int, default=2, help="main skills to examine")
     p.add_argument("--no-spirit", action="store_true", help="skip the Spirit skill sweep (slow)")
+    p.add_argument("--no-next", action="store_true", help="skip next passives / next ascendancy trial / mana sustain")
     p.set_defaults(fn=cmd_checkup)
     p = sub.add_parser("switch", help="switch readiness: when a target skill becomes usable and what gates it")
     p.add_argument("--skill", required=True)

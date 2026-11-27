@@ -629,3 +629,88 @@ def test_gate_diff_same_checkout_is_empty_and_respec_gold():
     r = patchdiff.gate_diff(POB_SRC, POB_SRC, ["Essence Drain", "Shield Wall"])
     assert r["changes"] == []
     assert bridge.respec_gold(1) == 15 and bridge.respec_gold(24) == 344
+
+
+# --- check-up "next steps": next passives, next ascendancy trial, mana sustain, empty jewel sockets ---
+
+LICH_SYNTH = '''
+for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Witch' then build.spec:SelectClass(cid)
+  for aid, a in pairs(c.classes) do if a.name == 'Lich' then build.spec:SelectAscendClass(aid) end end end end
+local ee for _, n in pairs(build.spec.nodes) do if n.dn == 'Eldritch Empowerment' then ee = n end end
+build.spec:AllocNode(ee) build.spec:BuildAllDependsAndPaths()
+recalc()
+return true
+'''
+
+
+def _lich_synth(eng):
+    """Level-30 Lich with only Eldritch Empowerment (2 points) and a gearless Essence Drain: a mana deficit."""
+    eng.call("new", level=30)
+    eng.call("eval", code=LICH_SYNTH)
+    eng.call("paste_skill", text="Essence Drain 8/0  1\nSwift Affliction I 1/0  1\nMinion Pact I 1/0  1\n", main=True)
+    groups = eng.call("checkup_groups")["groups"]
+    return sorted(groups, key=lambda g: -g["value"])[0]["index"]
+
+
+def test_checkup_next_passive_row_matches_real_allocation():
+    with Engine() as eng:
+        gi = _lich_synth(eng)
+        before = eng.call("checkup_next", group=gi)
+        row = next(p for p in before["passives"] if p["name"] == "Raw Destruction")
+        es0 = eng.call("eval", code="return build.calcsTab.mainOutput.EnergyShield or 0")
+        eng.call("eval", code="local n for _, x in pairs(build.spec.nodes) do if x.dn == 'Raw Destruction' then n = x end end "
+                              "build.spec:AllocNode(n) build.spec:BuildAllDependsAndPaths() recalc() return true")
+        after = eng.call("checkup_next", group=gi)
+        es1 = eng.call("eval", code="return build.calcsTab.mainOutput.EnergyShield or 0")
+        assert abs(after["base"] - before["base"] * row["mult"]) <= 1e-6 * after["base"]
+        assert abs((es1 - es0) - row["es"]) < 0.5
+        assert row["cost"] == 5 and row["mult"] > 1.2
+
+
+def test_checkup_next_ascendancy_rows_for_the_next_trial():
+    with Engine() as eng:
+        gi = _lich_synth(eng)
+        n = eng.call("checkup_next", group=gi)
+        assert n["ascUsed"] == 2
+        assert sorted(a["name"] for a in n["ascendancy"]) == [
+            "Crystalline Phylactery", "Necromantic Conduit", "Price of Power", "Rupture the Soul", "Soulless Form"]
+        conduit = next(a for a in n["ascendancy"] if a["name"] == "Necromantic Conduit")
+        assert conduit["mult"] > 1.05
+    with Engine() as eng:  # the example build has all 8 points spent: nothing is listed for a next trial
+        eng.call("load", **sources.resolve(str(BUILD)))
+        groups = eng.call("checkup_groups")["groups"]
+        n = eng.call("checkup_next", group=sorted(groups, key=lambda g: -g["value"])[0]["index"])
+        assert n["ascUsed"] == 8 and n["ascendancy"] == []
+
+
+def test_checkup_next_mana_sustain():
+    with Engine() as eng:
+        gi = _lich_synth(eng)
+        n = eng.call("checkup_next", group=gi)
+        m = n["sustain"]
+        assert m["state"] == "drains" and m["low"] == 0.35
+        assert abs(m["secs_to_low"] - (m["unreserved"] - 0.35 * m["mana"]) / (m["cost_ps"] - m["net"])) < 1e-9
+        out = eng.call("eval", code="local o = build.calcsTab.mainOutput return {o.ManaPerSecondCost, o.ManaRegenRecovery}")
+        assert abs(m["cost_ps"] - out[0]) < 1e-9 and abs(m["net"] - out[1]) < 1e-9
+        rows = {a["name"]: a["sustain"] for a in n["ascendancy"]}
+        assert rows["Necromantic Conduit"]["secs_to_low"] < m["secs_to_low"]  # loses 5% of maximum mana per second
+        assert rows["Soulless Form"]["secs_to_low"] > m["secs_to_low"]        # regenerates mana from life
+    with Engine() as eng:  # a summon has no mana cost per second
+        eng.call("new", level=30)
+        eng.call("paste_skill", text="Skeletal Warrior 8/0  1\n", main=True)
+        n = eng.call("checkup_next", group=eng.call("checkup_groups")["groups"][0]["index"])
+        assert n["sustain"]["state"] == "no_cost" and "secs_to_low" not in n["sustain"]
+
+
+def test_checkup_next_lists_empty_jewel_sockets():
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        groups = eng.call("checkup_groups")["groups"]
+        gi = sorted(groups, key=lambda g: -g["value"])[0]["index"]
+        filled = eng.call("eval", code="local t = {} for id, n in pairs(build.spec.allocNodes) do if n.type == 'Socket' "
+                                        "and build.itemsTab.sockets[id].selItemId ~= 0 then t[#t + 1] = id end end "
+                                        "table.sort(t) return t")
+        assert filled and eng.call("checkup_next", group=gi)["jewels"] == []
+        eng.call("eval", code="build.itemsTab.sockets[req.sock].selItemId = 0 build.buildFlag = true recalc() return true",
+                 sock=filled[0])
+        assert [j["id"] for j in eng.call("checkup_next", group=gi)["jewels"]] == [filled[0]]

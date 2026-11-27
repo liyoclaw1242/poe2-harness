@@ -904,3 +904,43 @@ rebuild; the rest are reporting or character-tool items:
   - The devilcat scoring script reads the plain collection, while the served ranking also uses the clear-support
     collection (0.667 / 0.760 against 0.650 / 0.671).
 
+
+## Check-up next steps: passives, next ascendancy trial, mana (2026-11-28)
+
+Following a test character through the campaign raised three questions that the check-up could not answer:
+which notable to take next, which ascendancy notable the next trial should buy, and whether the main skill's
+mana holds. They were answered with one-off scripts. The check-up now answers them itself.
+
+**What it adds**
+- **Next passives.** Every unallocated notable or keystone within 7 points is measured alone, with its shortest
+  path, in one PoB calculation. The check-up lists:
+  - the best 5 for the main skill, ranked by gain per point;
+  - the best 3 for life plus energy shield;
+  - the best 3 for resistances;
+  - allocated jewel sockets that hold no jewel.
+- **Next ascendancy trial.** Each unallocated notable of the character's own ascendancy reachable with the next
+  2 points is shown with its main-skill multiplier, its defence change and its mana effect. Nothing is listed
+  once PoB counts 8 points spent.
+- **Mana.** The main skill's mana line compares PoB's mana cost per second with its net mana regeneration. When
+  regeneration falls short, it gives the seconds of nonstop casting until low mana (35% of maximum).
+
+**Why mana matters here.** Necromantic Conduit adds about ×1.11 to Essence Drain only while Unholy Might lasts,
+and Unholy Might ends on low mana.
+- On a level-29 Lich, the skill already cost 29 mana per second against 15 of regeneration.
+- Conduit's 5% per second loss would have cut regeneration to zero: low mana after about 7 s instead of 14 s.
+- Soulless Form, taken instead, sustained the skill.
+
+**Limits**
+- Rows are not additive when paths overlap.
+- Attribute nodes on a path count as unchosen. Against a real allocation this is the only gap found. PoB's
+  allocation defaults them to Strength, which adds 10 life per node, and on two rows 4 energy shield. With the
+  attribute nodes switched away from Strength, life and energy shield match exactly.
+- The mana figure assumes nonstop casting of the main skill alone, and ignores flasks, leech and mana on kill.
+  PoB's cost per second is cost × cast speed, which overstates a fire-and-forget DoT.
+- Notables whose text depends on a configuration condition use the build's configuration. An example is
+  Crystalline Phylactery's mana cost "if you have no Energy Shield": PoB applies it unless its "Do you always
+  have Energy Shield?" option is ticked.
+
+**Side finding (not acted on).** PoB counts every socketed gem by name, but warns only for lineage supports used
+in more than one skill (limit 1) and for more than 9 skill groups. In PoB, a normal support may sit in two
+skills. Whether 0.5.5 allows this in game was not verified, so the check-up's "not checked" note stays.

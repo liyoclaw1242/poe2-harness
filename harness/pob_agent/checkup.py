@@ -90,7 +90,7 @@ def max_level_for(level: int, table) -> int:
     return best
 
 
-def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False) -> dict:
+def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nxt: bool = True) -> dict:
     with Engine(verbose) as eng:
         info = eng.call("load", **sources.resolve(build))
         prep = eng.call("checkup_prepare")
@@ -107,12 +107,15 @@ def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False) ->
             g["support_checks"] = support_checks(eng, g["index"], sup_tier, spreader)
         tree = eng.call("checkup_tree", group=main[0]["index"]) if main else None
         val = eng.call("checkup_value", group=main[0]["index"]) if main else {}
+        # next passives / next ascendancy trial / mana sustain / empty jewel sockets (after checkup_value: the call
+        # selects the main group the same way)
+        nexts = eng.call("checkup_next", group=main[0]["index"]) if main and nxt else None
         th = eng.call("thresholds")
         spirit_gems = (eng.call("checkup_spirit_gems", maxTier=gem_max, spirit=val.get("spiritUnreserved") or 0)["gems"]
                        if spirit else [])
     out = {"minions": prep, "level": level, "gem_max": gem_max, "support_tier": sup_tier, "groups": groups, "main": main,
            "tree": tree, "spirit_free": val.get("spiritUnreserved"), "thresholds": th, "spirit_options": [],
-           "spirit_checked": bool(spirit)}
+           "spirit_checked": bool(spirit), "next": nexts}
     if spirit and main and (val.get("spiritUnreserved") or 0) > 0:
         base = val["value"]
         for gem in spirit_gems:

@@ -2339,6 +2339,91 @@ function commands.checkup_tree(req)
 	return { allocated = n, level = build.characterLevel, base = base, nodes = rows }
 end
 
+-- Check-up "next steps": what the next passive points and the next ascendancy trial would add, whether the main
+-- skill's mana is sustained, and allocated jewel sockets left empty. Every row is one calcFunc output with the
+-- node's shortest path added (node.path includes the node, so #path is its point cost), measured alone.
+local NEXT_NOISE = 0.001 -- same value as the check-up's NOISE: below this a node adds nothing to the main skill
+local ASC_MAX = 8        -- ascendancy points a character can spend
+local function manaSustain(o)
+	local mana, unres = o.Mana or 0, o.ManaUnreserved or o.Mana or 0
+	local cost, net = o.ManaPerSecondCost or 0, o.NetManaRegen or o.ManaRegenRecovery or 0
+	local low = data.misc.LowPoolThreshold
+	local r = { mana = mana, unreserved = unres, cost_ps = cost, net = net, low = low, life_cost_ps = o.LifePerSecondCost }
+	if not o.ManaPerSecondHasCost or mana <= 0 or cost <= 0 then
+		r.state = "no_cost"
+	elseif cost <= net then
+		r.state = "sustained"
+	elseif unres <= low * mana then
+		r.state = "already_low"
+	else
+		r.state = "drains"
+		r.secs_to_low = (unres - low * mana) / (cost - net)
+	end
+	return r
+end
+
+function commands.checkup_next(req)
+	build.mainSocketGroup = req.group
+	recalc()
+	local maxPath, ascPoints = req.maxPath or 7, req.ascPoints or 2
+	local calcFunc = build.calcsTab:GetMiscCalculator()
+	local opts = { requirementsItems = true, requirementsGems = true, skipEHP = true }
+	local base = setsValue(calcFunc, {}, {}, opts) or 0
+	local o0 = calcFunc({}, false, opts)
+	local function res(o)
+		return (o.FireResist or 0) + (o.ColdResist or 0) + (o.LightningResist or 0)
+	end
+	local function row(node)
+		local add = {}
+		for _, p in ipairs(node.path) do add[p] = true end
+		local v = setsValue(calcFunc, {}, { addNodes = add }, opts) or 0
+		local o = calcFunc({ addNodes = add }, false, opts)
+		return { name = node.dn, id = node.id, cost = #node.path, keystone = node.isKeystone or nil,
+			multipleChoice = node.isMultipleChoice or nil, mult = base > 0 and v / base or nil,
+			life = (o.Life or 0) - (o0.Life or 0), es = (o.EnergyShield or 0) - (o0.EnergyShield or 0),
+			res = res(o) - res(o0), regen = (o.NetManaRegen or o.ManaRegenRecovery or 0) - (o0.NetManaRegen or o0.ManaRegenRecovery or 0),
+			sustain = manaSustain(o) }
+	end
+	local passives = {}
+	for _, node in pairs(build.spec.nodes) do
+		if not node.alloc and not node.ascendancyName and (node.isNotable or node.isKeystone) and node.path
+			and #node.path > 0 and #node.path <= maxPath then
+			local r = row(node)
+			r.sustain = nil
+			if (r.mult and r.mult > 1 + NEXT_NOISE) or r.life > 0 or r.es > 0 or r.res > 0 then
+				passives[#passives + 1] = r
+			end
+		end
+	end
+	local _, ascUsed = build.spec:CountAllocNodes()
+	local ascName = build.spec.curAscendClassName
+	local asc, ascLeft = {}, ASC_MAX - (ascUsed or 0)
+	if ascName and ascName ~= "None" and ascLeft > 0 then
+		local cap = math.min(ascPoints, ascLeft)
+		for _, node in pairs(build.spec.nodes) do
+			if node.ascendancyName == ascName and not node.alloc and node.isNotable and node.path
+				and #node.path > 0 and #node.path <= cap then
+				asc[#asc + 1] = row(node)
+			end
+		end
+	end
+	local jewels = {}
+	for id, node in pairs(build.spec.allocNodes) do
+		if node.type == "Socket" then
+			local slot = build.itemsTab.sockets and build.itemsTab.sockets[id]
+			if not slot or not slot.selItemId or slot.selItemId == 0 then
+				jewels[#jewels + 1] = { name = node.dn, id = id }
+			end
+		end
+	end
+	table.sort(jewels, tieBreak)
+	table.sort(passives, tieBreak)
+	table.sort(asc, tieBreak)
+	recalc() -- node overrides leave later fast calcs with stale Spirit until the next full calculation
+	return { base = base, noise = NEXT_NOISE, passives = passives, ascendancy = asc, ascendancyName = ascName,
+		ascUsed = ascUsed, ascMax = ASC_MAX, sustain = manaSustain(o0), jewels = jewels }
+end
+
 -- Main group value with the build as is (used around Spirit probes that paste a group in).
 function commands.checkup_value(req)
 	local o = build.calcsTab.mainOutput or {}
