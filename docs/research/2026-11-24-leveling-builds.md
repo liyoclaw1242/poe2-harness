@@ -798,3 +798,24 @@ Single-target DPS, the `dot` field used by pairs, speed and all factors are unch
 - **Collections:** Vine Arrow's clear-support collection now beats its plain one in 54 of 74 class × stage pairs
   (was 6 of 74). (B) rewards the Vines' area and duration, which the clear supports raise.
 
+## Every support that grants a cooldown is excluded (2026-11-27)
+
+A harness audit found that Expanse (8 s cooldown, +50% area), from the same family as Hourglass, was still picked:
+175 entries, all for Contagion, Profane Ritual or Thunderstorm.
+
+**Rule.** The name list is replaced by a rule read from gem data. A support is never a candidate if any of its
+levels has a cooldown, or if it adds the Cooldown skill type. Today that covers nine supports:
+- Hourglass, Expanse, Excise, Execrate, Nova Projectiles II, Zarokh's Revolt;
+- three lineage supports.
+
+Supports that only change an existing cooldown, such as Cooldown Recovery, stay eligible. The rule applies to the
+skill picker and to the check-up; socketed supports are still scored as they are.
+
+**Gates and result.** Registered before the run, with gates approved by Fable:
+- **Control:** 368 control entries reproduce the cache exactly.
+- **Picks:** no entry picks a cooldown support any more.
+- **Nothing else moved:** non-Expanse entries, other skills and boss #1s are identical.
+- **Rankings:** all unchanged (0.771 / 0.781 / 0.771, devilcat 0.687). No served #1 changes.
+- **Contagion + Essence Drain:** keeps its score in all 19 lists it leads.
+- **Top 3:** one change, Druid Shaman asc1, where Thunderstorm enters at #2.
+

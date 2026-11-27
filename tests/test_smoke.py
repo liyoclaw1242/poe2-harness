@@ -293,6 +293,40 @@ def test_checkup_never_recommends_hourglass():
         assert "Hourglass" not in {p["name"] for p in sc[mode]["best"]}
 
 
+COOLDOWN_SUPPORTS = ["Breachlord's Amalgam", "Excise", "Execrate", "Expanse", "Hayoxi's Fulmination", "Hourglass",
+                     "Nova Projectiles II", "Zarokh's Refrain", "Zarokh's Revolt"]
+
+
+def test_supports_that_grant_a_cooldown_are_never_picked():
+    # every support giving the skill a cooldown (read from gem data, not a name list) is left out of the pickers:
+    # Contagion with clear supports used to take Expanse (8 s cooldown), with or without a tier cap
+    from pob_agent import leveling as L
+    with Engine() as eng:
+        assert eng.call("cooldown_supports")["names"] == COOLDOWN_SUPPORTS
+        res = eng.call("leveling_probe", skills=["Contagion"], **L.stage_params("act1+clearsup", "Witch"))["results"][0]
+        untiered = {k: v for k, v in L.stage_params("act1+clearsup", "Witch").items() if k != "maxSupportTier"}
+        res2 = eng.call("leveling_probe", skills=["Contagion"], **untiered)["results"][0]
+    for r in (res, res2):
+        assert r["supports"] and not {s["name"] for s in r["supports"]} & set(COOLDOWN_SUPPORTS)
+
+
+def test_checkup_never_recommends_a_cooldown_support():
+    # Profane Ritual (1.3 s duration) at level 14 used to be advised Expanse for clearing packs
+    from pob_agent import checkup
+    sel = ("for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Witch' then build.spec:SelectClass(cid) end end "
+           "recalc() return true")
+    with Engine() as eng:
+        eng.call("new", level=14)
+        eng.call("eval", code=sel)
+        eng.call("paste_skill", text="Essence Drain 5/0  1\n", main=True)
+        eng.call("paste_skill", text="Profane Ritual 5/0  1\n", main=False)
+        eng.call("checkup_prepare")
+        g = next(x for x in eng.call("checkup_groups")["groups"] if x["skill"] == "Profane Ritual")
+        sc = checkup.support_checks(eng, g["index"], 1)
+    for mode in ("boss", "clear"):
+        assert not {p["name"] for p in sc[mode]["best"]} & set(COOLDOWN_SUPPORTS)
+
+
 def test_vine_arrow_counts_hit_ailment_once():
     # Vine Arrow act1 (Ranger, Poison I + Bleed I): Impact's combined DPS 20.64 already holds the hit's poison/bleed
     # (5.52); the Vines set's TotalDotDPS 21.50 repeats it on top of its own DoT 15.98. Total = PoB's Vines combined.

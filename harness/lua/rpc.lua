@@ -528,14 +528,25 @@ local function skillAllowed(g, req)
 	if not req.maxSkillTier then return true end
 	return g.Tier and g.Tier >= 1 and g.Tier <= req.maxSkillTier
 end
--- Supports whose value depends on something the calc does not model. Hourglass trades a skill's cast rate for a
--- cooldown; nothing here checks how much of that cooldown the skill's effect covers (Contagion: 10 s cooldown, cast
--- once per pack in the leveling model; Profane Ritual: 1.3 s duration), so the pickers never offer it. Supports a
--- player already has socketed are still scored as they are.
-local UNMODELLED_SUPPORTS = { Hourglass = true }
+-- Supports that give the skill a cooldown (Hourglass 10 s, Expanse 8 s, Excise, Execrate, Nova Projectiles II...)
+-- trade use rate for damage or area. Nothing here checks how much of that cooldown the skill's effect covers
+-- (Contagion is cast once per pack in the leveling model; Profane Ritual lasts 1.3 s), so the pickers never offer them.
+-- Read from gem data: a cooldown on any level, or the Cooldown skill type added. Supports a player already has socketed
+-- are still scored as they are.
+local function grantsCooldown(g)
+	local ge = g.grantedEffect
+	if not ge then return false end
+	for _, lv in pairs(ge.levels or {}) do
+		if lv.cooldown then return true end
+	end
+	for _, t in ipairs(ge.addSkillTypes or {}) do
+		if t == SkillType.Cooldown then return true end
+	end
+	return false
+end
 
 local function supportAllowed(g, req)
-	if UNMODELLED_SUPPORTS[g.name] then return false end
+	if grantsCooldown(g) then return false end
 	if not req.maxSupportTier then return true end
 	return g.Tier and g.Tier >= 1 and g.Tier <= req.maxSupportTier
 end
@@ -1389,6 +1400,17 @@ function commands.ascendancy_checkpoints(req)
 	return { skill = req.skill, supports = scan.supports, weaponType = scan.weaponType, ascendancies = rows }
 end
 
+-- Names of the supports grantsCooldown rejects (tests and gates pin this set).
+function commands.cooldown_supports()
+	local t = {}
+	for _, g in pairs(data.gems) do
+		local ge = g.grantedEffect
+		if ge and ge.support and not ge.hidden and grantsCooldown(g) then t[#t + 1] = g.name end
+	end
+	table.sort(t)
+	return { names = t }
+end
+
 function commands.leveling_probe(req)
 	-- firstSetOnly: judge supports/passives on the first stat set, as before setsValue (a same-template baseline);
 	-- read per skill by setsContext in scanOne/setupSkill
@@ -2139,7 +2161,7 @@ function commands.checkup_supports(req)
 	local candidates = {}
 	for id, cg in pairs(data.gems) do
 		local ge = cg.grantedEffect
-		if ge and ge.support and not ge.hidden and not (cg.tags and cg.tags.lineage) and not UNMODELLED_SUPPORTS[cg.name]
+		if ge and ge.support and not ge.hidden and not (cg.tags and cg.tags.lineage) and not grantsCooldown(cg)
 			and cg.Tier and cg.Tier >= 1 and cg.Tier <= (req.maxSupportTier or 1)
 			and active and calcLib.canGrantedEffectSupportActiveSkill(ge, active) then
 			candidates[#candidates + 1] = { id = id, g = cg }
