@@ -709,3 +709,44 @@ The gain is all in the tune half; the check half is flat and still not significa
 better generalisation. asc1 stays at chance. The pre_asc1 / act1 numbers (0.771 / 0.729 / source2 0.771,
 devilcat act1 0.60, pre_asc1 0.76) and the ascendancy checkpoint key (M1 6/19, random 3.4) do not read these
 caches and are unchanged.
+
+## Hourglass excluded from the support pickers (2026-11-27)
+
+**Problem.** Hourglass trades a skill's cast rate for a cooldown, and nothing in the pickers checks how much of
+that cooldown the skill's effect covers.
+- 409 cache entries picked it, across 5 skills: Rain of Arrows, Thunderstorm, Contagion, Profane Ritual and
+  Vine Arrow.
+- That includes Contagion in the "Contagion + Essence Drain" pair, which is #1 for Witch and Sorceress in 19
+  served lists. The ranking casts Contagion once per pack, but Hourglass gives it a 10 s cooldown.
+
+**Fix.** Hourglass is never offered as a candidate:
+- in the shared skill picker (skill scan, ascendancy lift, build-up, ascendancy checkpoints, leveling probe);
+- in the check-up's support search.
+
+A socketed Hourglass is still scored as it is. A real uptime factor is left for later.
+
+**Gates and result.** Registered before the run, with gates approved by Fable:
+- **Old code reproduces the cache:** 432 control entries.
+- **Hourglass removed:** 406 of the 409 entries were re-probed and none picks it now. The other 3 were in the
+  two dropped orphan caches (below). No new probe errors.
+- **Nothing else moved:** non-Hourglass entries, every other skill, every boss-ranking #1, and every ranked row
+  not involving the five skills are identical.
+- **Rankings:**
+  - pre_asc1 0.771, source2 0.771, devilcat 0.656: unchanged.
+  - act1 0.729 → 0.719: Thunderstorm enters Druid's top 3, so the guide skill's rank falls 3 → 4.
+- **Contagion + Essence Drain:** stays #1 in all 19 lists. The pair score falls 0–2%. The closest runner-up is
+  at 94% (Witch act1).
+
+**Stop rule hit, accepted by the owner.** In 6 Ranger lists (asc1 and asc2, generic, Deadeye and Pathfinder),
+#1 becomes Rain of Arrows, replacing Detonating Arrow (and Ice Shot for Deadeye asc1).
+- **Why:** the picker chose Hourglass for Rain of Arrows on single-target DPS (1716 vs 1342 at asc1), which put
+  it on a 10 s cooldown. The ranking then scored its clear at 1.12 at asc1 (1.13 at asc2).
+- **Without Hourglass:** it has no cooldown, and its served clear is 1.75 at asc1 (1.80 at asc2).
+- **Held-out keys** (a re-use of already scored keys, informational):
+  - asc1: 0.342 → 0.333; Deadeye's guide skill falls #2 → #3.
+  - asc2 class-clustered: 0.571 → 0.567; check half 0.488, unchanged. Deadeye's guide skill falls #3 → #4.
+
+**Not regenerated.** These tracked outputs still contain Hourglass picks from before:
+- data/results/scan_start, scan_mid, lift_mid, analysis and profiles_055.
+
+The two orphan bridge-target caches for the Lich target (no target definition) were dropped.

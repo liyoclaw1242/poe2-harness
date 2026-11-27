@@ -528,7 +528,14 @@ local function skillAllowed(g, req)
 	if not req.maxSkillTier then return true end
 	return g.Tier and g.Tier >= 1 and g.Tier <= req.maxSkillTier
 end
+-- Supports whose value depends on something the calc does not model. Hourglass trades a skill's cast rate for a
+-- cooldown; nothing here checks how much of that cooldown the skill's effect covers (Contagion: 10 s cooldown, cast
+-- once per pack in the leveling model; Profane Ritual: 1.3 s duration), so the pickers never offer it. Supports a
+-- player already has socketed are still scored as they are.
+local UNMODELLED_SUPPORTS = { Hourglass = true }
+
 local function supportAllowed(g, req)
+	if UNMODELLED_SUPPORTS[g.name] then return false end
 	if not req.maxSupportTier then return true end
 	return g.Tier and g.Tier >= 1 and g.Tier <= req.maxSupportTier
 end
@@ -2132,7 +2139,7 @@ function commands.checkup_supports(req)
 	local candidates = {}
 	for id, cg in pairs(data.gems) do
 		local ge = cg.grantedEffect
-		if ge and ge.support and not ge.hidden and not (cg.tags and cg.tags.lineage)
+		if ge and ge.support and not ge.hidden and not (cg.tags and cg.tags.lineage) and not UNMODELLED_SUPPORTS[cg.name]
 			and cg.Tier and cg.Tier >= 1 and cg.Tier <= (req.maxSupportTier or 1)
 			and active and calcLib.canGrantedEffectSupportActiveSkill(ge, active) then
 			candidates[#candidates + 1] = { id = id, g = cg }

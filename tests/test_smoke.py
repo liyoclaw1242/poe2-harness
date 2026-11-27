@@ -266,6 +266,33 @@ def test_checkup_clear_with_contagion_scores_the_pair():
     assert not {"Pierce I", "Multishot I", "Chain I"} & {p["name"] for p in sc["clear"]["best"]}
 
 
+def test_leveling_probe_never_picks_hourglass():
+    # Hourglass trades cast rate for a cooldown and nothing checks the skill's uptime against it; Contagion act1
+    # used to pick it first (10 s cooldown, cast once per pack in the ranking)
+    from pob_agent import leveling as L
+    with Engine() as eng:
+        res = eng.call("leveling_probe", skills=["Contagion"], **L.stage_params("act1", "Witch"))["results"][0]
+    assert res["supports"] and "Hourglass" not in {s["name"] for s in res["supports"]}
+
+
+def test_checkup_never_recommends_hourglass():
+    # same exclusion in the check-up; a socketed Hourglass stays in the current set and is scored as it is
+    from pob_agent import checkup
+    sel = ("for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Witch' then build.spec:SelectClass(cid) end end "
+           "recalc() return true")
+    with Engine() as eng:
+        eng.call("new", level=30)
+        eng.call("eval", code=sel)
+        eng.call("paste_skill", text="Essence Drain 8/0  1\n", main=True)
+        eng.call("paste_skill", text="Contagion 8/0  1\nHourglass 1/0  1\n", main=False)
+        eng.call("checkup_prepare")
+        sp = next(g for g in eng.call("checkup_groups")["groups"] if g["skill"] == "Contagion")
+        sc = checkup.support_checks(eng, sp["index"], 3)
+    assert "Hourglass" in sc["boss"]["current"]
+    for mode in ("boss", "clear"):
+        assert "Hourglass" not in {p["name"] for p in sc[mode]["best"]}
+
+
 def test_vine_arrow_counts_hit_ailment_once():
     # Vine Arrow act1 (Ranger, Poison I + Bleed I): Impact's combined DPS 20.64 already holds the hit's poison/bleed
     # (5.52); the Vines set's TotalDotDPS 21.50 repeats it on top of its own DoT 15.98. Total = PoB's Vines combined.
