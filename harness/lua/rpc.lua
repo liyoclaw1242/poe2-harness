@@ -445,11 +445,24 @@ function commands.trade_query(req)
 			if type(entry) == "table" and entry.tradeMod then textById[entry.tradeMod.id] = entry.tradeMod.text end
 		end
 	end
+	-- what the link actually searches: the weighted stat filters of the generated query, heaviest first (PoB orders
+	-- modWeights by mean stat change, and the query keeps a subset under its complexity budget, some remapped to
+	-- pseudo mods)
+	local byId = {}
+	for _, w in ipairs(tradeGen.modWeights or {}) do byId[w.tradeModId] = byId[w.tradeModId] or w end
 	local weights = {}
-	for i, w in ipairs(tradeGen.modWeights or {}) do
-		if i > (req.topWeights or 25) then break end
-		weights[#weights + 1] = { id = w.tradeModId, text = textById[w.tradeModId], weight = w.weight, meanStatDiff = w.meanStatDiff }
+	local cq = captured.query and (captured.query.query or captured.query)   -- the query body comes wrapped or bare
+	for _, group in ipairs((cq and cq.stats) or {}) do
+		for _, f in ipairs(group.filters or {}) do
+			local wv = f.value and f.value.weight
+			if f.id and wv then
+				local w = byId[f.id]
+				weights[#weights + 1] = { id = f.id, text = textById[f.id] or f.id, weight = wv, meanStatDiff = w and w.meanStatDiff }
+			end
+		end
 	end
+	table.sort(weights, function(x, y) if x.weight ~= y.weight then return x.weight > y.weight end return x.id < y.id end)
+	for i = #weights, (req.topWeights or 25) + 1, -1 do weights[i] = nil end
 	local url
 	if captured.query and req.league then
 		-- Same URL shape as PoB's CompareBuySimilar: trade2/search/<league>/<b64gzip(query)>

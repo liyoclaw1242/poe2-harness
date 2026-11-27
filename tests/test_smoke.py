@@ -457,6 +457,19 @@ def test_summary_label_tolerates_non_numeric_stats(capsys):
         assert label in capsys.readouterr().out
 
 
+def test_trade_query_lists_the_heaviest_weights_in_the_link():
+    # the printed weights are the link's own filters, heaviest first (PoB orders its list by mean stat change)
+    from pob_agent import trade
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        q = eng.call("trade_query", slot="Ring 1", league="Standard", statWeights=trade.DEFAULT_WEIGHTS, topWeights=12)
+    w = [x["weight"] for x in q["weights"]]
+    body = q["query"].get("query", q["query"])
+    filt = sorted((f["value"]["weight"] for g in body["stats"] for f in g["filters"]
+                   if (f.get("value") or {}).get("weight") is not None), reverse=True)
+    assert w and w == sorted(w, reverse=True) and w == filt[:len(w)]
+
+
 def test_checkup_text_agrees_with_its_numbers(capsys):
     # the support verdict follows the measured multiplier, a support the section recommends gets no swap advice,
     # a boss gain stays visible when the two sets merge, a gem above the stage cap is not "the highest", and the
