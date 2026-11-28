@@ -324,6 +324,16 @@ def cmd_trade_query(args):
         slots = args.slot or trade.active_slots(eng.call("items"))
         out = []
         for slot in slots:
+            # an empty off-hand that no item can go into (two-handed main hand; PoB's own IsItemValidForSlot) gets no
+            # link, unless the slot was asked for explicitly
+            if not args.slot and slot.startswith("Weapon 2"):
+                try:
+                    info = eng.call("checkup_gear_slot", slot=slot)
+                except EngineError:
+                    info = {}
+                if info.get("empty") and info.get("blocked"):
+                    out.append({"slot": slot, "skipped": "blocked by the two-handed main hand"})
+                    continue
             try:
                 q = trade.weighted_query(eng, slot, args.league, parse_weights(args.weights),
                                          args.max_price, args.currency, top=args.top)
@@ -334,6 +344,9 @@ def cmd_trade_query(args):
         def render(rows):
             for q in rows:
                 print(f"## {q['slot']}")
+                if q.get("skipped"):
+                    print("skipped: the two-handed main hand leaves no off-hand to fill\n")
+                    continue
                 if q.get("error"):
                     print(f"error: {q['error']}")
                     continue

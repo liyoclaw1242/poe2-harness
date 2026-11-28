@@ -862,3 +862,57 @@ def test_checkup_gear_basis_and_errors():
     assert "| Weapon 1 (Wand) | # to Strength (few affixes on this base move Spark DPS or EHP;" in out
     assert "| Weapon 2 (empty) | blocked by the two-handed main hand |" in out
     assert "One minion assumed [minion]." in out
+
+
+# --- trade-query: no link for an off-hand that a two-handed main hand blocks ---
+
+SWAP_SET = '''
+local set = build.itemsTab.activeItemSet
+local id = set["Weapon 1"].selItemId
+build.itemsTab.slots["Weapon 1"]:SetSelItemId(0)
+set.useSecondWeaponSet = true
+build.itemsTab.slots["Weapon 1 Swap"]:SetSelItemId(id)
+recalc()
+return true
+'''
+
+
+def _trade_query_rows(tmp_path, capsys, main_base, custom=None, swap=False, extra=()):
+    import json
+    from pob_agent import cli
+    with Engine() as eng:
+        eng.call("new", level=60)
+        eng.call("add_item", raw="Rarity: RARE\nMain\n" + main_base)
+        if custom:
+            eng.call("set_config", customMods=custom)
+        if swap:
+            eng.call("eval", code=SWAP_SET)
+        xml = eng.call("save", xml=True)["xml"]
+    path = tmp_path / "b.xml"
+    path.write_text(xml)
+    cli.main(["--json", "trade-query", str(path), "--league", "Standard", "--top", "3", *extra])
+    rows = {r["slot"]: r for r in json.loads(capsys.readouterr().out)}
+    cli.main(["trade-query", str(path), "--league", "Standard", "--top", "3", *extra])
+    return rows, capsys.readouterr().out
+
+
+def test_trade_query_skips_an_offhand_blocked_by_a_two_handed_weapon(tmp_path, capsys):
+    rows, text = _trade_query_rows(tmp_path, capsys, "Anvil Maul")
+    assert rows["Weapon 2"].get("skipped") and "weights" not in rows["Weapon 2"]
+    assert "## Weapon 2\nskipped: the two-handed main hand leaves no off-hand to fill" in text
+    assert rows["Helmet"].get("weights")
+    rows, _ = _trade_query_rows(tmp_path, capsys, "Anvil Maul", extra=("--slot", "Weapon 2"))
+    assert "skipped" not in rows["Weapon 2"]  # asked for explicitly: still queried
+
+
+def test_trade_query_keeps_offhands_pob_allows(tmp_path, capsys):
+    rows, _ = _trade_query_rows(tmp_path, capsys, "Crude Bow")  # a quiver
+    assert "skipped" not in rows["Weapon 2"]
+    rows, _ = _trade_query_rows(tmp_path, capsys, "Anvil Maul",
+                                custom="You can wield Two-Handed Axes, Maces and Swords in one hand")  # Giant's Blood
+    assert "skipped" not in rows["Weapon 2"]
+
+
+def test_trade_query_skips_the_blocked_offhand_of_weapon_set_two(tmp_path, capsys):
+    rows, _ = _trade_query_rows(tmp_path, capsys, "Anvil Maul", swap=True)
+    assert rows["Weapon 2 Swap"].get("skipped") and "Weapon 2" not in rows

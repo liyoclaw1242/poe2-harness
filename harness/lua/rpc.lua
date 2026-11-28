@@ -2549,7 +2549,6 @@ function commands.checkup_value(req)
 	return { value = v, spirit = o.Spirit, spiritUnreserved = o.SpiritUnreserved }
 end
 
--- Persistent / Spirit skills a campaign character could add with its free Spirit.
 -- What the check-up's gear section says about a slot: the equipped base's PoB type and subtype, or for an empty
 -- off-hand whether any off-hand can go there at all (PoB's own IsItemValidForSlot over a representative rare of each
 -- off-hand-capable type: a two-handed main hand blocks them all unless Bow/Quiver, Staff + Instruments of Power,
@@ -2581,6 +2580,7 @@ function commands.checkup_gear_slot(req)
 	return out
 end
 
+-- Persistent / Spirit skills a campaign character could add with its free Spirit.
 function commands.checkup_spirit_gems(req)
 	local l, seen = {}, {}
 	for _, gd in pairs(data.gems) do

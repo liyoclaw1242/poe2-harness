@@ -31,7 +31,8 @@ stacks before full damage) → scales (what one unit of each stat is worth) → 
 ```
 pob-agent trade-query <build> --league "<trade league>" [--slot Gloves "Ring 1"] [--weights FullDPS:1,TotalEHP:0.5] [--max-price 5 --currency divine]
 ```
-Gives PoB-derived stat weights per slot and a trade2 URL for the player to open. Ask the player to
+Gives PoB-derived stat weights per slot and a trade2 URL for the player to open. An empty off-hand that a
+two-handed main hand blocks gets no link (JSON row `{"slot", "skipped"}`, no `weights`/`url`) unless asked for with `--slot`. Ask the player to
 paste promising listings (Ctrl+C item text, plus price) into a file separated by `---` lines with
 `slot:` / `price:` / `name:` headers, then:
 ```

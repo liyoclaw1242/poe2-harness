@@ -891,7 +891,8 @@ rebuild; the rest are reporting or character-tool items:
   random 0.39, so source2 should not be read as generalisation.
 - **Main socket group.** A non-damaging exported main group (for example a buff) still gives an all-zero report
   on 15 of 126 sample builds; automatic selection needs care around totems.
-- **trade-query** still emits an off-hand link when the main hand is two-handed.
+- **trade-query** emitted an off-hand link when the main hand is two-handed (fixed 2026-11-28: an empty off-hand that
+  PoB allows no item into is skipped).
 - **Smaller items:**
   - The check-up can recommend supports with a condition PoB does not model: Hit and Run's movement gate, and
     Inexorable Critical credited at its cap.
