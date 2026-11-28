@@ -400,22 +400,34 @@ end
 local tradeGen
 local function nn(v) if v == json.null then return nil end return v end
 
--- Prefix/Suffix item mods by trade hash (data.itemMods.Item), for "can this affix drop on this base".
-local affixesByHash
-local function dropAffixes(hash)
+-- Prefix/Suffix item mods by trade hash (data.itemMods.Item), for "can this affix drop on this base". A jewel socket
+-- reads data.itemMods.Jewel instead, without the radius mods (a radius weight key or a node type): those only roll on
+-- Time-Lost jewels. Each mod carries its id (`modId`) for the jewel rows.
+local affixesByHash, jewelAffixesByHash
+local function isRadiusMod(mod)
+	if mod.nodeType then return true end
+	for _, key in ipairs(mod.weightKey or {}) do
+		if key:find("radius") then return true end
+	end
+	return false
+end
+local function dropAffixes(hash, jewel)
 	if not affixesByHash then
-		affixesByHash = {}
-		for _, mod in pairsSortByKey(data.itemMods.Item) do
-			if mod.type == "Prefix" or mod.type == "Suffix" then
-				for h in pairs(mod.tradeHashes or {}) do
-					local k = tostring(h)
-					affixesByHash[k] = affixesByHash[k] or {}
-					table.insert(affixesByHash[k], mod)
+		affixesByHash, jewelAffixesByHash = {}, {}
+		for index, src in ipairs({ data.itemMods.Item, data.itemMods.Jewel }) do
+			local into = index == 1 and affixesByHash or jewelAffixesByHash
+			for id, mod in pairsSortByKey(src) do
+				if (mod.type == "Prefix" or mod.type == "Suffix") and not (index == 2 and isRadiusMod(mod)) then
+					for h in pairs(mod.tradeHashes or {}) do
+						local k = tostring(h)
+						into[k] = into[k] or {}
+						table.insert(into[k], { modId = id, mod = mod })
+					end
 				end
 			end
 		end
 	end
-	return affixesByHash[hash] or {}
+	return (jewel and jewelAffixesByHash or affixesByHash)[hash] or {}
 end
 
 -- Item:GetModSpawnWeight on a bare tag set: the first weight key the base has decides.
@@ -433,8 +445,15 @@ end
 -- Bases an affix is checked against: the equipped item's base, or for an empty slot every base of the trade
 -- category PoB searches that slot with (an empty weapon slot: PoB's one-hand weapon list).
 local ONE_HAND = { ["One Hand Mace"] = true, Wand = true, Sceptre = true, Flail = true, Spear = true }
+-- the jewel bases a socket's "Base" query can drop (Diamond and the Time-Lost jewels are not dropped plain)
+local BASE_JEWELS = { "Emerald", "Ruby", "Sapphire" }
 local function slotBaseTags(slot, item, category)
 	if item and item.base then return { item.base.tags } end
+	if category == "BaseJewel" then
+		local list = {}
+		for _, name in ipairs(BASE_JEWELS) do list[#list + 1] = data.itemBases[name].tags end
+		return list
+	end
 	local tradeHelpers = LoadModule("Classes/TradeHelpers")
 	local list = {}
 	for _, base in pairsSortByKey(data.itemBases) do
@@ -457,22 +476,53 @@ local function topAffixes(slot, n)
 		end
 	end
 	local item = slot.selItemId and build.itemsTab.items[slot.selItemId]
-	local tagSets = slotBaseTags(slot, item, tradeGen.calcContext.itemCategory)
+	local category = tradeGen.calcContext.itemCategory
+	local tagSets = slotBaseTags(slot, item, category)
+	local jewel = category == "BaseJewel" and not item
 	local function drops(id)
 		for h in id:gsub("^.-stat_", ""):gmatch("%d+") do
-			for _, mod in ipairs(dropAffixes(h)) do
+			for _, m in ipairs(dropAffixes(h, jewel)) do
 				for _, tags in ipairs(tagSets) do
-					if spawnWeight(mod, tags) > 0 then return true end
+					if spawnWeight(m.mod, tags) > 0 then return true end
 				end
 			end
 		end
 		return false
 	end
+	-- a jewel row names the Jewel mods behind it and, per base jewel, the affix type of the first (by mod id) that
+	-- can roll there (spawn weight > 0)
+	local function jewelRoll(id)
+		local ids, bases, seen = {}, {}, {}
+		for h in id:gsub("^.-stat_", ""):gmatch("%d+") do
+			for _, m in ipairs(dropAffixes(h, true)) do
+				for _, name in ipairs(BASE_JEWELS) do
+					if spawnWeight(m.mod, data.itemBases[name].tags) > 0 then
+						if not seen[m.modId] then
+							seen[m.modId] = true
+							ids[#ids + 1] = m.modId
+						end
+						bases[name] = bases[name] or {}
+						table.insert(bases[name], m)
+					end
+				end
+			end
+		end
+		table.sort(ids)
+		local rollsOn = {}
+		for _, name in ipairs(BASE_JEWELS) do
+			if bases[name] then
+				table.sort(bases[name], function(a, b) return a.modId < b.modId end)
+				local m = bases[name][1]
+				rollsOn[#rollsOn + 1] = { base = name, type = m.mod.type, modId = m.modId, group = m.mod.group }
+			end
+		end
+		return { modIds = ids, rollsOn = rollsOn }
+	end
 	local rows = {}
 	for _, w in ipairs(tradeGen.modWeights or {}) do
 		local id = w.tradeModId
 		if id:match("^explicit%.") and textById[id] and drops(id) then
-			rows[#rows + 1] = { id = id, text = textById[id], meanStatDiff = w.meanStatDiff }
+			rows[#rows + 1] = { id = id, text = textById[id], meanStatDiff = w.meanStatDiff, jewel = jewel and jewelRoll(id) or nil }
 		end
 	end
 	table.sort(rows, function(a, b)
@@ -2701,6 +2751,107 @@ function commands.checkup_gear_slot(req)
 		out.blocked = not open
 	end
 	return out
+end
+
+-- The guide's base list for one equipment slot, read from data.itemBases only: the equipped item's base and every
+-- non-hidden base of the same type (an empty slot: the slot's own type; an empty weapon slot: none). Python selects.
+local SLOT_TYPES = { Helmet = "Helmet", ["Body Armour"] = "Body Armour", Gloves = "Gloves", Boots = "Boots",
+	Amulet = "Amulet", ["Ring 1"] = "Ring", ["Ring 2"] = "Ring", ["Ring 3"] = "Ring", Belt = "Belt" }
+local DEFENCE_KEYS = { Armour = "armour", Evasion = "evasion", EnergyShield = "energyShield", Ward = "ward" }
+local function baseRow(name, base)
+	local def = {}
+	for k, out in pairs(DEFENCE_KEYS) do
+		local v = base.armour and base.armour[k]
+		if v and v > 0 then def[out] = v end
+	end
+	local implicits = {}
+	for line in (base.implicit or ""):gmatch("[^\n]+") do implicits[#implicits + 1] = line end
+	return { base = name, reqLevel = (base.req and base.req.level) or 1, type = base.type, subType = base.subType,
+		defences = def, implicits = implicits }
+end
+function commands.checkup_gear_bases(req)
+	local slot = build.itemsTab.slots[req.slot]
+	if not slot then error("unknown slot " .. tostring(req.slot)) end
+	local item = slot.selItemId and build.itemsTab.items[slot.selItemId]
+	local out, ty = { candidates = {} }, SLOT_TYPES[req.slot]
+	if item and item.base then
+		out.equipped = baseRow(item.baseName, item.base)
+		out.equipped.rarity, out.equipped.name = item.rarity, item.name
+		ty = item.base.type
+	end
+	if ty then
+		for name, base in pairsSortByKey(data.itemBases) do
+			if base.type == ty and not base.hidden then out.candidates[#out.candidates + 1] = baseRow(name, base) end
+		end
+	end
+	return out
+end
+
+-- The guide's jewel measurement: the check-up value of `group` (checkup_value's path) with a test jewel in the empty
+-- socket `slot`, for each jewel = { base, modIds }: a rare of that base carrying each Jewel mod at the mean of its
+-- ranges, passed to PoB's calculator as a replacement item (the build is not changed). `base` = the value without one.
+local function meanLine(line)
+	return (line:gsub("%((%-?[%d%.]+)%-(%-?[%d%.]+)%)", function(a, b)
+		return string.format("%g", (tonumber(a) + tonumber(b)) / 2)
+	end))
+end
+-- Every Jewel Prefix/Suffix that can drop on a base jewel (non-radius, spawn weight > 0 on Emerald, Ruby or Sapphire):
+-- id, affix type, mod group (one per jewel), its lines and the base jewels it rolls on. Sorted by id.
+function commands.checkup_jewel_mods()
+	local out = {}
+	for id, mod in pairsSortByKey(data.itemMods.Jewel) do
+		if (mod.type == "Prefix" or mod.type == "Suffix") and not isRadiusMod(mod) then
+			local bases = {}
+			for _, name in ipairs(BASE_JEWELS) do
+				if spawnWeight(mod, data.itemBases[name].tags) > 0 then bases[#bases + 1] = name end
+			end
+			if #bases > 0 then
+				local lines = {}
+				for k = 1, #mod do lines[k] = mod[k] end
+				out[#out + 1] = { modId = id, type = mod.type, group = mod.group, lines = lines, bases = bases }
+			end
+		end
+	end
+	return { mods = out }
+end
+
+function commands.checkup_jewel_values(req)
+	if req.slot and not build.itemsTab.slots[req.slot] then error("unknown slot " .. tostring(req.slot)) end
+	build.mainSocketGroup = req.group
+	build.configTab:BuildModList()
+	local calcFunc = build.calcsTab:GetMiscCalculator()
+	-- no requirementsItems: that flag lets the accelerated pass carry the items over, so the test jewel would be
+	-- ignored after the first call
+	local opts = { requirementsGems = true, skipEHP = true }
+	local ok, o = pcall(calcFunc, {}, false, opts)
+	-- mainDps: PoB's main-output DPS of the group (what a DPS-weighted ranking reads), next to the check-up value
+	local out = { base = setsValue(calcFunc, {}, {}, opts) or 0, values = {}, mainDps = ok and o and outDps(o) or 0 }
+	for i, j in ipairs(req.jewels or {}) do
+		local lines = { "Rarity: RARE", "Test Jewel", j.base }
+		for _, id in ipairs(j.modIds or {}) do
+			local mod = data.itemMods.Jewel[id]
+			if not mod then error("unknown jewel mod " .. tostring(id)) end
+			for k = 1, #mod do lines[#lines + 1] = meanLine(mod[k]) end
+		end
+		local item = new("Item"):Item(table.concat(lines, "\n"))
+		out.values[i] = setsValue(calcFunc, {}, { repSlotName = req.slot, repItem = item }, opts) or 0
+	end
+	recalc()
+	return out
+end
+
+-- Names of the skills that reserve Spirit in PoB's last full calculation (the persistent skills in use).
+function commands.checkup_spirit_in_use()
+	local env, seen, names = build.calcsTab.mainEnv, {}, {}
+	for _, s in ipairs(env and env.player and env.player.activeSkillList or {}) do
+		local ge = s.activeEffect and s.activeEffect.grantedEffect
+		if ge and (s.skillData.SpiritReservedBase or 0) > 0 and not seen[ge.name] then
+			seen[ge.name] = true
+			names[#names + 1] = ge.name
+		end
+	end
+	table.sort(names)
+	return { names = names }
 end
 
 -- Persistent / Spirit skills a campaign character could add with its free Spirit.

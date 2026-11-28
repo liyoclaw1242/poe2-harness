@@ -845,21 +845,15 @@ def _setting_watch(c):
     return f"needs PoB setting '{c['label']}'"
 
 
-def render_checkup(r):
+def _do_now_flags(r):
+    """The Do now rows and the Flags, as both the report and the guide print them: value rows + clear rows, the clear
+    rows, the flags, the dead supports and the PoB-setting flags in size order."""
     level = r["level"]
-    nx, main, groups = r.get("next"), r["main"], r["groups"]
-    used = set()
-
-    def cite(key):
-        used.add(key)
-        return f"[{key}]"
-
+    nx, main = r.get("next"), r["main"]
     big = lambda m: bool(m and m > 1 + REPORT)
-    print(f"## Leveling check-up — level {level}")
-    print(f"Caps by this level: uncut gems to level {r['gem_max']}, supports to tier {r['support_tier']}.")
 
     # ---- Do now: rows grouped by the measure they are multiples of
-    value_groups, clear_rows, stars = [], [], False
+    value_groups, clear_rows = [], []
     for i, g in enumerate(main):
         measure = f"{g['skill']} value"
         rows = []
@@ -922,18 +916,6 @@ def render_checkup(r):
         rows.sort(key=lambda x: -x[3])
         value_groups.extend(rows)
     do_rows = value_groups + clear_rows
-    print("\n### Do now")
-    if do_rows:
-        _table(("measure", "change", "cost", "gain", "watch"), [(a, b, c, fx(d), e) for a, b, c, d, e in do_rows])
-        stars = any("*" in x[1] for x in do_rows)
-        line = ("\nRows are ranked inside one measure only; measures are not comparable with each other " + cite("value")
-                + (" " + cite("clear") if clear_rows or any("clear speed" in x[4] for x in do_rows) else "") + ". "
-                + "Each gain is measured alone " + cite("alone") + ".")
-        if stars:
-            line += " `*` " + cite("borrow") + "."
-        print(line)
-    else:
-        print("Nothing measured adds more than 2% to a checked skill.")
 
     # ---- Flags (fixed order, each only when true)
     flags = []
@@ -988,6 +970,46 @@ def render_checkup(r):
     if jewels:
         flags.append(f"{len(jewels)} allocated jewel socket has no jewel." if len(jewels) == 1 else
                      f"{len(jewels)} allocated jewel sockets have no jewel.")
+    return {"do_rows": do_rows, "clear_rows": clear_rows, "flags": flags, "dead": dead,
+            "setting_flags": setting_flags}
+
+
+def render_checkup(r):
+    level = r["level"]
+    nx, main, groups = r.get("next"), r["main"], r["groups"]
+    used = set()
+
+    def cite(key):
+        used.add(key)
+        return f"[{key}]"
+
+    big = lambda m: bool(m and m > 1 + REPORT)
+    print(f"## Leveling check-up — level {level}")
+    print(f"Caps by this level: uncut gems to level {r['gem_max']}, supports to tier {r['support_tier']}.")
+
+    s = _do_now_flags(r)
+    do_rows, clear_rows, flags, dead = s["do_rows"], s["clear_rows"], s["flags"], s["dead"]
+    setting_flags, stars = s["setting_flags"], False
+    print("\n### Do now")
+    if do_rows:
+        _table(("measure", "change", "cost", "gain", "watch"), [(a, b, c, fx(d), e) for a, b, c, d, e in do_rows])
+        stars = any("*" in x[1] for x in do_rows)
+        line = ("\nRows are ranked inside one measure only; measures are not comparable with each other " + cite("value")
+                + (" " + cite("clear") if clear_rows or any("clear speed" in x[4] for x in do_rows) else "") + ". "
+                + "Each gain is measured alone " + cite("alone") + ".")
+        if stars:
+            line += " `*` " + cite("borrow") + "."
+        print(line)
+    else:
+        print("Nothing measured adds more than 2% to a checked skill.")
+
+    th = (r.get("thresholds") or {}).get("resists") or {}
+    t = r.get("tree")
+    expected = max(0, level - 1)
+    free = r.get("spirit_free")
+    who = main[0]["skill"] if main else "the main skill"
+    spirit_fed = any(c.get("spirit_sources") for c in r.get("config_flags") or [])
+    jewels = (nx or {}).get("jewels") or []
     if flags:
         print("\nFlags:\n" + "\n".join(f"- {f}" for f in flags))
     else:
@@ -1260,11 +1282,195 @@ def render_checkup(r):
         print(f"- [{key}] {text}")
 
 
+DEF_LABELS = (("armour", "armour"), ("evasion", "evasion"), ("energyShield", "ES"), ("ward", "ward"))
+
+
+def _base_name(b):
+    """`English (中文)`, or English alone when the table has no name for the base."""
+    return f"{b['base']} ({b['zh']})" if b.get("zh") else b["base"]
+
+
+def _defences(b):
+    d = b.get("defences") or {}
+    return " + ".join(f"{d[k]:g} {label}" for k, label in DEF_LABELS if d.get(k)) or "no defence"
+
+
+def _pick_detail(g, p):
+    if g.get("rule") == "armour":
+        return f"req {p['reqLevel']}, {_defences(p)}"
+    if g.get("rule") == "jewelry":
+        return (f"req {p['reqLevel']}, implicit matches a ranked affix: {p['affix']}"
+                + (" (equipped)" if p.get("equipped") else ""))
+    return f"req {p['reqLevel']}, " + ("; ".join(p.get("implicits") or []) or "no implicit")
+
+
+def _guide_summary_line(g):
+    """One Summary line per slot: an armour slot whose top base has more base defence than the equipped one, or a
+    jewelry slot whose first listed base is not the equipped one (neutral: its implicit matches a ranked affix). An
+    empty armour slot gets none (its bases are per defence type, not ranked)."""
+    picks, eq = g.get("picks") or [], g.get("equipped")
+    if not picks or g.get("rule") not in ("armour", "jewelry"):
+        return None
+    top = picks[0]
+    if g["rule"] == "armour":
+        if not eq:
+            return None
+        return (f"{g['slot']}: {top['base']} (req {top['reqLevel']}) has more base defence than the equipped "
+                f"{eq['base']}: {top['value']:g} vs {sum((eq.get('defences') or {}).values()):g}.")
+    if top.get("equipped"):
+        return None
+    return f"{g['slot']}: {top['base']}'s implicit matches a ranked affix ({top['affix']})."
+
+
+def render_guide(r):
+    """checkup --guide: five sections from the check-up dict and its `guide` key. English text; Chinese only after
+    base names in sections 3 and 4. No multiplier is computed here."""
+    level, main, nx, gd = r["level"], r["main"], r.get("next"), r.get("guide") or {}
+    big = lambda m: bool(m and m > 1 + REPORT)
+    print(f"## Play guide — level {level}")
+    print(f"Caps by this level: uncut gems to level {r['gem_max']}, supports to tier {r['support_tier']}.")
+
+    # ---- 1. skills and supports
+    print("\n### 1. Skills and supports")
+    if not main:
+        print("No socketed skill deals damage in PoB yet.")
+    for g in main:
+        lvl = "item-granted, no gem to level" if g.get("source") else f"gem level {g['level']} (cap {r['gem_max']})"
+        sup = ", ".join(s["name"] for s in g.get("supports") or []) or "none"
+        print(f"- {g['skill']}: {lvl}; supports now: {sup}")
+        checks = g.get("support_checks") or {}
+        boss, clear = checks.get("boss"), checks.get("clear")
+        merged = boss and clear and _merged(checks)
+        if boss:
+            label = "bosses and clearing" if merged else "bosses"
+            print(f"  - {label}: " + (f"{_support_diff(boss)} ({fx(boss['mult'])})" if big(boss.get("mult"))
+                                      else "the current supports are the best set found"))
+        if clear and not merged:
+            if clear.get("unscored"):
+                print("  - clearing: not estimated (the pack model has no value for this skill)")
+            else:
+                print("  - clearing (estimate): " + (f"{_support_diff(clear)} ({fx(clear['mult'])})"
+                                                     if big(clear.get("mult")) else
+                                                     "the current supports are the best set found"))
+    used = gd.get("spirit_in_use") or []
+    if not r.get("spirit_checked", True):
+        best = "not checked (--no-spirit)"
+    elif r.get("spirit_options"):
+        o = r["spirit_options"][0]
+        from .checkup import best_mult
+        best = f"{o['name']} ({o['spirit']:.0f} Spirit, up to {fx(best_mult(o))})"
+    else:
+        best = "none raises the main skill"
+    print(f"\nSpirit: in use {', '.join(used) if used else 'none'}; best Spirit option: {best}.")
+
+    # ---- 2. passives
+    print("\n### 2. Passives")
+    t = r.get("tree")
+    if not t:
+        print("No main skill, so no passive is measured.")
+    else:
+        core = sorted((n for n in t.get("nodes") or [] if n.get("type") in ("Notable", "Keystone") and n["share"] > 0),
+                      key=lambda n: (-n["share"], n["name"]))[:8]
+        print("Core notables: " + (", ".join(f"{n['name']} {100 * n['share']:.1f}%" for n in core) or "none allocated")
+              + ".")
+    if nx:
+        rows, _ = _next_rows(nx)
+        print("\nNext:")
+        if not rows:
+            print("- No notable within 7 points adds to the main skill or to life, energy shield or resistances.")
+        for title, n in rows:
+            gains = [f"main skill {fx(n['mult'])}"] if n.get("mult") and n["mult"] > 1 + nx["noise"] else []
+            gains += [f"{k} {_delta(n[v])}" for k, v in (("life", "life"), ("ES", "es"), ("ele res", "res"))
+                      if _delta(n[v]) != "—"]
+            print(f"- {n['name']} ({n['cost']} pts), best for {title}: {', '.join(gains) or '—'}")
+        name = nx.get("ascendancyName")
+        if name and name != "None":
+            head = f"\nNext ascendancy trial ({name}, {nx['ascUsed']}/{nx['ascMax']} points spent): "
+            if nx["ascUsed"] >= nx["ascMax"]:
+                print(head + "all points spent.")
+            elif not nx.get("ascendancy"):
+                print(head + f"no unallocated notable within the next {min(2, nx['ascMax'] - nx['ascUsed'])} point(s).")
+            else:
+                print(head + ", ".join(f"{n['name']} ({n['cost']} pts, {fx(n.get('mult'))})"
+                                       for n in sorted(nx["ascendancy"], key=lambda n: (-(n.get("mult") or 0), n["name"])))
+                      + ".")
+
+    # ---- 3. gear
+    print("\n### 3. Gear")
+    uncovered = gd.get("zh_uncovered") or []
+    print("Chinese base names cover every equippable item type"
+          + (f" except {', '.join(uncovered)} (not covered)" if uncovered else "")
+          + "; a base missing from the table prints in English.")
+    v, dps = gd.get("value"), gd.get("mainDps")
+    if v is not None and dps is not None and abs(v - dps) > 1e-6 * max(1.0, abs(v)):
+        print(f"The slot affixes are PoB's trade ranking on hit DPS + EHP; {main[0]['skill']}'s value here also "
+              "counts its DoT or minion part, so DoT affixes may be under-rated.")
+    for g in gd.get("gear") or []:
+        if g.get("blocked"):
+            print(f"- {g['slot']}: blocked by the two-handed main hand")
+            continue
+        eq = g.get("equipped")
+        line = f"- {g['slot']}: " + (_base_name(eq) if eq else "empty")
+        if g.get("unique"):
+            line += f" — unique equipped: {g['unique']}"
+        print(line)
+        label = ("same granted skill" if g.get("grantsSkill") else "other bases of this type") \
+            if g.get("rule") == "weapon" else "pick up"
+        for p in g.get("picks") or []:
+            print(f"  - {'keep' if p.get('equipped') else label}: {_base_name(p)} — {_pick_detail(g, p)}")
+        if g.get("error"):
+            print(f"  - affixes: not measured ({g['error']})")
+        elif g.get("affixes"):
+            print("  - affixes: " + "; ".join(g["affixes"]))
+        else:
+            print("  - affixes: none measured adds to the weighted outputs")
+
+    # ---- 4. jewels
+    print("\n### 4. Jewels")
+    jewels = gd.get("jewels") or []
+    if nx is None:
+        print("Jewel sockets not checked (--no-next).")
+    elif not jewels:
+        print("No empty jewel socket.")
+    for j in jewels:
+        if j.get("error"):
+            print(f"- {j['name']}: not measured ({j['error']})")
+        elif not j.get("base"):
+            print(f"- {j['name']}: no jewel affix raises the main skill's value")
+        else:
+            print(f"- {j['name']}: {_base_name(j)}")
+            print("  - affixes: " + "; ".join(j["affixes"]))
+            print(f"  - measured with that jewel (mean rolls) in the socket: main skill {fx(j['mult'])}")
+
+    # ---- 5. summary
+    print("\n### 5. Summary")
+    s = _do_now_flags(r)
+    print("Do now:")
+    if s["do_rows"]:
+        _table(("measure", "change", "cost", "gain", "watch"), [(a, b, c, fx(d), e) for a, b, c, d, e in s["do_rows"]])
+    else:
+        print("Nothing measured adds more than 2% to a checked skill.")
+    if s["flags"]:
+        print("\nFlags:\n" + "\n".join(f"- {f}" for f in s["flags"]))
+    else:
+        print("\nFlags: none.")
+    lines = [x for x in (_guide_summary_line(g) for g in gd.get("gear") or []) if x]
+    if lines:
+        print("\nBases:\n" + "\n".join(f"- {x}" for x in lines))
+    print("\nEvery number is from the check-up, PoB's base data or the jewel measured in section 4; run `checkup` "
+          "without --guide for the full report and its notes.")
+
+
 def cmd_checkup(args):
     """What to change on a leveling character, measured on its own build."""
     from . import checkup
-    emit(args, checkup.run(args.build, top=args.top, spirit=not args.no_spirit, verbose=args.verbose, nxt=not args.no_next,
-                           gear_check=not args.no_gear), render_checkup)
+    r = checkup.run(args.build, top=args.top, spirit=not args.no_spirit, verbose=args.verbose, nxt=not args.no_next,
+                    gear_check=not args.no_gear)
+    if args.guide:
+        r["guide"] = checkup.guide(args.build, r, verbose=args.verbose)
+        emit(args, r, render_guide)
+        return
+    emit(args, r, render_checkup)
 
 
 def cmd_switch(args):
@@ -1558,6 +1764,9 @@ def main(argv=None):
     p.add_argument("--no-spirit", action="store_true", help="skip the Spirit skill sweep (slow)")
     p.add_argument("--no-next", action="store_true", help="skip next passives / next ascendancy trial / mana sustain")
     p.add_argument("--no-gear", action="store_true", help="skip the affixes-to-look-for sweep per equipment slot")
+    p.add_argument("--guide", action="store_true",
+                   help="print a five-section play guide (skills, passives, gear bases with zh-TW names, jewels, "
+                        "summary) instead of the report; with --json, adds a `guide` key")
     p.set_defaults(fn=cmd_checkup)
     p = sub.add_parser("switch", help="switch readiness: when a target skill becomes usable and what gates it")
     p.add_argument("--skill", required=True)

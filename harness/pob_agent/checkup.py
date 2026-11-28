@@ -16,7 +16,9 @@ Gem and support availability come from the drop tables in `switch` (area level ~
 """
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 
 from . import switch
 from .engine import Engine, EngineError
@@ -471,4 +473,229 @@ def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nx
                     out["spirit_together"] = tg
     if gear_rows is not None:
         out["gear"] = gear_rows
+    return out
+
+
+# ---------------------------------------------------------------------------
+# checkup --guide: bases to pick up and jewels, read from data.itemBases and the check-up's own trade-query rows
+
+# official Traditional Chinese base names (poe2db.tw, CC BY-NC-SA 3.0; see data/NOTICE). They cover every equippable
+# item type except trap tools (ZH_UNCOVERED); a base missing from the table prints in English.
+ZH_FILE = Path(__file__).resolve().parent / "data" / "base_names_zh_tw.json"
+ZH_TYPES = ("Amulet", "Belt", "Body Armour", "Boots", "Bow", "Charm", "Claw", "Crossbow", "Dagger", "Flail", "Focus",
+            "Gloves", "Helmet", "Jewel", "One Hand Axe", "One Hand Mace", "One Hand Sword", "Quiver", "Ring", "Sceptre",
+            "Shield", "Spear", "Staff", "Talisman", "Two Hand Axe", "Two Hand Mace", "Two Hand Sword", "Wand")
+ZH_UNCOVERED = ("TrapTool",)
+GUIDE_LEVEL_AHEAD = 3   # a base is listed when its level requirement is at most character level + 3 (display window)
+ARMOUR_TYPES = ("Helmet", "Body Armour", "Gloves", "Boots", "Shield", "Focus", "Buckler")
+JEWELRY_TYPES = ("Amulet", "Ring", "Belt")
+GUIDE_AFFIXES = 4      # affix texts per slot in the guide
+JEWEL_BASES = ("Emerald", "Ruby", "Sapphire")
+
+
+def load_zh() -> dict:
+    """en -> zh base names; empty when the table is absent or unreadable (every base then prints in English)."""
+    try:
+        return json.loads(ZH_FILE.read_text(encoding="utf-8")).get("names") or {}
+    except (OSError, ValueError):
+        return {}
+
+
+def zh_name(en: str | None, names: dict) -> str | None:
+    """The table's name for a base, trying the name without a trailing " (...)" (PoB's Shrine Sceptre variants)."""
+    if not en:
+        return None
+    return names.get(en) or names.get(re.sub(r" \([^()]*\)$", "", en))
+
+
+def norm_mod(line: str) -> str:
+    """A mod line as trade text: {variant} tags dropped, (a-b) ranges and numbers -> #, leading + stripped, (Local)
+    ignored. "+(20-30)% to Fire Resistance" -> "#% to Fire Resistance"."""
+    line = re.sub(r"\{[^}]*\}", "", line)
+    line = re.sub(r"\(-?\d+(?:\.\d+)?--?\d+(?:\.\d+)?\)", "#", line)
+    line = re.sub(r"\d+(?:\.\d+)?", "#", line)
+    line = line.replace("(Local)", "")
+    return " ".join(line.split()).lstrip("+")
+
+
+def defence_value(b: dict) -> float:
+    """A base's listed defences summed (hybrids add their defences)."""
+    return sum((b.get("defences") or {}).values())
+
+
+def _defence_keys(b: dict) -> frozenset:
+    return frozenset(k for k, v in (b.get("defences") or {}).items() if v)
+
+
+def _grants_skill(b: dict) -> bool:
+    return any(x.startswith("Grants Skill:") for x in b.get("implicits") or [])
+
+
+def guide_bases(row: dict, info: dict | None, level: int) -> dict:
+    """Bases for one gear slot (`row` = the check-up's gear row, `info` = checkup_gear_bases). Candidates need
+    reqLevel <= level + GUIDE_LEVEL_AHEAD.
+      - armour, focus, shield: the same subType (when the equipped base has one) and the same set of defence keys,
+        summed defence strictly above the equipped base's; up to 2, highest first (ties: lower reqLevel, then name).
+        An empty slot: the top base of each subType (defence type), without Ward (runeforged) bases.
+      - weapons: no pick-up; up to 2 bases of the same type and subType with a higher reqLevel than the equipped one,
+        highest first; a base that grants a skill only lists bases granting the same skill. Empty: nothing.
+      - amulet, ring, belt: a base whose implicit (as trade text) equals one of the slot's ranked affixes, ordered by
+        that affix's rank, up to 3; the equipped base is marked.
+      - a unique: no base list; a blocked off-hand: nothing."""
+    out = {"slot": row["slot"], "affixes": [m["text"] for m in (row.get("mods") or [])[:GUIDE_AFFIXES]], "picks": []}
+    if row.get("error"):
+        out["error"] = row["error"]
+    if row.get("blocked"):
+        out["blocked"] = True
+        return out
+    info = info or {}
+    eq = info.get("equipped")
+    if eq:
+        out["equipped"] = {"base": eq["base"], "reqLevel": eq["reqLevel"], "type": eq["type"],
+                           "defences": dict(eq.get("defences") or {}), "implicits": list(eq.get("implicits") or [])}
+    else:
+        out["empty"] = True
+    if row.get("unique") or (eq and (eq.get("rarity") or "").upper() == "UNIQUE"):
+        out["unique"] = row.get("unique") or eq.get("name")
+        return out
+    cands = [c for c in info.get("candidates") or [] if c["reqLevel"] <= level + GUIDE_LEVEL_AHEAD]
+    ty = eq["type"] if eq else (cands[0]["type"] if cands else None)
+    if not ty:
+        return out
+
+    def pick(c, **extra):
+        return {"base": c["base"], "reqLevel": c["reqLevel"], "defences": dict(c.get("defences") or {}),
+                "implicits": list(c.get("implicits") or []), **extra}
+
+    if ty in ARMOUR_TYPES:
+        out["rule"] = "armour"
+        if eq:
+            keys, value = _defence_keys(eq), defence_value(eq)
+            pool = [c for c in cands if (not eq.get("subType") or c.get("subType") == eq["subType"])
+                    and _defence_keys(c) == keys and defence_value(c) > value]
+            pool.sort(key=lambda c: (-defence_value(c), c["reqLevel"], c["base"]))
+            out["picks"] = [pick(c, value=defence_value(c)) for c in pool[:2]]
+        else:
+            # an empty slot is not ranked across defence types: the top base of each subType (no Ward runeforged)
+            best = {}
+            for c in sorted((c for c in cands if defence_value(c) > 0 and "ward" not in _defence_keys(c)),
+                            key=lambda c: (-defence_value(c), c["reqLevel"], c["base"])):
+                best.setdefault(c.get("subType") or "", c)
+            out["picks"] = [pick(best[k], value=defence_value(best[k]), subType=best[k].get("subType"))
+                            for k in sorted(best)]
+    elif ty in JEWELRY_TYPES:
+        out["rule"] = "jewelry"
+        ranked = [norm_mod(m["text"]) for m in row.get("mods") or []]
+        pool = []
+        for c in cands:
+            hits = [(ranked.index(norm_mod(x)), x) for x in c.get("implicits") or [] if norm_mod(x) in ranked]
+            if hits:
+                rank, line = min(hits)
+                pool.append((rank, c["reqLevel"], c["base"], c, row["mods"][rank]["text"]))
+        pool.sort(key=lambda x: x[:3])
+        out["picks"] = [pick(c, affix=text, **({"equipped": True} if eq and c["base"] == eq["base"] else {}))
+                        for _, _, _, c, text in pool[:3]]
+    elif eq:
+        out["rule"] = "weapon"
+        skill = _grants_skill(eq)
+        out["grantsSkill"] = skill
+        same = [norm_mod(x) for x in eq.get("implicits") or []]
+        pool = [c for c in cands if c["reqLevel"] > eq["reqLevel"]
+                and (not eq.get("subType") or c.get("subType") == eq["subType"])
+                and (not skill or [norm_mod(x) for x in c.get("implicits") or []] == same)]
+        pool.sort(key=lambda c: (-c["reqLevel"], c["base"]))
+        out["picks"] = [pick(c) for c in pool[:2]]
+    return out
+
+
+def jewel_singles(mods: list[dict], base: float, values: list[float]) -> list[dict]:
+    """Jewel mods whose test jewel (the mod alone, mean roll) raises the check-up value, best first (ties: text, id).
+    Each row keeps its mult = value / base."""
+    rows = [{**m, "text": " / ".join(norm_mod(x) for x in m["lines"]), "mult": v / base}
+            for m, v in zip(mods, values) if base > 0 and v > base]
+    rows.sort(key=lambda m: (-m["mult"], m["text"], m["modId"]))
+    return rows
+
+
+def jewel_sets(singles: list[dict]) -> list[dict]:
+    """Per base jewel, the set measured as one jewel: mods taken greedily in single-mod order while the base allows
+    them (spawn weight > 0), at most 2 prefixes and 2 suffixes, one mod per mod group."""
+    out = []
+    for base in JEWEL_BASES:
+        picked, groups, kinds = [], set(), {"Prefix": 0, "Suffix": 0}
+        for m in singles:
+            if base in m["bases"] and m["group"] not in groups and kinds[m["type"]] < 2:
+                picked.append(m)
+                groups.add(m["group"])
+                kinds[m["type"]] += 1
+        if picked:
+            out.append({"base": base, "modIds": [m["modId"] for m in picked], "affixes": [m["text"] for m in picked]})
+    return out
+
+
+def jewel_pick(sets: list[dict]) -> dict | None:
+    """The set with the highest measured value; ties: more affixes, then the base name."""
+    return min(sets, key=lambda x: (-x["value"], -len(x["modIds"]), x["base"])) if sets else None
+
+
+def guide(build: str, r: dict, verbose: bool = False) -> dict:
+    """The guide pass after run(): per gear slot the bases to pick up (checkup_gear_bases + guide_bases); per empty
+    allocated jewel socket the base jewel and affixes measured on the check-up value of the main skill (each droppable
+    Jewel mod alone as a test jewel at mean rolls, then each base's greedy set as one jewel); the skills reserving
+    Spirit. Every base carries its zh name from the table (None when missing)."""
+    names = load_zh()
+    level = r["level"]
+    main = r.get("main") or []
+    group = main[0]["index"] if main else None
+    out = {"gear": [], "jewels": [], "zh_types": list(ZH_TYPES), "zh_uncovered": list(ZH_UNCOVERED)}
+    with Engine(verbose) as eng:
+        eng.call("load", **sources.resolve(build))
+        eng.call("checkup_prepare")
+        out["spirit_in_use"] = eng.call("checkup_spirit_in_use")["names"]
+        for row in r.get("gear") or []:
+            info = None
+            if not row.get("blocked"):
+                try:
+                    info = eng.call("checkup_gear_bases", slot=row["slot"])
+                except EngineError as exc:
+                    out["gear"].append({"slot": row["slot"], "picks": [], "error": clean_error(str(exc)),
+                                        "affixes": [m["text"] for m in (row.get("mods") or [])[:GUIDE_AFFIXES]]})
+                    continue
+            g = guide_bases(row, info, level)
+            for b in ([g["equipped"]] if g.get("equipped") else []) + g["picks"]:
+                b["zh"] = zh_name(b["base"], names)
+            out["gear"].append(g)
+        jewels = (r.get("next") or {}).get("jewels") or []
+        if group is not None:
+            # the check-up value with no test jewel, and PoB's main-output DPS of the same skill (for the gear caveat)
+            v0 = eng.call("checkup_jewel_values", group=group, jewels=[])
+            out["value"], out["mainDps"] = v0["base"], v0["mainDps"]
+        mods = eng.call("checkup_jewel_mods")["mods"] if jewels and group is not None else []
+        for j in jewels:
+            row = {"name": j["name"], "id": j["id"], "base": None, "affixes": [], "sets": []}
+            if group is None:
+                out["jewels"].append(row)
+                continue
+            slot = f"Jewel {j['id']}"
+            try:
+                single = eng.call("checkup_jewel_values", group=group, slot=slot,
+                                  jewels=[{"base": m["bases"][0], "modIds": [m["modId"]]} for m in mods])
+                singles = jewel_singles(mods, single["base"], single["values"])
+                sets = jewel_sets(singles)
+                if sets:
+                    full = eng.call("checkup_jewel_values", group=group, slot=slot,
+                                    jewels=[{"base": x["base"], "modIds": x["modIds"]} for x in sets])
+                    for x, v in zip(sets, full["values"]):
+                        x["value"], x["mult"] = v, v / full["base"]
+            except EngineError as exc:
+                row["error"] = clean_error(str(exc))
+                out["jewels"].append(row)
+                continue
+            row["singles"] = [{"modId": m["modId"], "text": m["text"], "mult": m["mult"]} for m in singles]
+            row["sets"] = sets
+            best = jewel_pick(sets)
+            if best:
+                row.update(base=best["base"], affixes=best["affixes"], modIds=best["modIds"], mult=best["mult"])
+            row["zh"] = zh_name(row["base"], names)
+            out["jewels"].append(row)
     return out

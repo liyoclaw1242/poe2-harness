@@ -53,6 +53,14 @@ harness/tools/                 research scripts (build harvesting, overnight sca
 - trade2：只產生搜尋連結；評估的是玩家貼回來的物品文字，不會自動抓取掛單。
 - 本工具為非官方粉絲工具，與 Grinding Gear Games 無關。
 
+## 第三方資料：繁體中文基底名稱
+
+`harness/pob_agent/data/base_names_zh_tw.json` 是 `checkup --guide` 在裝備與珠寶段落顯示的官方繁體中文基底名稱，取自 [poe2db.tw/tw](https://poe2db.tw/tw/)（授權 CC BY-NC-SA 3.0；名稱是 Grinding Gear Games 的遊戲內文字，由 poe2db 整理，來源與日期見同目錄的 `NOTICE`）。
+
+- 此檔案**不適用**本專案的 MIT 授權，僅限非商業用途。
+- 涵蓋所有可裝備的物品類型（武器、副手、防具、飾品、珠寶、護符），TrapTool 除外。表中缺少的名稱（TrapTool、Energy Blade、Keyblade 與 Shrine Sceptre 的三個變體等）顯示英文。
+- 檔案不存在時，guide 一律顯示英文名稱。
+
 ## 現況（2026-11-23）
 
 產品方向已從「哪個技能最強」改成服務打過終局的老玩家：改版影響（patch-diff）、依現有裝備的天賦路徑與洗點、昇華選擇檢查點、開荒流派與轉型規劃、單技能疊乘。細節與 1.0（2026-12-11）前的時程見 `docs/research/2026-11-23-product-direction.md`；研究結論與更正見 `docs/research/2026-11-23-055-multiplier-stacking.md`。
