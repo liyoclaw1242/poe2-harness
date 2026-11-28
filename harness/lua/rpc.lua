@@ -2549,6 +2549,129 @@ function commands.checkup_value(req)
 	return { value = v, spirit = o.Spirit, spiritUnreserved = o.SpiritUnreserved }
 end
 
+-- Configuration options as the check-up's Spirit sweep reads them. A Spirit skill (or the build itself) can make PoB
+-- show an option whose value it leaves empty (Withering Presence -> "# of Withered Stacks", a banner -> "Is Banner
+-- Planted?"); the plain value then misses the effect. Visibility is PoB's own test (ConfigTab varControls[var].shown).
+local configMeta
+local function configOptions()
+	if not configMeta then
+		configMeta = {}
+		for _, o in ipairs(LoadModule("Modules/ConfigOptions")) do
+			if o.var then
+				local gates = {}
+				for k, v in pairs(o) do
+					if type(k) == "string" and k:match("^if") then gates[#gates + 1] = k end
+				end
+				table.sort(gates)
+				local list
+				if o.list then
+					list = {}
+					for _, e in ipairs(o.list) do list[#list + 1] = e.val end
+				end
+				configMeta[o.var] = { var = o.var, type = o.type, gates = gates, list = list, ifFlag = o.ifFlag, ifSkill = o.ifSkill,
+					label = o.label and o.label:gsub("%^x%x%x%x%x%x%x", ""):gsub("%^%d", ""):gsub(":$", "") }
+			end
+		end
+	end
+	return configMeta
+end
+
+-- What sets a flag, by name: the skill (a wand's Chaos Bolt for CanWither), the passive node or the item behind the
+-- mod; the configuration's own mods are left out.
+local function flagSources(flag)
+	local env, names, seen = build.calcsTab.mainEnv, {}, {}
+	local skills = env and env.player and env.player.activeSkillList or {}
+	local function describe(src)
+		local kind, rest = src:match("^(%a+):(.*)$")
+		if kind == "Skill" then
+			for _, sk in ipairs(skills) do
+				local ge = sk.activeEffect and sk.activeEffect.grantedEffect
+				if ge and ge.id == rest then return ge.name end
+			end
+		elseif kind == "Tree" then
+			local node = build.spec.nodes[tonumber(rest)]
+			return node and node.dn
+		end
+		return rest and rest:match("([^:]+)$") or src
+	end
+	for _, sk in ipairs(skills) do
+		for _, m in ipairs(sk.skillModList:Tabulate("FLAG", nil, flag)) do
+			local src = tostring(m.mod.source)
+			local name = not src:match("^Config") and describe(src)
+			if name and not seen[name] then
+				seen[name] = true
+				names[#names + 1] = name
+			end
+		end
+	end
+	table.sort(names)
+	return names
+end
+
+-- Flags granted by the character's allocated ascendancy nodes, by flag name -> node name (the rule
+-- applyAscendancyFlags uses for templates: a check option gated on such a flag is something the node does every use).
+local function ascendancyFlags()
+	local flags = {}
+	for _, node in pairs(build.spec.allocNodes) do
+		if node.ascendancyName and node.ascendancyName == build.spec.curAscendClassName then
+			for _, mod in ipairs(node.modList or {}) do
+				if mod.type == "FLAG" then flags[mod.name] = node.dn end
+			end
+		end
+	end
+	return flags
+end
+
+-- Options PoB shows now, with what the sweep needs to set them. Take it after checkup_value (a full recalc).
+-- sources: what makes PoB show it (the skills, nodes or items setting an ifFlag; the used skills an ifSkill names).
+function commands.checkup_config_shown()
+	local out, meta, ascFlags = {}, configOptions(), ascendancyFlags()
+	local used = build.calcsTab.mainEnv and build.calcsTab.mainEnv.skillsUsed or {}
+	for var, c in pairs(build.configTab.varControls) do
+		local m = meta[var]
+		if m then
+			local ok, shown = pcall(function()
+				if type(c.shown) == "function" then return c.shown() end
+				return c.shown ~= false
+			end)
+			if ok and shown then
+				local v = build.configTab.input[var]
+				local row = { var = var, type = m.type, label = m.label, gates = m.gates, list = m.list,
+					value = (type(v) == "number" or type(v) == "boolean" or type(v) == "string") and v or nil }
+				if m.ifFlag and type(m.ifFlag) == "string" then
+					row.sources = flagSources(m.ifFlag)
+					if m.type == "check" and ascFlags[m.ifFlag] then row.ascendancyNode = ascFlags[m.ifFlag] end
+				elseif m.ifSkill then
+					local names = {}
+					for _, n in ipairs(type(m.ifSkill) == "table" and m.ifSkill or { m.ifSkill }) do
+						if used[n] then names[#names + 1] = n end
+					end
+					table.sort(names)
+					row.sources = names
+				end
+				out[#out + 1] = row
+			end
+		end
+	end
+	table.sort(out, function(a, b) return a.var < b.var end)
+	return { options = out }
+end
+
+-- The group's value with some configuration options set, then the options restored. recalc after every write.
+function commands.checkup_config_value(req)
+	local input, saved = build.configTab.input, {}
+	for var, v in pairs(req.values or {}) do
+		saved[var] = { input[var] }
+		input[var] = v
+	end
+	recalc()
+	local ok, v = pcall(groupValue, req.group)
+	for var, old in pairs(saved) do input[var] = old[1] end
+	recalc()
+	if not ok then error(v, 0) end
+	return { value = v }
+end
+
 -- What the check-up's gear section says about a slot: the equipped base's PoB type and subtype, or for an empty
 -- off-hand whether any off-hand can go there at all (PoB's own IsItemValidForSlot over a representative rare of each
 -- off-hand-capable type: a two-handed main hand blocks them all unless Bow/Quiver, Staff + Instruments of Power,

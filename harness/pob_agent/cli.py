@@ -635,7 +635,10 @@ NOTES = {
             "affixes are not scored. A guide to what "
             "to pick up, not a price check. trade-query builds the search links.",
     "gear_def": " \"defence only\": the build has no DPS in PoB, so only EHP orders that slot.",
-    "spirit": "Defensive buffs (e.g. Arctic Armour) and minions' own damage are not scored.",
+    "spirit": "Defensive buffs (e.g. Arctic Armour) and minions' own damage are not scored. A Spirit skill or a build "
+              "setting that works through a PoB configuration option is measured with that option on and the rest of the "
+              "build as exported: a check on, a list at its best value, a count at 1 and reported per unit (additive); "
+              "how many stacks you keep up (the steady state) is not modelled.",
     "minion": "PoB counts no minion in your presence although you use {skills} (it only counts minion skills with a "
               "minion limit, e.g. not a sceptre's Skeletal Warrior); this check-up assumes one, so minion-draining "
               "supports such as Minion Pact are valued as in game.",
@@ -785,6 +788,60 @@ def _gear_base(s):
     return f" ({sub})" if sub else ""
 
 
+def _setting_gain(c, plain):
+    """A configuration-dependent value: a count per unit (additive, against the plain value), else a multiplier."""
+    if c["type"] in ("count", "countAllowZero", "integer"):
+        cap = f" (max {c['max']})" if c.get("max") else ""
+        return f"+{100 * (c['mult'] - c.get('refMult', plain)):.1f}% per {c.get('unit') or 'unit'}{cap}"
+    return ("up to " if c["type"] == "list" else "") + fx(c["mult"])
+
+
+def _setting_when(c):
+    if c["type"] in ("count", "countAllowZero", "integer"):
+        extra = f" (with {', '.join(chr(39) + w + chr(39) for w in c['with'])} on)" if c.get("with") else ""
+        return f" of '{c['label']}'{extra}"
+    if c["type"] == "list":
+        return f" when '{c['label']}' = {c['value']}"
+    return f" when '{c['label']}' is on"
+
+
+SETTING_FLAGS = 6   # build-level PoB-setting flags printed in Flags; the rest only in Sustain and defences
+
+
+def _setting_size(c):
+    """Gain of a build-level setting at its measured value, for ordering flags."""
+    if c["type"] in ("count", "countAllowZero", "integer"):
+        return c["mult"] - c.get("refMult", 1.0)
+    return c["mult"] - 1.0
+
+
+def _setting_flag(c, who):
+    state = "empty" if c["type"] != "check" else "off"
+    by = f" though {', '.join(c['sources'])} uses it" if c.get("sources") else ""
+    if c.get("ascendancyNode"):
+        text = (f"PoB setting '{c['label']}' is {state}: {c['ascendancyNode']} does it on every use in game; tick it "
+                f"in PoB — {who} values here are {fx(c['mult'])} low while it is off")
+    else:
+        text = f"PoB setting '{c['label']}' is {state}{by}: {who} value {_setting_short(c, 1.0)}"
+    if c.get("spirit_sources"):
+        text += "; Spirit skills that also apply it: " + ", ".join(
+            f"{x['name']} ({x['spirit']:.0f} Spirit)" for x in c["spirit_sources"])
+    return text + "."
+
+
+def _setting_short(c, plain):
+    """The gain alone, for rows that already name the setting."""
+    tail = "" if c["type"] in ("count", "countAllowZero", "integer") else \
+        f" at {c['value']}" if c["type"] == "list" else " when on"
+    return _setting_gain(c, plain) + tail
+
+
+def _setting_watch(c):
+    if c["type"] in ("count", "countAllowZero", "integer"):
+        return f"at 1 of PoB setting '{c['label']}'"
+    return f"needs PoB setting '{c['label']}'"
+
+
 def render_checkup(r):
     level = r["level"]
     nx, main, groups = r.get("next"), r["main"], r["groups"]
@@ -836,7 +893,12 @@ def render_checkup(r):
                 rows.append((measure, f"ascendancy: {n['name']}", f"next trial, {n['cost']} pts", n["mult"], watch))
             if r.get("spirit_options"):
                 o = r["spirit_options"][0]
-                rows.append((measure, f"Spirit: {o['name']}", f"{o['spirit']:.0f} Spirit", o["mult"], "—"))
+                c = max(o.get("config") or [], key=lambda c: c["mult"], default=None)
+                if c and c["mult"] > o["mult"] and big(c["mult"]):
+                    rows.append((measure, f"Spirit: {o['name']}", f"{o['spirit']:.0f} Spirit", c["mult"],
+                                 _setting_watch(c)))
+                elif o["mult"] > 1.01:
+                    rows.append((measure, f"Spirit: {o['name']}", f"{o['spirit']:.0f} Spirit", o["mult"], "—"))
         rows.sort(key=lambda x: -x[3])
         value_groups.extend(rows)
     do_rows = value_groups + clear_rows
@@ -890,10 +952,18 @@ def render_checkup(r):
             flags.append(f"{s['name']} costs {g['skill']} single-target DPS ({fx(m)})." if costs
                          else f"Dead support: {s['name']} on {g['skill']} ({fx(m)}).")
     free = r.get("spirit_free")
+    who = main[0]["skill"] if main else "the main skill"
+    spirit_fed = any(c.get("spirit_sources") for c in r.get("config_flags") or [])
     if free is not None and free < 0:
         flags.append(f"Spirit over-reserved by {-free:.0f}.")
-    elif free and free > 0 and main and r.get("spirit_checked", True) and not r.get("spirit_options"):
+    elif (free and free > 0 and main and r.get("spirit_checked", True) and not r.get("spirit_options")
+          and not spirit_fed):
         flags.append(f"{free:.0f} Spirit unreserved and no Spirit skill by this level raises the main skill.")
+    setting_flags = sorted(r.get("config_flags") or [], key=lambda c: -_setting_size(c))
+    for c in setting_flags[:SETTING_FLAGS]:
+        flags.append(_setting_flag(c, who))
+    if len(setting_flags) > SETTING_FLAGS:
+        flags.append(f"+{len(setting_flags) - SETTING_FLAGS} more PoB settings in Sustain and defences.")
     jewels = (nx or {}).get("jewels") or []
     if jewels:
         flags.append(f"{len(jewels)} allocated jewel socket has no jewel." if len(jewels) == 1 else
@@ -1017,9 +1087,17 @@ def render_checkup(r):
             verdict = "—"
         elif r.get("spirit_options"):
             verdict = "Spirit skills below raise the main skill " + cite("spirit")
+        elif spirit_fed:
+            verdict = "no Spirit skill raises it directly; see PoB settings below " + cite("spirit")
         else:
             verdict = "no Spirit skill by this level raises the main skill " + cite("spirit")
         rows.append(("Spirit", f"{free:.0f} unreserved", verdict))
+    for c in setting_flags:
+        also = (f"; also applied by {', '.join(x['name'] + ' (' + format(x['spirit'], '.0f') + ' Spirit)' for x in c['spirit_sources'])}"
+                if c.get("spirit_sources") else "")
+        node = f"; {c['ascendancyNode']} does it on every use" if c.get("ascendancyNode") else ""
+        rows.append(("PoB setting", f"'{c['label']}' {'off' if c['type'] == 'check' else 'empty'}",
+                     f"{who} value {_setting_short(c, 1.0)}{node}{also} " + cite("spirit")))
     if t:
         rows.append(("Passive points", f"{t['allocated']} allocated",
                      f"levels alone give {expected} by level {level}; quest points come on top"))
@@ -1032,8 +1110,12 @@ def render_checkup(r):
         print("Nothing to check in this report.")
     if r.get("spirit_options"):
         print()
-        _table(("Spirit skill", "tier", "Spirit", "main skill"),
-               [(o["name"], o["tier"], f"{o['spirit']:.0f}", fx(o["mult"])) for o in r["spirit_options"][:3]])
+        _table(("Spirit skill", "tier", "Spirit", "main skill", "with a PoB setting"),
+               [(o["name"], o["tier"], f"{o['spirit']:.0f}", fx(o["mult"]),
+                 "; ".join(f"{_setting_gain(c, o['mult'])}{_setting_when(c)}" for c in o.get("config") or []) or "—")
+                for o in r["spirit_options"][:3]])
+        if any(o.get("config") for o in r["spirit_options"][:3]):
+            print("\n" + cite("spirit"))
 
     # ---- Passives allocated
     print("\n### Passives allocated")

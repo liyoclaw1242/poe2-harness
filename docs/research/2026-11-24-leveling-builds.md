@@ -981,3 +981,32 @@ Three choices are the owner's:
 - **Limits.**
   - Spirit and minion or ally affixes are not scored. A sceptre off-hand can therefore list only one affix.
   - The mid roll spans every tier and is not capped by character level.
+
+## Spirit skills and build settings that work through PoB configuration (2026-11-28)
+
+The check-up's Spirit sweep reported x1.00 for every Spirit skill on a level-45 Essence Drain Lich. The reason is
+that PoB gates some effects behind configuration options. Withering Presence, for example, only marks the enemy as
+able to be withered; the stacks come from the "# of Withered Stacks" option, which is empty by default.
+
+**What the check-up does now**
+- **Detection.** It records which options PoB shows before a Spirit skill is pasted and after, using PoB's own
+  visibility test.
+- **Credit.** A Spirit skill is credited only for options it newly reveals. Each option is measured as follows:
+  - a check option is turned on;
+  - a list option is set to its best value;
+  - a count option is set to 1, and the result is reported per unit, because the effect is additive.
+- **Count limits.** For counts, PoB's cap is found by measuring at increasing counts.
+- **Restoring state.** Each measurement recalculates, then restores the option.
+
+**Build-level flags.** An option the build already uses but leaves empty or off is reported as a build-level
+flag, for example "'# of Withered Stacks' is empty though Chaos Bolt uses it: +4.9% per stack (max 10)". The flag
+also names Spirit skills that would feed the same option, such as Withering Presence (30 Spirit), without crediting
+them a number. Two related cases:
+- An option gated by a flag from an allocated node of the character's own ascendancy is worded as always on in game,
+  for example Eldritch Empowerment's "Are you Sacrificing?". The report's absolute values are low while that option
+  is off.
+- Only mechanic gates raise a build flag (skill, skill type, flag, node). Situational ones, such as "Is the enemy
+  Frozen?", do not.
+
+**Not modelled.** How many stacks a source keeps up in play: Withering Presence applies one every 1.6 s for 6 s, so
+roughly 3-4. On the example build, War Banner is now credited x1.26 via "Is Banner Planted?".

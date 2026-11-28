@@ -916,3 +916,127 @@ def test_trade_query_keeps_offhands_pob_allows(tmp_path, capsys):
 def test_trade_query_skips_the_blocked_offhand_of_weapon_set_two(tmp_path, capsys):
     rows, _ = _trade_query_rows(tmp_path, capsys, "Anvil Maul", swap=True)
     assert rows["Weapon 2 Swap"].get("skipped") and "Weapon 2" not in rows
+
+
+_WITCH = ("for cid, c in pairs(build.spec.tree.classes) do if c.name == 'Witch' then build.spec:SelectClass(cid) end end "
+          "recalc() return true")
+
+
+def _witch_build(path, wand=False):
+    """A level-45 Witch with Essence Drain and her 100 Spirit; optionally a wand whose Chaos Bolt can wither."""
+    with Engine() as eng:
+        eng.call("new", level=45)
+        eng.call("eval", code=_WITCH)
+        eng.call("paste_skill", text="Essence Drain 10/0  1\n", main=True)
+        if wand:
+            eng.call("add_item", raw="Rarity: RARE\nT\nWithered Wand\nImplicits: 1\nGrants Skill: Level 10 Chaos Bolt")
+        path.write_text(eng.call("save", xml=True)["xml"])
+    return str(path)
+
+
+def _value_with(build, gem, level, group, values):
+    """Independent run: a fresh engine, the gem pasted, the options written straight into PoB's config, recalc."""
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(build))
+        eng.call("checkup_prepare")
+        if gem:
+            eng.call("paste_skill", text=f"{gem} {level}/0  1\n", main=False)
+        eng.call("eval", code="for k, v in pairs(req.values) do build.configTab.input[k] = v end recalc() return true",
+                 values=values)
+        return eng.call("checkup_value", group=group)["value"]
+
+
+def test_checkup_spirit_credits_a_setting_the_skill_reveals(tmp_path):
+    # Withering Presence only makes PoB show '# of Withered Stacks'; with no wither source in the build the sweep
+    # credits it per stack, and the per-stack value equals a direct PoB run with the option at 1
+    from pob_agent import checkup
+    b = _witch_build(tmp_path / "witch.xml")
+    shown, flags = checkup.baseline_config(b, 1, False)
+    before = {o["var"] for o in shown}
+    assert "multiplierWitheredStackCount" not in before and not flags
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(b))
+        eng.call("checkup_prepare")
+        base = eng.call("checkup_value", group=1)["value"]
+    r, cfg = checkup.spirit_candidate(b, "Withering Presence", 10, 1, before, base)
+    row = next(c for c in cfg if c["var"] == "multiplierWitheredStackCount")
+    assert row["type"] == "count" and row["value"] == 1 and row["mult"] > 1.001
+    direct = _value_with(b, "Withering Presence", 10, 1, {"multiplierWitheredStackCount": 1}) / base
+    assert abs(row["mult"] - direct) < 1e-9
+
+
+def test_checkup_flags_a_setting_the_build_already_reveals(tmp_path):
+    # a wand's Chaos Bolt already lets the build wither: '# of Withered Stacks' is a build-level flag, and Withering
+    # Presence gets no credit for it
+    from pob_agent import checkup
+    b = _witch_build(tmp_path / "witch_wand.xml", wand=True)
+    shown, flags = checkup.baseline_config(b, 1, False)
+    before = {o["var"] for o in shown}
+    flag = next(c for c in flags if c["var"] == "multiplierWitheredStackCount")
+    assert flag["sources"] == ["Chaos Bolt"] and flag["mult"] > 1.001
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(b))
+        eng.call("checkup_prepare")
+        base = eng.call("checkup_value", group=1)["value"]
+    _, cfg = checkup.spirit_candidate(b, "Withering Presence", 10, 1, before, base)
+    assert not any(c["var"] == "multiplierWitheredStackCount" for c in cfg)
+
+
+def test_checkup_spirit_credits_war_banner_when_planted():
+    # War Banner's effect needs 'Is Banner Planted?'; plain it reads x1.00 on the example build
+    from pob_agent import checkup
+    group = 1
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        eng.call("checkup_prepare")
+        group = sorted(eng.call("checkup_groups")["groups"], key=lambda g: -g["value"])[0]["index"]
+    shown, _ = checkup.baseline_config(str(BUILD), group, False)
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        eng.call("checkup_prepare")
+        base = eng.call("checkup_value", group=group)["value"]
+    r, cfg = checkup.spirit_candidate(str(BUILD), "War Banner", 20, group, {o["var"] for o in shown}, base)
+    planted = next(c for c in cfg if c["var"] == "bannerPlanted")
+    assert abs(r["value"] / base - 1) < 0.001 and abs(planted["mult"] - 1.258) < 0.005
+
+
+def test_checkup_config_values_are_measured_and_restored_in_sequence():
+    # two options measured one after the other in one engine each equal a fresh engine with that option written in,
+    # and the plain value afterwards is unchanged
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        eng.call("checkup_prepare")
+        group = sorted(eng.call("checkup_groups")["groups"], key=lambda g: -g["value"])[0]["index"]
+        eng.call("paste_skill", text="War Banner 20/0  1\n", main=False)
+        plain = eng.call("checkup_value", group=group)["value"]
+        a = eng.call("checkup_config_value", group=group, values={"bannerPlanted": True})["value"]
+        b = eng.call("checkup_config_value", group=group, values={"conditionEnemyShocked": True})["value"]
+        again = eng.call("checkup_value", group=group)["value"]
+    assert a > plain and b > plain and again == plain
+    assert abs(a - _value_with(str(BUILD), "War Banner", 20, group, {"bannerPlanted": True})) < 1e-9 * a
+    assert abs(b - _value_with(str(BUILD), "War Banner", 20, group, {"conditionEnemyShocked": True})) < 1e-9 * b
+
+
+def test_checkup_lists_spirit_skills_that_feed_a_build_setting(tmp_path, capsys):
+    # the wand's Chaos Bolt already makes PoB show '# of Withered Stacks'; Withering Presence also applies wither:
+    # it is listed under that flag with no number credited, and the report no longer says no Spirit skill helps
+    from pob_agent import checkup, cli
+    b = _witch_build(tmp_path / "witch_wand.xml", wand=True)
+    shown, flags = checkup.baseline_config(b, 1, False)
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(b))
+        eng.call("checkup_prepare")
+        base = eng.call("checkup_value", group=1)["value"]
+    opts = checkup.spirit_sweep(b, [{"name": "Withering Presence", "tier": 4, "spirit": 30}], 10, 1, shown, flags, base)
+    wither = next(c for c in flags if c["var"] == "multiplierWitheredStackCount")
+    assert wither["spirit_sources"] == [{"name": "Withering Presence", "spirit": 30}]
+    assert wither["unit"] == "Withered stack" and wither.get("max")
+    assert not any(c["var"] == "multiplierWitheredStackCount" for o in opts for c in o["config"])
+    r = {**_checkup_dict(level=45), "spirit_free": 100, "spirit_checked": True, "spirit_options": opts,
+         "config_flags": flags}
+    cli.render_checkup(r)
+    out = capsys.readouterr().out
+    assert "Spirit skills that also apply it: Withering Presence (30 Spirit)." in out
+    assert "per Withered stack (max " in out
+    assert "no Spirit skill by this level raises the main skill." not in out
+    assert "no Spirit skill raises it directly; see PoB settings below" in out
