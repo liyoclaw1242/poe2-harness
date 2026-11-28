@@ -270,7 +270,8 @@ def count_cap(eng, group: int, values_for, v1: float) -> int | None:
 
 
 def best_mult(opt: dict) -> float:
-    return max([opt["mult"]] + [c["mult"] for c in opt.get("config") or []])
+    sup = (opt.get("blasphemy") or {}).get("supports") or []
+    return max([opt["mult"]] + [c["mult"] for c in opt.get("config") or []] + [x["mult"] for x in sup])
 
 
 def baseline_config(build: str, group: int, verbose: bool) -> tuple[list[dict], list[dict]]:
@@ -336,6 +337,90 @@ def spirit_candidate(build: str, name: str, level: int, group: int, before: set,
         return r, measure_options(eng, group, revealed, base, r["value"])
 
 
+def blasphemy_candidate(build: str, curse: str, level: int, sup_tier: int, group: int, before: set, base: float,
+                        verbose: bool = False) -> tuple[dict, list[dict]]:
+    """Blasphemy + one curse in a fresh engine (checkup_blasphemy: the plain pair, then up to 2 supports picked greedily
+    within the free Spirit), and the configuration options the plain pair newly reveals, measured on the plain pair."""
+    with Engine(verbose) as eng:
+        eng.call("load", **sources.resolve(build))
+        eng.call("checkup_prepare")
+        r = eng.call("checkup_blasphemy", group=group, curse=curse, level=level, maxSupportTier=sup_tier, slots=2)
+        if r.get("skipped") or not r.get("aura"):
+            return r, []
+        r2 = eng.call("checkup_value", group=group)
+        shown = eng.call("checkup_config_shown")["options"]
+        revealed = [o for o in shown if o["var"] not in before]
+        return r, measure_options(eng, group, revealed, base, r2["value"])
+
+
+def hand_cast_value(build: str, curse: str, level: int, group: int, verbose: bool = False) -> float:
+    """The main skill's value with the curse cast by hand (pasted alone), for comparison with Blasphemy."""
+    with Engine(verbose) as eng:
+        eng.call("load", **sources.resolve(build))
+        eng.call("checkup_prepare")
+        eng.call("paste_skill", text=f"{curse} {level}/0  1\n", main=False)
+        return eng.call("checkup_value", group=group)["value"]
+
+
+def blasphemy_sweep(build: str, blas: dict, level: int, sup_tier: int, group: int, shown0: list[dict], base: float,
+                    verbose: bool = False) -> tuple[list[dict], str | None]:
+    """Blasphemy with each curse it could carry at this level, one curse at a time. Kept when PoB makes the curse an
+    aura, the pair fits the free Spirit, and the plain pair, a support set or a revealed option beats x1.01. Spirit costs
+    are PoB's (free Spirit minus what is left). Returns (options, reason skipped)."""
+    if not blas or not blas.get("blasphemy"):
+        return [], None
+    before = {o["var"] for o in shown0}
+    opts = []
+    for c in blas.get("curses") or []:
+        try:
+            r, cfg = blasphemy_candidate(build, c["name"], level, sup_tier, group, before, base, verbose)
+        except Exception:
+            continue
+        if r.get("skipped"):
+            return [], r["skipped"]
+        if not r.get("aura") or (r.get("spirit") or 0) <= 0 or (r.get("spiritUnreserved") or 0) < 0:
+            continue
+        sups = [{"name": x["name"], "tier": x["tier"], "mult": x["value"] / base, "spirit": x["spirit"],
+                 "spirit_left": x["spiritUnreserved"], **({"elsewhere": True} if x.get("elsewhere") else {})}
+                for x in r.get("picks") or []]
+        opt = {"name": f"Blasphemy + {c['name']}", "tier": max(blas["blasphemy"], c["tier"]), "spirit": r["spirit"],
+               "mult": r["value"] / base, "spirit_left": r["spiritUnreserved"], "config": cfg,
+               "blasphemy": {"curse": c["name"], "supports": sups, "replaced": r.get("replaced") or []}}
+        if best_mult(opt) > 1.01:
+            try:
+                opt["hand_mult"] = hand_cast_value(build, c["name"], level, group, verbose) / base
+            except Exception:
+                pass
+            opts.append(opt)
+    return opts, None
+
+
+def spirit_together(build: str, opts: list[dict], flags: list[dict], level: int, verbose: bool = False) -> dict | None:
+    """The best Blasphemy option with the best other Spirit skill: a listed Spirit option, else a Spirit skill listed
+    under a build setting it also feeds (Withering Presence under '# of Withered Stacks'). PoB's Spirit left with both
+    pasted in one engine, for the plain pair and for the support set. No combined multiplier is computed."""
+    b = next((o for o in opts if o.get("blasphemy")), None)
+    o = next((o for o in opts if not o.get("blasphemy")), None)
+    if o is None:
+        fed = sorted((f for f in flags or [] if f.get("spirit_sources")), key=lambda f: (-f["mult"], f["var"]))
+        if fed:
+            o = fed[0]["spirit_sources"][0]
+    if not b or not o:
+        return None
+    bl = b["blasphemy"]
+    sets = [("plain", [])] + ([("supports", [x["name"] for x in bl["supports"]])] if bl["supports"] else [])
+    out = {"blasphemy": b["name"], "other": o["name"], "other_spirit": o["spirit"]}
+    for key, sup in sets:
+        with Engine(verbose) as eng:
+            eng.call("load", **sources.resolve(build))
+            eng.call("checkup_prepare")
+            eng.call("paste_skill", text=f"{o['name']} {level}/0  1\n", main=False)
+            text = f"Blasphemy {level}/0  1\n{bl['curse']} {level}/0  1\n" + "".join(f"{n} 1/0  1\n" for n in sup)
+            eng.call("paste_skill", text=text, main=False)
+            out[key] = eng.call("eval", code="recalc() return {left = build.calcsTab.mainOutput.SpiritUnreserved or 0}")["left"]
+    return out
+
+
 def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nxt: bool = True,
         gear_check: bool = True) -> dict:
     with Engine(verbose) as eng:
@@ -358,8 +443,10 @@ def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nx
         # selects the main group the same way)
         nexts = eng.call("checkup_next", group=main[0]["index"]) if main and nxt else None
         th = eng.call("thresholds")
-        spirit_gems = (eng.call("checkup_spirit_gems", maxTier=gem_max, spirit=val.get("spiritUnreserved") or 0)["gems"]
-                       if spirit else [])
+        sg = (eng.call("checkup_spirit_gems", maxTier=gem_max, spirit=val.get("spiritUnreserved") or 0)
+              if spirit else {})
+        spirit_gems = sg.get("gems") or []
+        blas_info = {"blasphemy": sg.get("blasphemy"), "curses": sg.get("curses") or []}
         gear_rows = gear(eng, main[0]["index"] if main else None) if gear_check else None
     out = {"minions": prep, "level": level, "gem_max": gem_max, "support_tier": sup_tier, "groups": groups, "main": main,
            "tree": tree, "spirit_free": val.get("spiritUnreserved"), "thresholds": th, "spirit_options": [],
@@ -369,6 +456,19 @@ def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nx
     if spirit and main and (val.get("spiritUnreserved") or 0) > 0:
         out["spirit_options"] = spirit_sweep(build, spirit_gems, gem_max, main[0]["index"], shown0, out["config_flags"],
                                              val["value"], verbose)
+        if val.get("value"):
+            blas, skipped = blasphemy_sweep(build, blas_info, gem_max, sup_tier, main[0]["index"], shown0, val["value"],
+                                            verbose)
+            if skipped:
+                out["blasphemy_skipped"] = skipped
+            if blas:
+                out["spirit_options"] = sorted(out["spirit_options"] + blas, key=lambda x: (-best_mult(x), x["name"]))
+                try:
+                    tg = spirit_together(build, out["spirit_options"], out.get("config_flags"), gem_max, verbose)
+                except Exception:
+                    tg = None
+                if tg:
+                    out["spirit_together"] = tg
     if gear_rows is not None:
         out["gear"] = gear_rows
     return out

@@ -1040,3 +1040,170 @@ def test_checkup_lists_spirit_skills_that_feed_a_build_setting(tmp_path, capsys)
     assert "per Withered stack (max " in out
     assert "no Spirit skill by this level raises the main skill." not in out
     assert "no Spirit skill raises it directly; see PoB settings below" in out
+
+
+BLAS_DESPAIR = {"blasphemy": 8, "curses": [{"name": "Despair", "tier": 9}]}
+
+
+def _witch_variant(path, *pastes):
+    """The level-45 Witch with extra groups pasted (a curse cast by hand, a Spirit skill, a support elsewhere)."""
+    b = _witch_build(path)
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(b))
+        for t in pastes:
+            eng.call("paste_skill", text=t, main=False)
+        eng.call("set_main", group=1)
+        path.write_text(eng.call("save", xml=True)["xml"])
+    return str(path)
+
+
+def _paste_value(build, text, group=1):
+    """Independent run: a fresh engine, one group pasted; the main group's value and PoB's Spirit left."""
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(build))
+        eng.call("checkup_prepare")
+        base = eng.call("checkup_value", group=group)["value"]
+        eng.call("paste_skill", text=text, main=False)
+        r = eng.call("checkup_value", group=group)
+        return base, r["value"], r["spiritUnreserved"]
+
+
+def test_checkup_blasphemy_despair_with_supports_and_hand_cast(tmp_path):
+    # Blasphemy reserves Spirit per socketed curse, not a flat amount, so the Spirit sweep never listed it. Each number
+    # equals a direct paste: the pair, the pair with the greedy support, the curse cast by hand
+    from pob_agent import checkup
+    b = _witch_build(tmp_path / "witch.xml")
+    shown, _ = checkup.baseline_config(b, 1, False)
+    base, v, left = _paste_value(b, "Blasphemy 10/0  1\nDespair 10/0  1\n")
+    opts, skipped = checkup.blasphemy_sweep(b, BLAS_DESPAIR, 10, 4, 1, shown, base)
+    assert skipped is None and len(opts) == 1
+    o = opts[0]
+    assert o["name"] == "Blasphemy + Despair" and o["tier"] == 9
+    assert abs(o["mult"] - v / base) < 1e-9 and o["spirit"] == 100 - left == 60 and o["spirit_left"] == left
+    sup = o["blasphemy"]["supports"]
+    assert sup and sup[0]["name"] == "Heightened Curse" and sup[0]["mult"] > o["mult"] and sup[0]["spirit"] == 84
+    _, v2, left2 = _paste_value(b, "Blasphemy 10/0  1\nDespair 10/0  1\n" + "".join(f"{x['name']} 1/0  1\n" for x in sup))
+    assert abs(sup[-1]["mult"] - v2 / base) < 1e-9 and sup[-1]["spirit_left"] == left2 >= 0
+    _, vh, _ = _paste_value(b, "Despair 10/0  1\n")
+    assert abs(o["hand_mult"] - vh / base) < 1e-9 and o["hand_mult"] > o["mult"]
+
+
+def test_checkup_blasphemy_supports_stay_within_free_spirit(tmp_path):
+    # with Withering Presence reserving 30, 70 Spirit is free: the pair (60) fits, Heightened Curse's set (84) does not
+    from pob_agent import checkup
+    b = _witch_variant(tmp_path / "witch_wp.xml", "Withering Presence 10/0  1\n")
+    shown, _ = checkup.baseline_config(b, 1, False)
+    base, _, left = _paste_value(b, "Blasphemy 10/0  1\nDespair 10/0  1\n")
+    assert left == 10
+    o = checkup.blasphemy_sweep(b, BLAS_DESPAIR, 10, 4, 1, shown, base)[0][0]
+    assert all(x["name"] != "Heightened Curse" and x["spirit"] <= 70 and x["spirit_left"] >= 0
+               for x in o["blasphemy"]["supports"])
+
+
+def test_checkup_blasphemy_names_the_curse_it_replaces(tmp_path):
+    # curse limit 1: Blasphemy's Despair displaces the Enfeeble the build casts; the row says so
+    from pob_agent import checkup
+    b = _witch_variant(tmp_path / "witch_enf.xml", "Enfeeble 10/0  1\n")
+    shown, _ = checkup.baseline_config(b, 1, False)
+    base, _, _ = _paste_value(b, "Blasphemy 10/0  1\nDespair 10/0  1\n")
+    o = checkup.blasphemy_sweep(b, BLAS_DESPAIR, 10, 4, 1, shown, base)[0][0]
+    assert o["blasphemy"]["replaced"] == ["Enfeeble"]
+
+
+def test_checkup_blasphemy_flags_a_support_socketed_elsewhere(tmp_path):
+    from pob_agent import checkup
+    b = _witch_variant(tmp_path / "witch_hc.xml", "Heightened Curse 1/0  1\n")
+    shown, _ = checkup.baseline_config(b, 1, False)
+    base, _, _ = _paste_value(b, "Blasphemy 10/0  1\nDespair 10/0  1\n")
+    sup = checkup.blasphemy_sweep(b, BLAS_DESPAIR, 10, 4, 1, shown, base)[0][0]["blasphemy"]["supports"]
+    assert sup[0]["name"] == "Heightened Curse" and sup[0].get("elsewhere") is True
+
+
+def test_checkup_blasphemy_fits_together_is_measured_in_one_engine(tmp_path):
+    from pob_agent import checkup
+    b = _witch_build(tmp_path / "witch.xml")
+    shown, _ = checkup.baseline_config(b, 1, False)
+    base, _, _ = _paste_value(b, "Blasphemy 10/0  1\nDespair 10/0  1\n")
+    opts = checkup.blasphemy_sweep(b, BLAS_DESPAIR, 10, 4, 1, shown, base)[0]
+    opts.append({"name": "Withering Presence", "tier": 4, "spirit": 30, "mult": 1.0, "config": []})
+    tg = checkup.spirit_together(b, opts, [], 10)
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(b))
+        eng.call("checkup_prepare")
+        eng.call("paste_skill", text="Withering Presence 10/0  1\n", main=False)
+        eng.call("paste_skill", text="Blasphemy 10/0  1\nDespair 10/0  1\n", main=False)
+        direct = eng.call("checkup_value", group=1)["spiritUnreserved"]
+        eng.call("paste_skill", text="Heightened Curse 1/0  1\n", main=False)
+        eng.call("eval", code="local l = build.skillsTab.socketGroupList; local g = table.remove(l); "
+                 "for _, s in ipairs(g.gemList) do table.insert(l[#l].gemList, s) end "
+                 "build.skillsTab:ProcessSocketGroup(l[#l]) recalc() return {}")
+        direct_sup = eng.call("checkup_value", group=1)["spiritUnreserved"]
+    assert tg["other"] == "Withering Presence" and tg["plain"] == direct == 10
+    assert tg["supports"] == direct_sup == -14
+
+
+def test_checkup_blasphemy_is_skipped_when_the_build_uses_it(tmp_path, capsys):
+    from pob_agent import checkup, cli
+    b = _witch_variant(tmp_path / "witch_blas.xml", "Blasphemy 10/0  1\nEnfeeble 10/0  1\n")
+    shown, _ = checkup.baseline_config(b, 1, False)
+    base, _, _ = _paste_value(b, "Enfeeble 10/0  1\n")
+    opts, skipped = checkup.blasphemy_sweep(b, BLAS_DESPAIR, 10, 4, 1, shown, base)
+    assert opts == [] and skipped == "the build already uses Blasphemy"
+    cli.render_checkup({**_checkup_dict(level=45), "spirit_free": 40, "spirit_checked": True, "spirit_options": [],
+                        "blasphemy_skipped": skipped})
+    assert "Blasphemy not checked: the build already uses Blasphemy." in capsys.readouterr().out
+
+
+def test_checkup_blasphemy_support_candidates_match_pob_socketing(tmp_path):
+    # independent: every support of tier <= 4 (same exclusions) pasted with Blasphemy + Despair; the ones PoB puts in
+    # the curse's effectList are exactly the RPC's candidates
+    b = _witch_build(tmp_path / "witch.xml")
+    scan = r'''
+local out = {}
+for id, cg in pairs(data.gems) do
+  local ge = cg.grantedEffect
+  if ge and ge.support and not ge.hidden and not (cg.tags and cg.tags.lineage) and cg.Tier and cg.Tier >= 1 and cg.Tier <= 4 then
+    build.skillsTab:PasteSocketGroup("Blasphemy 10/0  1\nDespair 10/0  1\n" .. cg.name .. " 1/0  1\n")
+    local n = #build.skillsTab.socketGroupList
+    local g = build.skillsTab.socketGroupList[n]
+    recalc()
+    for _, a in ipairs(build.calcsTab.mainEnv.player.activeSkillList) do
+      if a.socketGroup == g and a.activeEffect.grantedEffect.name == "Despair" then
+        for _, e in ipairs(a.effectList) do if e.grantedEffect == ge then out[#out + 1] = cg.name end end
+      end
+    end
+    table.remove(build.skillsTab.socketGroupList, n)
+  end
+end
+table.sort(out)
+return {names = out}
+'''
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(b))
+        eng.call("checkup_prepare")
+        cands = eng.call("checkup_blasphemy", group=1, curse="Despair", level=10, maxSupportTier=4, slots=0)["candidates"]
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(b))
+        eng.call("checkup_prepare")
+        cool = set(eng.call("cooldown_supports").get("names") or [])
+        names = eng.call("eval", code=scan)["names"]
+    assert cands and sorted(cands) == sorted(set(n for n in names if n not in cool))
+
+
+def test_checkup_renders_blasphemy_rows(capsys):
+    from pob_agent import cli
+    bl = {"name": "Blasphemy + Despair", "tier": 9, "spirit": 60, "mult": 1.12, "spirit_left": 40, "config": [],
+          "hand_mult": 1.22, "blasphemy": {"curse": "Despair", "replaced": ["Enfeeble"], "supports": [
+              {"name": "Heightened Curse", "tier": 1, "mult": 1.15, "spirit": 84, "spirit_left": 16, "elsewhere": True}]}}
+    r = {**_checkup_dict(level=45), "spirit_free": 100, "spirit_checked": True, "spirit_options": [bl],
+         "spirit_together": {"blasphemy": "Blasphemy + Despair", "other": "Withering Presence", "other_spirit": 30,
+                             "plain": 10, "supports": -14}}
+    cli.render_checkup(r)
+    out = capsys.readouterr().out
+    assert "| Blasphemy + Despair | 9 | 60 | x1.12 |" in out
+    assert ("Spirit: Blasphemy + Despair + Heightened Curse | 84 Spirit | x1.15 | cast by hand: x1.22 for no Spirit while "
+            "the curse is up; replaces Enfeeble (curse limit); a support already socketed in another group |") in out
+    assert ("with Heightened Curse (already socketed in another group) x1.15, 84 Spirit (16 left); cast by hand instead: "
+            "x1.22 for no Spirit while the curse is up") in out
+    assert ("Blasphemy + Despair (60) and Withering Presence (30) fit together, 10 Spirit left; with Heightened Curse "
+            "(84) they do not.") in out

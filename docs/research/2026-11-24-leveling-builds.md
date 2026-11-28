@@ -1010,3 +1010,32 @@ them a number. Two related cases:
 
 **Not modelled.** How many stacks a source keeps up in play: Withering Presence applies one every 1.6 s for 6 s, so
 roughly 3-4. On the example build, War Banner is now credited x1.26 via "Is Banner Planted?".
+
+## Blasphemy and its supports in the Spirit sweep (2026-11-28)
+
+The Spirit sweep listed only skills with a flat Spirit reservation. Blasphemy has none. It reserves Spirit per curse
+socketed in it, and its supports scale that cost, so "Blasphemy + a curse" never appeared. On a level-45 Essence Drain
+Lich, Blasphemy + Despair is x1.12 for 60 Spirit. Adding Heightened Curse makes it x1.15 for 84 Spirit. Despair cast by
+hand is x1.22 for no Spirit, because Blasphemy carries a final "less curse effect".
+
+**What the check-up does now**
+- **Candidates.** Each curse gem in range at the character's level is pasted into a Blasphemy group, one curse at a
+  time, in a fresh engine.
+- **Kept rows.** A curse is kept only if PoB puts the Blasphemy support on the curse, the measured cost is above 0,
+  and the pair fits the free Spirit.
+- **Costs.** Every cost is PoB's own: free Spirit minus what is left.
+- **Supports.** Up to 2 supports are picked greedily on the curse, with the same filter as the support check. Each
+  pick must keep PoB's Spirit left at 0 or more.
+- **What each row reports:**
+  - the hand-cast value of the same curse;
+  - a curse the build already applies that the pair displaces under the curse limit;
+  - a pick that is already socketed in another group.
+- **Spirit settings.** Options the pair newly reveals are measured on the plain pair. A support set and a setting are
+  never combined in one number.
+- **Fits together.** The best Blasphemy row is checked against the best other Spirit skill, including one listed only
+  under a build setting, such as Withering Presence. Both are pasted in one engine and PoB's Spirit left is reported,
+  for the plain pair and for the support set. No combined multiplier is computed.
+- **Already using Blasphemy.** A build that already uses Blasphemy is not swept, and the report says so.
+
+**Not modelled.** Supports that only widen area or duration read as no gain. Spirit supports that attach to Blasphemy
+itself rather than to the curse are not covered.

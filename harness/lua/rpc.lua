@@ -2717,7 +2717,130 @@ function commands.checkup_spirit_gems(req)
 			end
 		end
 	end
-	return { gems = l }
+	-- Blasphemy reserves Spirit per curse socketed in it (no flat reservation of its own), so it is listed apart:
+	-- its tier, and the curse gems it could carry at this level.
+	local blas, curses = nil, {}
+	for _, gd in pairs(data.gems) do
+		local ge = gd.grantedEffect
+		if ge and not ge.support and gd.Tier and gd.Tier >= 1 and gd.Tier <= (req.maxTier or 1) then
+			if ge.skillTypes and ge.skillTypes[SkillType.IsBlasphemy] then
+				blas = math.min(blas or gd.Tier, gd.Tier)
+			elseif ge.skillTypes and ge.skillTypes[SkillType.AppliesCurse] and not seen[gd.name] then
+				seen[gd.name] = true
+				curses[#curses + 1] = { name = gd.name, tier = gd.Tier }
+			end
+		end
+	end
+	table.sort(curses, function(a, b) return a.name < b.name end)
+	return { gems = l, blasphemy = blas, curses = blas and curses or {} }
+end
+
+-- Curse names PoB applies to the enemy now (after a recalc of the main group).
+local function curseNames()
+	local env, l = build.calcsTab.mainEnv, {}
+	for _, c in ipairs(env and env.curseSlots or {}) do
+		if c and c.name and not c.isMark then l[#l + 1] = c.name end
+	end
+	table.sort(l)
+	return l
+end
+
+local function usesBlasphemy()
+	for _, g in ipairs(build.skillsTab.socketGroupList) do
+		if g.enabled ~= false then
+			for _, s in ipairs(g.gemList or {}) do
+				local ge = s.gemData and s.gemData.grantedEffect
+				if s.enabled ~= false and ge and ge.skillTypes and ge.skillTypes[SkillType.IsBlasphemy] then return true end
+			end
+		end
+	end
+	return false
+end
+
+-- Blasphemy + one curse pasted as a new group, then supports picked greedily on the curse within the free Spirit.
+-- Spirit costs are PoB's own (SpiritUnreserved before minus after). The group is left as the plain pair, so the caller
+-- can measure configuration options on it. aura=false: PoB did not make the curse an aura (no Blasphemy support on it).
+function commands.checkup_blasphemy(req)
+	local i = req.group
+	if usesBlasphemy() then return { skipped = "the build already uses Blasphemy" } end
+	local v0 = groupValue(i); recalc()
+	local free = (build.calcsTab.mainOutput or {}).SpiritUnreserved or 0
+	local before = curseNames()
+	build.skillsTab:PasteSocketGroup(string.format("Blasphemy %d/0  1\n%s %d/0  1\n", req.level, req.curse, req.level))
+	local n = #build.skillsTab.socketGroupList
+	local g = build.skillsTab.socketGroupList[n]
+	local function measure()
+		local v = groupValue(i)
+		recalc()
+		return v, (build.calcsTab.mainOutput or {}).SpiritUnreserved or 0
+	end
+	local value, left = measure()
+	local after = curseNames()
+	local active
+	for _, a in ipairs(build.calcsTab.mainEnv.player.activeSkillList) do
+		if a.socketGroup == g and a.activeEffect.grantedEffect.name == req.curse then active = a end
+	end
+	local aura = false
+	for _, e in ipairs(active and active.effectList or {}) do
+		if e.grantedEffect.id == "SupportBlasphemyPlayer" then aura = true end
+	end
+	local replaced, kept = {}, {}
+	for _, c in ipairs(after) do kept[c] = true end
+	for _, c in ipairs(before) do if not kept[c] then replaced[#replaced + 1] = c end end
+	local out = { value = value, base = v0, free = free, spiritUnreserved = left, spirit = free - left, aura = aura,
+		replaced = replaced, picks = {}, candidates = {} }
+	if not aura or not active then return out end
+	local elsewhere = {}
+	for j, og in ipairs(build.skillsTab.socketGroupList) do
+		if j ~= n then
+			for _, s in ipairs(og.gemList or {}) do
+				if s.gemData and s.gemData.grantedEffect and s.gemData.grantedEffect.support then elsewhere[s.gemData.name] = true end
+			end
+		end
+	end
+	local cands = {}
+	for id, cg in pairs(data.gems) do
+		local ge = cg.grantedEffect
+		if ge and ge.support and not ge.hidden and not (cg.tags and cg.tags.lineage) and not grantsCooldown(cg)
+			and cg.Tier and cg.Tier >= 1 and cg.Tier <= (req.maxSupportTier or 1)
+			and calcLib.canGrantedEffectSupportActiveSkill(ge, active) then
+			cands[#cands + 1] = { id = id, g = cg }
+		end
+	end
+	table.sort(cands, function(a, b) return a.id < b.id end)
+	for _, c in ipairs(cands) do out.candidates[#out.candidates + 1] = c.g.name end
+	local plain = g.gemList
+	local list = {}
+	for _, s in ipairs(plain) do list[#list + 1] = s end
+	local chosen, prev = {}, value
+	for _ = 1, (req.slots or 2) do
+		local best, bv, bl
+		for _, c in ipairs(cands) do
+			if not chosen[c.id] then
+				local trial = {}
+				for _, s in ipairs(list) do trial[#trial + 1] = s end
+				trial[#trial + 1] = { level = math.min(c.g.naturalMaxLevel or 1, 1), quality = 0, count = 1, enabled = true,
+					enableGlobal1 = true, enableGlobal2 = true, gemId = c.id, nameSpec = c.g.name, skillId = c.g.grantedEffectId,
+					gemData = c.g }
+				g.gemList = trial
+				build.skillsTab:ProcessSocketGroup(g)
+				local v, l = measure()
+				if l >= 0 and v == v and v ~= math.huge and v > prev * 1.001 and (not bv or v > bv) then
+					best, bv, bl = { c = c, entry = trial[#trial] }, v, l
+				end
+			end
+		end
+		if not best then break end
+		chosen[best.c.id] = true
+		list[#list + 1] = best.entry
+		prev = bv
+		out.picks[#out.picks + 1] = { name = best.c.g.name, tier = best.c.g.Tier, value = bv, spiritUnreserved = bl,
+			spirit = free - bl, elsewhere = elsewhere[best.c.g.name] or nil }
+	end
+	g.gemList = plain
+	build.skillsTab:ProcessSocketGroup(g)
+	measure()
+	return out
 end
 
 function commands.eval(req)

@@ -638,7 +638,10 @@ NOTES = {
     "spirit": "Defensive buffs (e.g. Arctic Armour) and minions' own damage are not scored. A Spirit skill or a build "
               "setting that works through a PoB configuration option is measured with that option on and the rest of the "
               "build as exported: a check on, a list at its best value, a count at 1 and reported per unit (additive); "
-              "how many stacks you keep up (the steady state) is not modelled.",
+              "how many stacks you keep up (the steady state) is not modelled. Blasphemy is measured with one curse at a "
+              "time (it reserves Spirit per socketed curse, scaled by its supports; the cost shown is PoB's) and up to 2 "
+              "supports on the curse, picked greedily within your free Spirit; a support that only widens area or "
+              "duration reads as no gain. A PoB setting is measured on the plain pair, never with its supports.",
     "minion": "PoB counts no minion in your presence although you use {skills} (it only counts minion skills with a "
               "minion limit, e.g. not a sceptre's Skeletal Warrior); this check-up assumes one, so minion-draining "
               "supports such as Minion Pact are valued as in game.",
@@ -894,11 +897,28 @@ def render_checkup(r):
             if r.get("spirit_options"):
                 o = r["spirit_options"][0]
                 c = max(o.get("config") or [], key=lambda c: c["mult"], default=None)
-                if c and c["mult"] > o["mult"] and big(c["mult"]):
+                bl = o.get("blasphemy") or {}
+                sup = (bl.get("supports") or [None])[-1]
+                def bl_watch(row_mult, extra=None, elsewhere=False):
+                    w = [extra] if extra else []
+                    if o.get("hand_mult") is not None and o["hand_mult"] >= row_mult:
+                        w.append(f"cast by hand: {fx(o['hand_mult'])} for no Spirit while the curse is up")
+                    if bl.get("replaced"):
+                        w.append(f"replaces {', '.join(bl['replaced'])} (curse limit)")
+                    if elsewhere:
+                        w.append("a support already socketed in another group")
+                    return "; ".join(w) or "—"
+                repl = bl_watch(o["mult"]) if bl else "—"
+                # a support set and a PoB setting are never combined in one number
+                if sup and sup["mult"] > o["mult"] and sup["mult"] >= (c["mult"] if c else 0) and big(sup["mult"]):
+                    names = " + ".join(x["name"] for x in bl["supports"])
+                    rows.append((measure, f"Spirit: {o['name']} + {names}", f"{sup['spirit']:.0f} Spirit", sup["mult"],
+                                 bl_watch(sup["mult"], elsewhere=any(x.get("elsewhere") for x in bl["supports"]))))
+                elif c and c["mult"] > o["mult"] and big(c["mult"]):
                     rows.append((measure, f"Spirit: {o['name']}", f"{o['spirit']:.0f} Spirit", c["mult"],
-                                 _setting_watch(c)))
+                                 bl_watch(c["mult"], _setting_watch(c)) if bl else _setting_watch(c)))
                 elif o["mult"] > 1.01:
-                    rows.append((measure, f"Spirit: {o['name']}", f"{o['spirit']:.0f} Spirit", o["mult"], "—"))
+                    rows.append((measure, f"Spirit: {o['name']}", f"{o['spirit']:.0f} Spirit", o["mult"], repl))
         rows.sort(key=lambda x: -x[3])
         value_groups.extend(rows)
     do_rows = value_groups + clear_rows
@@ -1114,8 +1134,45 @@ def render_checkup(r):
                [(o["name"], o["tier"], f"{o['spirit']:.0f}", fx(o["mult"]),
                  "; ".join(f"{_setting_gain(c, o['mult'])}{_setting_when(c)}" for c in o.get("config") or []) or "—")
                 for o in r["spirit_options"][:3]])
-        if any(o.get("config") for o in r["spirit_options"][:3]):
+        lines = []
+        for o in r["spirit_options"][:3]:
+            bl = o.get("blasphemy")
+            if not bl:
+                continue
+            parts = []
+            if bl["supports"]:
+                parts.append("with " + "; then ".join(
+                    f"{x['name']}{' (already socketed in another group)' if x.get('elsewhere') else ''} "
+                    f"{fx(x['mult'])}, {x['spirit']:.0f} Spirit ({x['spirit_left']:.0f} left)" for x in bl["supports"]))
+            if o.get("hand_mult") is not None:
+                parts.append(f"cast by hand instead: {fx(o['hand_mult'])} for no Spirit while the curse is up "
+                             f"(Blasphemy keeps it up permanently, at less curse effect)")
+            if bl.get("replaced"):
+                parts.append(f"replaces {', '.join(bl['replaced'])} (curse limit)")
+            lines.append(f"- {o['name']} ({o['spirit']:.0f} Spirit, {fx(o['mult'])}): " + "; ".join(parts) + ".")
+        tg = r.get("spirit_together")
+        if tg:
+            def fit(left, what):
+                return (f"{what} and {tg['other']} ({tg['other_spirit']:.0f}) fit together, {left:.0f} Spirit left"
+                        if left >= 0 else f"{what} and {tg['other']} ({tg['other_spirit']:.0f}) do not fit together "
+                        f"({-left:.0f} Spirit short)")
+            b = next(o for o in r["spirit_options"] if o["name"] == tg["blasphemy"])
+            txt = fit(tg["plain"], f"{b['name']} ({b['spirit']:.0f})")
+            if "supports" in tg:
+                sup = b["blasphemy"]["supports"]
+                names = " + ".join(x["name"] for x in sup)
+                txt += ("; with " + names + f" ({sup[-1]['spirit']:.0f}) "
+                        + (f"they fit too, {tg['supports']:.0f} left" if tg["supports"] >= 0 else "they do not"))
+            lines.append("- " + txt + ". Measured in PoB with both socketed; no combined multiplier is computed.")
+        if r.get("blasphemy_skipped"):
+            lines.append(f"- Blasphemy not checked: {r['blasphemy_skipped']}.")
+        if lines:
+            print()
+            print("\n".join(lines))
+        if any(o.get("config") or o.get("blasphemy") for o in r["spirit_options"][:3]):
             print("\n" + cite("spirit"))
+    elif r.get("blasphemy_skipped"):
+        print(f"\nBlasphemy not checked: {r['blasphemy_skipped']}.")
 
     # ---- Passives allocated
     print("\n### Passives allocated")
