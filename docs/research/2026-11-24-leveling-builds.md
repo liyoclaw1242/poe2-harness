@@ -944,3 +944,39 @@ and Unholy Might ends on low mana.
 **Side finding (not acted on).** PoB counts every socketed gem by name, but warns only for lineage supports used
 in more than one skill (limit 1) and for more than 9 skill groups. In PoB, a normal support may sit in two
 skills. Whether 0.5.5 allows this in game was not verified, so the check-up's "not checked" note stays.
+
+## Check-up report format and gear affixes (2026-11-28)
+
+The check-up text grew section by section into mixed tables and long prose lines, with several multiplier formats.
+It now follows one layout:
+- **Do now.** A table whose rows are ranked only within one measure, in this order:
+  - the main skill's value;
+  - each other skill's value;
+  - clear speed, which is an estimate and always carries its single-target multiplier.
+- **Detail tables.** Skills, supports, sustain and defences, allocated passives, next passives, next ascendancy
+  trial, and gear.
+- **Notes.** One keyed list, cited by the sections, instead of caveat sentences after each section.
+
+Formatting:
+- Multipliers always show two decimals.
+- Values use the shared short format (1.44M).
+- Empty cells show "—".
+
+Three choices are the owner's:
+- Do now shows up to five passive rows.
+- Values use the short format.
+- During the campaign (character level below 65), chaos resistance is left out of the below-cap flag.
+
+**Gear: affixes to look for.** Each equipment slot lists up to five affixes to watch for when picking up items.
+- **Ranking.** The order comes from PoB's own trade generator. It sets each affix to a mid roll for that slot,
+  with the current item removed, and ranks by the gain in the main skill's DPS plus half-weighted EHP.
+- **Ties** are broken by text, because PoB's own order is not stable between runs.
+- **Only affixes that can drop on the slot's base are listed.** Runes, implicits, enchants and corrupted lines
+  are excluded. So are Desecrated or other crafted-only mods that have no spawn weight.
+- **Agreement.** On three builds, an independent recompute with try_items at the mid roll on a blank rare gives
+  the same order.
+- **Blocked off-hand.** An empty off-hand that PoB allows no item into, behind a two-handed main hand, is shown as
+  blocked rather than measured.
+- **Limits.**
+  - Spirit and minion or ally affixes are not scored. A sceptre off-hand can therefore list only one affix.
+  - The mid roll spans every tier and is not capped by character level.

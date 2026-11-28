@@ -592,194 +592,527 @@ def render_switch(r):
 # check-up verdict bands: NOISE is the support search's own acceptance threshold (a support must add more than 0.1%),
 # REPORT the change the report calls out (2%)
 NOISE, REPORT = 0.001, 0.02
+# the owner's rule: below this character level the campaign is not over, and chaos resistance is not yet flagged
+# (maps start around 65)
+CAMPAIGN_END_LEVEL = 65
+RESISTS = ("Fire", "Cold", "Lightning", "Chaos")
+
+NOTES = {
+    "value": "value = PoB DPS of the skill as the leveling ranking counts it: best hit part + best DoT part. \"main skill "
+             "xN\" and \"<skill> value xN\" are multiples of that skill's value.",
+    "alone": "Every xN is measured alone against the current character; gains are not additive. A next-passive row "
+             "includes its shortest path from the current tree; rows are not additive when paths overlap, and attribute "
+             "nodes on a path count as unchosen.",
+    "clear": "Clear speed is the leveling ranking's pack model (pack of 6, every projectile and pierce reaching another "
+             "monster): an estimate, not a PoB number, and not comparable with single-target DPS.",
+    "borrow": "`*` = socketed in another skill now; whether one support gem can sit in two skills is not checked. "
+              "\"without borrowed\" is the best set found without such supports.",
+    "mana": "Mana is nonstop casting of the main skill only: PoB's mana cost per second against net regeneration; low "
+            "mana = {low} of maximum. It ignores other skills, flasks, leech and mana on kill. PoB's cost per second is "
+            "cost x cast speed, which overstates a fire-and-forget DoT.",
+    "mana_fast": " A drain this fast means the build relies on leech, mana on hit or flasks.",
+    "asc": "Conditions an ascendancy notable sustains are assumed on, as in checkpoints. A notable that needs mana (e.g. "
+           "Unholy Might while not on low mana) loses that effect once mana runs low.",
+    "asc_cost": " A changed mana cost comes from the notable's own text as PoB applies it under the build's configuration "
+                "(e.g. a cost that applies \"if you have no Energy Shield\" counts unless PoB's \"Do you always have "
+                "Energy Shield?\" option is ticked).",
+    "gear": "Ordered by PoB's trade generator: each affix at a mid roll for that slot, ranked by the gain in {dps} + "
+            "half-weighted EHP over a blank item (your current item removed); one affix at a time, not additive; mid "
+            "roll spans all tiers, not capped by level; only affixes that can drop on the slot's base; Spirit and minion/ally "
+            "affixes are not scored. A guide to what "
+            "to pick up, not a price check. trade-query builds the search links.",
+    "gear_def": " \"defence only\": the build has no DPS in PoB, so only EHP orders that slot.",
+    "spirit": "Defensive buffs (e.g. Arctic Armour) and minions' own damage are not scored.",
+    "minion": "PoB counts no minion in your presence although you use {skills} (it only counts minion skills with a "
+              "minion limit, e.g. not a sceptre's Skeletal Warrior); this check-up assumes one, so minion-draining "
+              "supports such as Minion Pact are valued as in game.",
+    "source": "PoB calculations on the imported character, except clear speed. Gem and support availability from drop "
+              "tables by area level. `ele res` = elemental res (capped).",
+}
+NOTE_ORDER = ("value", "alone", "clear", "borrow", "mana", "asc", "gear", "spirit", "minion", "source")
+
+
+def fx(m):
+    """One multiplier format: x + 2 decimals; x1.00 only when PoB sees no effect (within NOISE)."""
+    if m is None:
+        return "—"
+    if round(m, 2) == 1.0:
+        if m > 1 + NOISE:
+            return "<x1.01"
+        if m < 1 - NOISE:
+            return ">x0.99"
+    return f"x{m:.2f}"
+
+
+def _rate(v, signed=False):
+    if signed:
+        return "—" if abs(v) < 0.05 else f"{v:+.1f}/s"
+    return f"{v:.1f}/s"
+
+
+def _delta(v):
+    return "—" if abs(v) < 0.5 else f"{v:+.0f}"
+
+
+def _secs(t):
+    return "within 1 s" if t < 1 else f"after {t:.1f} s" if t < 10 else f"after {t:.0f} s"
 
 
 def _mana_line(m, short=False):
-    """Mana sustain of the main skill: PoB's mana cost per second against net mana regeneration."""
-    low = f"{100 * m['low']:.0f}%"
+    """Mana sustain of the main skill as a short verdict: `sustained` / `low after N s` / `already low` /
+    `no mana cost`. short=False adds the life cost to `no mana cost` (the Sustain table's `now` cell)."""
     if m["state"] == "no_cost":
-        life = f" (life cost {m['life_cost_ps']:.0f}/s)" if m.get("life_cost_ps") else ""
-        return "no mana cost" + life if short else f"mana: the main skill has no mana cost{life}"
+        life = f" (life cost {m['life_cost_ps']:.0f}/s)" if m.get("life_cost_ps") and not short else ""
+        return "no mana cost" + life
     if m["state"] == "sustained":
-        what = "sustained"
-    elif m["state"] == "already_low":
-        what = f"already at low mana ({low} of maximum)"
-    else:
-        t = m["secs_to_low"]
-        secs = "within 1 s" if t < 1 else f"after {t:.1f} s" if t < 10 else f"after {t:.0f} s"
-        what = f"low mana ({low} of maximum) {secs} of casting"
-        if t < 5 and not short:
-            what += " (a drain this fast means the build relies on leech, mana on hit or flasks, which this ignores)"
-    if short:
-        return what
-    return (f"mana: cost {m['cost_ps']:.1f}/s, net regeneration {m['net']:.1f}/s -> {what}. Nonstop casting of the main "
-            "skill only; ignores other skills, flasks, leech and mana on kill. PoB's cost per second is cost x cast "
-            "speed, which overstates a fire-and-forget DoT.")
+        return "sustained"
+    if m["state"] == "already_low":
+        return "already low"
+    return "low " + _secs(m["secs_to_low"])
 
 
-def _render_next(nx):
-    def x(m):
-        return f"x{m:.3f}" if m else "—"
+def _table(head, rows):
+    print("| " + " | ".join(head) + " |\n|" + "---|" * len(head))
+    for row in rows:
+        print("| " + " | ".join(str(c) if c not in (None, "") else "—" for c in row) + " |")
 
-    def defence(n):
-        parts = [f"{k} {n[v]:+.0f}" for k, v in (("life", "life"), ("ES", "es")) if abs(n[v]) >= 0.5]
-        if abs(n["res"]) >= 0.5:
-            parts.append(f"elemental res (capped) {n['res']:+.0f}")
-        return ", ".join(parts) or "—"
 
+def _next_rows(nx):
+    """Next-passive rows in table order: (best for, node). Same selection and order as the three groups always had;
+    a notable picked by two groups is one row in its first group, naming both."""
     rows = nx["passives"]
     dmg = sorted((n for n in rows if n.get("mult") and n["mult"] > 1 + nx["noise"]),
                  key=lambda n: -(n["mult"] - 1) / n["cost"])[:5]
     tough = sorted((n for n in rows if n["life"] + n["es"] > 0), key=lambda n: -(n["life"] + n["es"]) / n["cost"])[:3]
     res = sorted((n for n in rows if n["res"] > 0), key=lambda n: -n["res"] / n["cost"])[:3]
+    out, seen = [], {}
+    for title, lst in (("main skill", dmg), ("life + ES", tough), ("resistances", res)):
+        for n in lst:
+            if n["id"] in seen:
+                seen[n["id"]][0].append(title)
+                continue
+            seen[n["id"]] = ([title], n)
+            out.append(seen[n["id"]])
+    return [(", ".join(t), n) for t, n in out], dmg
+
+
+def _render_next(nx, cite):
+    def per_pt(n):
+        m = n.get("mult")
+        return f"+{100 * (m - 1) / n['cost']:.1f}%/pt" if m and m > 1 + nx["noise"] else "—"
+
     print("\n### Next passives (notables within 7 points)")
+    rows, _ = _next_rows(nx)
     if not rows:
         print("No notable within 7 points adds to the main skill or to life, energy shield or resistances.")
-    for title, lst in (("for the main skill", dmg), ("for life + energy shield", tough), ("for resistances", res)):
-        if lst:
-            print(f"{title}: " + "; ".join(f"{n['name']} ({n['cost']} pts, main skill {x(n.get('mult'))}, {defence(n)})"
-                                           for n in lst))
-    if nx["jewels"]:
-        print("jewel sockets allocated without a jewel: " + ", ".join(j["name"] for j in nx["jewels"])
-              + " (normal early on; any jewel there adds stats)")
-    print("Each notable is measured alone with its shortest path from the current tree; rows are not additive when "
-          "paths overlap, and attribute nodes on a path count as unchosen.")
+    else:
+        _table(("best for", "notable", "pts", "main skill", "per pt", "life", "ES", "ele res", "mana regen"),
+               [(t, n["name"], n["cost"], fx(n.get("mult")), per_pt(n), _delta(n["life"]), _delta(n["es"]),
+                 _delta(n["res"]), _rate(n.get("regen") or 0, signed=True)) for t, n in rows])
+        print("\nEach group is sorted by its own gain per point " + cite("alone") + ".")
     name = nx.get("ascendancyName")
     if not name or name == "None":
-        return
+        return False
     print(f"\n### Next ascendancy trial ({name}, {nx['ascUsed']}/{nx['ascMax']} points spent)")
     if nx["ascUsed"] >= nx["ascMax"]:
         print("All ascendancy points are spent.")
-        return
+        return False
     if not nx["ascendancy"]:
         print(f"No unallocated notable is reachable with the next {min(2, nx['ascMax'] - nx['ascUsed'])} point(s).")
-        return
-    print("| notable | points | main skill | defence | mana regen | mana |\n|---|---|---|---|---|---|")
-    now_cost, cost_changed = nx["sustain"]["cost_ps"], False
+        return False
+    now_m = nx["sustain"]
+    now_cost, cost_changed, rows = now_m["cost_ps"], False, []
     for n in sorted(nx["ascendancy"], key=lambda n: (-(n.get("mult") or 0), n["name"])):
         m = n["sustain"]
-        cell = _mana_line(m, short=True)
-        if m["state"] != "no_cost" and abs(m["cost_ps"] - now_cost) > 0.05:
-            cell += f" (cost {m['cost_ps']:.1f}/s, now {now_cost:.1f}/s)"
-            cost_changed = True
-        print(f"| {n['name']}{' (valued without its option)' if n.get('multipleChoice') else ''} | {n['cost']} | "
-              f"{x(n.get('mult'))} | {defence(n)} | {n['regen']:+.1f}/s | {cell} |")
-    print("Conditions an ascendancy notable sustains are assumed on, as in checkpoints. A notable that needs mana "
-          "(e.g. Unholy Might while not on low mana) loses that effect once mana runs low; the mana column is "
-          "nonstop casting of the main skill only.")
-    if cost_changed:
-        print("A changed mana cost comes from the notable's own text as PoB applies it under the build's configuration "
-              "(e.g. a cost that applies \"if you have no Energy Shield\" counts unless PoB's \"Do you always have "
-              "Energy Shield?\" option is ticked).")
+        cost = "unchanged"
+        if m["state"] == "no_cost" and now_m["state"] != "no_cost":
+            cost, cost_changed = f"none (now {_rate(now_cost)})", True
+        elif m["state"] != "no_cost" and abs(m["cost_ps"] - now_cost) > 0.05:
+            cost, cost_changed = f"{_rate(m['cost_ps'])} (now {_rate(now_cost)})", True
+        rows.append((n["name"] + (" (valued without its option)" if n.get("multipleChoice") else ""), n["cost"],
+                     fx(n.get("mult")), _delta(n["life"]), _delta(n["es"]), _delta(n["res"]),
+                     _rate(n.get("regen") or 0, signed=True), cost, _mana_line(m, short=True)))
+    _table(("notable", "pts", "main skill", "life", "ES", "ele res", "mana regen", "mana cost", "mana"), rows)
+    print("\n" + cite("asc") + " " + cite("mana"))
+    return cost_changed
+
+
+def _support_diff(sc):
+    cur = list(sc.get("current") or [])
+    best = [p["name"] for p in sc["best"]]
+    star = {p["name"] for p in sc["best"] if p.get("elsewhere")}
+    add = " + ".join(n + ("*" if n in star else "") for n in best if n not in cur)
+    out = " + ".join(n for n in cur if n not in best)
+    if not add:
+        return f"supports: remove {out}"
+    return f"supports: {out} -> {add}" if out else f"supports: add {add}"
+
+
+def _merged(checks):
+    """Boss and clear recommend the same set (both above or both below the report band): one row."""
+    sets = {obj: frozenset(p["name"] for p in sc["best"]) for obj, sc in checks.items()}
+    side = lambda sc: bool(sc.get("mult") and sc["mult"] > 1 + REPORT)
+    return len(checks) == 2 and len(set(sets.values())) == 1 and len({side(sc) for sc in checks.values()}) == 1
+
+
+def _names(picks, star=True):
+    return " + ".join(p["name"] + ("*" if star and p.get("elsewhere") else "") for p in picks)
+
+
+GEAR_FEW = 3   # fewer affixes than this on a slot: say why the list is short
+
+
+def _gear_base(s):
+    """Slot label suffix: the equipped base's PoB type (its subtype where the type only repeats the slot), or empty."""
+    if s.get("empty"):
+        return " (empty)"
+    ty, sub = s.get("type"), s.get("subType")
+    if ty and not s["slot"].startswith(ty):
+        return f" ({ty})"
+    return f" ({sub})" if sub else ""
 
 
 def render_checkup(r):
-    def x(m):
-        return f"x{m:.2f}" if m else "—"
-    print(f"## Leveling check-up — level {r['level']}: uncut gems up to level {r['gem_max']}, supports up to tier "
-          f"{r['support_tier']} can have dropped by now")
-    print("\nvalue = PoB DPS of the skill as the leveling ranking counts it: best hit part + best DoT part.")
-    m = r.get("minions") or {}
-    if m.get("assumedOne"):
-        print(f"PoB counts no minion in your presence although you use {', '.join(m['minionSkills'])} (it only counts "
-              "minion skills with a minion limit, e.g. not a sceptre's Skeletal Warrior); this check-up assumes one, "
-              "so minion-draining supports such as Minion Pact are valued as in game.")
-    print("\n### Damaging skills\n\n| skill | gem level | value | supports (what each adds) |\n|---|---|---|---|")
-    for g in r["groups"]:
-        sup = ", ".join(f"{s['name']} {x(s.get('mult'))}" for s in g["supports"]) or "none"
-        print(f"| {g['skill']} | {g['level']} | {g['value']:.0f} | {sup} |")
-    if not r["groups"]:
-        print("\nNo socketed skill deals damage in PoB yet, so there is nothing to compare.")
-    for g in r["main"]:
-        print(f"\n### {g['skill']}")
-        if g.get("source"):
-            print("gem level: granted by an item, no gem to level")
-        elif g["levels"]["rows"]:
-            print("gem level: " + ", ".join(f"{e['level']} -> {e['value']:.0f} ({x(e['mult'])})" for e in g["levels"]["rows"]))
-        elif g["level"] > r["gem_max"]:
-            print(f"gem level: {g['level']} is above the level-{r['gem_max']} cap for uncut gems found by this "
-                  "character level (a planner export?); its value is measured at the socketed level")
-        else:
-            print(f"gem level: {g['level']} is already the highest uncut gem by this level")
-        nx = r.get("next")
-        if nx and g is r["main"][0]:
-            print(_mana_line(nx["sustain"]))
+    level = r["level"]
+    nx, main, groups = r.get("next"), r["main"], r["groups"]
+    used = set()
+
+    def cite(key):
+        used.add(key)
+        return f"[{key}]"
+
+    big = lambda m: bool(m and m > 1 + REPORT)
+    print(f"## Leveling check-up — level {level}")
+    print(f"Caps by this level: uncut gems to level {r['gem_max']}, supports to tier {r['support_tier']}.")
+
+    # ---- Do now: rows grouped by the measure they are multiples of
+    value_groups, clear_rows, stars = [], [], False
+    for i, g in enumerate(main):
+        measure = f"{g['skill']} value"
+        rows = []
         checks = g.get("support_checks") or {}
-        label = {"clear": "clearing packs", "boss": "bosses"}
-        sets = {obj: frozenset(p["name"] for p in sc["best"]) for obj, sc in checks.items()}
-        side = lambda sc: bool(sc.get("mult") and sc["mult"] > 1 + REPORT)
-        if len(checks) == 2 and len(set(sets.values())) == 1 and len({side(sc) for sc in checks.values()}) == 1:
-            label = {"clear": "clearing packs and bosses (same set)"}
-            boss_m = checks["boss"].get("mult")
-            checks = {"clear": {**checks["clear"], "boss_mult": boss_m}}
-        for obj, sc in checks.items():
-            best = " + ".join(p["name"] + (" (socketed in another skill)" if p.get("elsewhere") else "") for p in sc["best"])
-            cur = " + ".join(sc["current"]) or "none"
-            if sc.get("unscored"):
-                print(f"supports for {label[obj]}: not estimated (the pack model has no value for this skill)")
-                continue
-            if sc.get("mult") and sc["mult"] > 1 + REPORT:
-                dps = f"; single-target DPS {x(sc['dpsMult'])}" if obj == "clear" and sc.get("dpsMult") else ""
-                what = "clear speed" if obj == "clear" else "DPS"
-                if obj == "clear" and sc.get("pair"):
-                    what = f"clear speed as {sc['pair']}"
-                bm = f"; boss DPS {x(sc['boss_mult'])}" if sc.get("boss_mult") else ""
-                print(f"supports for {label[obj]}: now {cur}; best set found {best} ({what} {x(sc['mult'])}{dps}{bm})")
-                own = sc.get("own")
-                if own:
-                    ob = " + ".join(p["name"] for p in own["best"])
-                    print(f"  without supports already socketed elsewhere: {ob} ({x(own.get('mult'))}); "
-                          "whether one support gem can sit in two skills is not checked")
-            else:
-                pair = f" (scored as {sc['pair']})" if obj == "clear" and sc.get("pair") else ""
-                print(f"supports for {label[obj]}: {cur} is already the best set found{pair} (searched tier <= {r['support_tier']})")
-        recommended = {p["name"] for sc in (g.get("support_checks") or {}).values() for p in sc.get("best") or []}
-        scored = [sc for sc in (g.get("support_checks") or {}).values() if not sc.get("unscored")]
-        already = bool(scored) and all(not (sc.get("mult") and sc["mult"] > 1 + REPORT) for sc in scored)
+        boss, clear = checks.get("boss"), checks.get("clear")
+        merged = boss and clear and _merged(checks)
+        if boss and big(boss.get("mult")):
+            watch = []
+            if boss.get("own"):
+                watch.append(f"{fx(boss['own'].get('mult'))} without the borrowed support")
+            if merged:
+                watch.append(f"clear speed {fx(clear.get('mult'))} (estimate)")
+            rows.append((measure, _support_diff(boss), "gem swap", boss["mult"], "; ".join(watch) or "—"))
+        if clear and not merged and not clear.get("unscored") and big(clear.get("mult")):
+            clear_rows.append((f"{g['skill']} clear speed (estimate)", _support_diff(clear), "gem swap", clear["mult"],
+                               f"single-target {fx(clear.get('dpsMult'))}"))
+        lv = [e for e in ((g.get("levels") or {}).get("rows") or []) if big(e.get("mult"))]
+        if lv and not g.get("source"):
+            e = max(lv, key=lambda e: e["mult"])
+            rows.append((measure, f"gem level {e['level']}", f"uncut gem level {e['level']}", e["mult"], "—"))
+        if i == 0 and nx:
+            for n in [n for n in _next_rows(nx)[1] if big(n.get("mult"))][:5]:
+                watch = ", ".join(f"{k} {_delta(n[v])}" for k, v in (("life", "life"), ("ES", "es")) if n[v] <= -0.5)
+                rows.append((measure, f"passive: {n['name']}", f"{n['cost']} pts", n["mult"], watch or "—"))
+            name = nx.get("ascendancyName")
+            asc = [n for n in nx.get("ascendancy") or [] if big(n.get("mult"))]
+            if name and name != "None" and nx["ascUsed"] < nx["ascMax"] and asc:
+                n = sorted(asc, key=lambda n: (-n["mult"], n["name"]))[0]
+                st = n["sustain"]["state"]
+                watch = "—"
+                if st not in ("sustained", "no_cost"):
+                    regen = _rate(n.get("regen") or 0, signed=True)
+                    watch = (f"mana regen {regen}, " if regen != "—" else "") + _mana_line(n["sustain"], short=True)
+                rows.append((measure, f"ascendancy: {n['name']}", f"next trial, {n['cost']} pts", n["mult"], watch))
+            if r.get("spirit_options"):
+                o = r["spirit_options"][0]
+                rows.append((measure, f"Spirit: {o['name']}", f"{o['spirit']:.0f} Spirit", o["mult"], "—"))
+        rows.sort(key=lambda x: -x[3])
+        value_groups.extend(rows)
+    do_rows = value_groups + clear_rows
+    print("\n### Do now")
+    if do_rows:
+        _table(("measure", "change", "cost", "gain", "watch"), [(a, b, c, fx(d), e) for a, b, c, d, e in do_rows])
+        stars = any("*" in x[1] for x in do_rows)
+        line = ("\nRows are ranked inside one measure only; measures are not comparable with each other " + cite("value")
+                + (" " + cite("clear") if clear_rows or any("clear speed" in x[4] for x in do_rows) else "") + ". "
+                + "Each gain is measured alone " + cite("alone") + ".")
+        if stars:
+            line += " `*` " + cite("borrow") + "."
+        print(line)
+    else:
+        print("Nothing measured adds more than 2% to a checked skill.")
+
+    # ---- Flags (fixed order, each only when true)
+    flags = []
+    th = (r.get("thresholds") or {}).get("resists") or {}
+    if nx and main and nx["sustain"]["state"] in ("drains", "already_low"):
+        m = nx["sustain"]
+        flags.append(f"Mana: {main[0]['skill']} is already at low mana." if m["state"] == "already_low" else
+                     f"Mana: {main[0]['skill']} reaches low mana {_secs(m['secs_to_low'])} of nonstop casting.")
+    low_res = [e for e in RESISTS if e in th and (th[e].get("missing") or 0) > 0
+               and not (e == "Chaos" and level < CAMPAIGN_END_LEVEL)]
+    if low_res:
+        flags.append("Resistances below cap: " + ", ".join(f"{e} {th[e]['value']:.0f}%" for e in low_res) + ".")
+    t = r.get("tree")
+    expected = max(0, level - 1)
+    if t and t["allocated"] < expected:
+        flags.append(f"Unspent passive points: {t['allocated']} allocated, levels alone give {expected}.")
+    for g in main:
+        if not g.get("source") and not (g.get("levels") or {}).get("rows") and g["level"] > r["gem_max"]:
+            flags.append(f"{g['skill']} is gem level {g['level']}, above the level-{r['gem_max']} cap for this "
+                         "character level (a planner export?).")
+    dead = []
+    for g in main:
+        checks = g.get("support_checks") or {}
+        recommended = {p["name"] for sc in checks.values() for p in sc.get("best") or []}
+        scored = [sc for sc in checks.values() if not sc.get("unscored")]
+        already = bool(scored) and all(not big(sc.get("mult")) for sc in scored)
         for s in g["supports"]:
             m = s.get("mult")
             if not m or m > 1 + NOISE or s["name"] in recommended:
                 continue
             costs = m < 1 - REPORT
-            what = "costs single-target DPS" if costs else "adds nothing to this skill in PoB"
+            what = "costs single-target DPS" if costs else "no effect on this skill in PoB"
             advice = (f"no better support found at tier <= {r['support_tier']}" if already
-                      else "swap it (see the sets above)" if costs else "swap it for a support that does")
-            print(f"  - {s['name']} ({x(m)}): {what}; {advice}")
-    t = r.get("tree")
+                      else "swap it (see best set)" if costs else "swap it")
+            dead.append((g["skill"], s["name"], fx(m), f"{what}; {advice}"))
+            flags.append(f"{s['name']} costs {g['skill']} single-target DPS ({fx(m)})." if costs
+                         else f"Dead support: {s['name']} on {g['skill']} ({fx(m)}).")
+    free = r.get("spirit_free")
+    if free is not None and free < 0:
+        flags.append(f"Spirit over-reserved by {-free:.0f}.")
+    elif free and free > 0 and main and r.get("spirit_checked", True) and not r.get("spirit_options"):
+        flags.append(f"{free:.0f} Spirit unreserved and no Spirit skill by this level raises the main skill.")
+    jewels = (nx or {}).get("jewels") or []
+    if jewels:
+        flags.append(f"{len(jewels)} allocated jewel socket has no jewel." if len(jewels) == 1 else
+                     f"{len(jewels)} allocated jewel sockets have no jewel.")
+    if flags:
+        print("\nFlags:\n" + "\n".join(f"- {f}" for f in flags))
+    else:
+        print("\nFlags: none.")
+
+    # ---- Skills
+    print("\n### Skills")
+    if not groups:
+        print("No socketed skill deals damage in PoB yet, so there is nothing to compare.")
+    else:
+        rows = []
+        main_idx = {g.get("index") for g in main} - {None}
+        for g in groups:
+            is_main = any(g is m for m in main) or g.get("index") in main_idx
+            if not is_main:
+                up = "—"
+            elif g.get("source"):
+                up = "item-granted, no gem to level"
+            elif (g.get("levels") or {}).get("rows"):
+                up = ", ".join(f"{e['level']} -> {fmt(e['value'])} ({fx(e['mult'])})" for e in g["levels"]["rows"])
+            elif g["level"] > r["gem_max"]:
+                up = f"above cap {r['gem_max']}; valued at the socketed level"
+            else:
+                up = "at cap"
+            sup = ", ".join(f"{s['name']} {fx(s.get('mult'))}" for s in g["supports"]) or "none"
+            rows.append((g["skill"], g["level"], fmt(g["value"]), up, sup))
+        _table(("skill", "gem lvl", "value", "gem upgrade", "supports (what each adds)"), rows)
+    if (r.get("minions") or {}).get("assumedOne"):
+        print("\nOne minion assumed " + cite("minion") + ".")
+
+    # ---- Supports
+    print(f"\n### Supports (top {len(main)} skills)")
+    if not main:
+        print("No skill to check.")
+    else:
+        rows, star_any = [], False
+        for g in main:
+            checks = g.get("support_checks") or {}
+            boss, clear = checks.get("boss"), checks.get("clear")
+            if boss and clear and _merged(checks):
+                cur = " + ".join(boss.get("current") or []) or "none"
+                if big(boss.get("mult")):
+                    st = fx(boss["mult"])
+                    if clear.get("dpsMult") and fx(clear["dpsMult"]) != st:
+                        st += f" (pack model {fx(clear['dpsMult'])})"
+                    own, cown = boss.get("own"), clear.get("own")
+                    wo = f"{fx(own.get('mult'))}: {_names(own['best'], False)}" if own else ""
+                    if cown:   # the clear set without borrowed supports: its clear speed, and its names when they differ
+                        same = own and {p["name"] for p in own["best"]} == {p["name"] for p in cown["best"]}
+                        cs = f"clear speed {fx(cown.get('mult'))}" + ("" if same else f": {_names(cown['best'], False)}")
+                        wo = f"{wo} ({cs})" if same else "; ".join(x for x in (wo, cs) if x)
+                    rows.append((g["skill"], "clearing + bosses", cur, _names(boss["best"]), fx(clear.get("mult")), st,
+                                 wo or "—"))
+                    star_any |= any(p.get("elsewhere") for p in boss["best"])
+                else:
+                    pair = f" (scored as {clear['pair']})" if clear.get("pair") else ""
+                    rows.append((g["skill"], "clearing + bosses", cur, "= now" + pair, "—", "—", "—"))
+                continue
+            if boss:
+                cur = " + ".join(boss.get("current") or []) or "none"
+                if big(boss.get("mult")):
+                    own = boss.get("own")
+                    rows.append((g["skill"], "bosses", cur, _names(boss["best"]), "—", fx(boss["mult"]),
+                                 f"{fx(own.get('mult'))}: {_names(own['best'], False)}" if own else "—"))
+                    star_any |= any(p.get("elsewhere") for p in boss["best"])
+                else:
+                    rows.append((g["skill"], "bosses", cur, "= now", "—", "—", "—"))
+            if clear:
+                cur = " + ".join(clear.get("current") or []) or "none"
+                pair = f" (scored as {clear['pair']})" if clear.get("pair") else ""
+                if clear.get("unscored"):
+                    rows.append((g["skill"], "clearing", cur, "not estimated (the pack model has no value for this skill)",
+                                 "—", "—", "—"))
+                elif big(clear.get("mult")):
+                    own = clear.get("own")
+                    rows.append((g["skill"], "clearing", cur, _names(clear["best"]) + pair, fx(clear["mult"]),
+                                 fx(clear.get("dpsMult")),
+                                 f"{fx(own.get('mult'))}: {_names(own['best'], False)}" if own else "—"))
+                    star_any |= any(p.get("elsewhere") for p in clear["best"])
+                else:
+                    rows.append((g["skill"], "clearing", cur, "= now" + pair, "—", "—", "—"))
+        _table(("skill", "for", "now", "best set found", "clear speed", "single-target", "without borrowed"), rows)
+        has_clear = any(x[1] != "bosses" and x[4] != "—" for x in rows)
+        line = "\nOne skill has one set of sockets: its bosses row and its clearing row are alternatives"
+        cites = ([cite("clear")] if has_clear else []) + ([cite("borrow")] if star_any else [])
+        print(line + (" " + " ".join(cites) if cites else "") + ".")
+        if dead:
+            print()
+            _table(("skill", "support", "adds", "verdict"), dead)
+
+    # ---- Sustain and defences
+    print("\n### Sustain and defences")
+    rows = []
+    if nx and main:
+        m = nx["sustain"]
+        if m["state"] == "no_cost":
+            rows.append((f"Mana, {main[0]['skill']} nonstop", _mana_line(m), "—"))
+        else:
+            rows.append((f"Mana, {main[0]['skill']} nonstop", f"cost {_rate(m['cost_ps'])}, net regen {_rate(m['net'])}",
+                         _mana_line(m, short=True) + " " + cite("mana")))
+    if th:
+        els = [e for e in RESISTS if e in th]
+        miss = [e for e in els if (th[e].get("missing") or 0) > 0]
+        if miss and len(miss) == len(els):
+            verdict = "below cap by " + ", ".join(f"{th[e]['missing']:.0f}" for e in els)
+        elif miss:
+            verdict = "below cap by " + ", ".join(f"{e} {th[e]['missing']:.0f}" for e in miss)
+        else:
+            verdict = "at cap"
+        rows.append(("Resistances", ", ".join(f"{e} {th[e]['value']:.0f}%" for e in els), verdict))
+    if free is not None:
+        if free < 0:
+            verdict = "over-reserved"
+        elif not r.get("spirit_checked", True):
+            verdict = "not checked (--no-spirit)"
+        elif free == 0 or not main:
+            verdict = "—"
+        elif r.get("spirit_options"):
+            verdict = "Spirit skills below raise the main skill " + cite("spirit")
+        else:
+            verdict = "no Spirit skill by this level raises the main skill " + cite("spirit")
+        rows.append(("Spirit", f"{free:.0f} unreserved", verdict))
     if t:
-        expected = max(0, r["level"] - 1)
-        print(f"\n### Passives\n{t['allocated']} allocated; levels alone give {expected} by level {r['level']} "
-              f"(quest points come on top)." + (" Check for unspent points." if t["allocated"] < expected else ""))
+        rows.append(("Passive points", f"{t['allocated']} allocated",
+                     f"levels alone give {expected} by level {level}; quest points come on top"))
+    if jewels:
+        rows.append(("Jewel sockets", f"{len(jewels)} allocated without a jewel: " + ", ".join(j["name"] for j in jewels),
+                     "normal early on; any jewel there adds stats"))
+    if rows:
+        _table(("check", "now", "verdict"), rows)
+    else:
+        print("Nothing to check in this report.")
+    if r.get("spirit_options"):
+        print()
+        _table(("Spirit skill", "tier", "Spirit", "main skill"),
+               [(o["name"], o["tier"], f"{o['spirit']:.0f}", fx(o["mult"])) for o in r["spirit_options"][:3]])
+
+    # ---- Passives allocated
+    print("\n### Passives allocated")
+    if not t:
+        print("No main skill, so no passive is measured.")
+    else:
         idle = [n for n in t["nodes"] if abs(n["share"]) < 0.001]
         top = [n for n in t["nodes"] if n["share"] >= 0.001][:5]
         if top:
-            print("largest share of the main skill: " + ", ".join(f"{n['name']} {100 * n['share']:.1f}%" for n in top))
+            print("Largest share of the main skill: " + ", ".join(f"{n['name']} {100 * n['share']:.1f}%" for n in top))
         if idle:
-            print(f"{len(idle)} nodes add nothing to the main skill (attributes, defence or path): "
-                  + ", ".join(sorted({n['name'] for n in idle})))
-    if r.get("next"):
-        _render_next(r["next"])
-    if r.get("spirit_free"):
-        print(f"\n### Spirit\n{r['spirit_free']:.0f} Spirit unreserved.")
-        for o in r["spirit_options"][:3]:
-            print(f"- {o['name']} (tier {o['tier']}, {o['spirit']:.0f} Spirit): main skill {x(o['mult'])}")
-        if not r.get("spirit_checked", True):
-            print("Spirit skills were not checked (--no-spirit).")
-        elif not r["spirit_options"]:
-            print("No Spirit skill available by this level raises the main skill in PoB. Defensive buffs (e.g. Arctic "
-                  "Armour) and minions' own damage are not scored here.")
-    th = (r.get("thresholds") or {}).get("resists") or {}
-    if th:
-        print("\n### Resistances\n" + ", ".join(f"{e} {v['value']:.0f}%" for e, v in th.items()))
-    print("\nPoB calculations on the imported character, except clear speed: that is the leveling ranking's pack model "
-          "(pack of 6, every projectile and pierce reaching another monster), an estimate. Gem and support availability "
-          "from drop tables by area level.")
+            label = {"Notable": "notables", "Keystone": "keystones", "Socket": "sockets", "Normal": "small nodes"}
+            order = ["Notable", "Keystone", "Socket", "Normal"]
+            types = sorted({n.get("type") or "Normal" for n in idle},
+                           key=lambda x: (order.index(x) if x in order else len(order), x))
+            parts = []
+            for ty in types:
+                counts = {}
+                for n in idle:
+                    if (n.get("type") or "Normal") == ty:
+                        counts[n["name"]] = counts.get(n["name"], 0) + 1
+                names = sorted(counts, key=lambda k: (-counts[k], k))
+                parts.append(label.get(ty, ty.lower() + "s") + " "
+                             + ", ".join(k + (f" x{counts[k]}" if counts[k] > 1 else "") for k in names))
+            print(f"{len(idle)} nodes add nothing to the main skill: " + "; ".join(parts))
+        if not top and not idle:
+            print("No allocated node is measured.")
+
+    cost_changed = _render_next(nx, cite) if nx else False
+
+    # ---- Gear
+    gear = r.get("gear")
+    if gear is not None:
+        print("\n### Gear: affixes to look for")
+        rows, def_only = [], False
+        who = main[0]["skill"] if main else "the build's"
+        for s in gear:
+            cell = s["slot"] + _gear_base(s)
+            if s.get("unique"):
+                cell += f" (unique equipped: {s['unique']})"
+            if s.get("defenceOnly"):
+                cell += " (defence only)"
+                def_only = True
+            if s.get("blocked"):
+                look = "blocked by the two-handed main hand"
+            elif s.get("error"):
+                look = f"not measured ({s['error']})"
+            else:
+                look = ("; ".join(m["text"] for m in s["mods"]) if s.get("mods")
+                        else "No affix measured adds to the weighted outputs in this slot.")
+                if len(s.get("mods") or []) < GEAR_FEW:
+                    look += f" (few affixes on this base move {who} DPS or EHP; Spirit and minion/ally affixes are not scored)"
+            rows.append((cell, look))
+        if rows:
+            _table(("slot", "look for (best first)"), rows)
+            print("\n" + cite("gear"))
+        else:
+            print("No equipment slot to measure.")
+    else:
+        def_only = False
+
+    # ---- Notes: each caveat once, only those the report cites (plus [value] and [source])
+    print("\n### Notes")
+    used |= {"value", "source"}
+    for key in NOTE_ORDER:
+        if key not in used:
+            continue
+        text = NOTES[key]
+        if key == "mana":
+            m = (nx or {}).get("sustain") or {}
+            text = text.format(low=f"{100 * (m.get('low') or 0.35):.0f}%")
+            if m.get("state") == "drains" and m.get("secs_to_low", 99) < 5:
+                text += NOTES["mana_fast"]
+        elif key == "asc" and cost_changed:
+            text += NOTES["asc_cost"]
+        elif key == "gear":
+            basis = {s.get("dpsBasis") for s in gear if s.get("dpsBasis")}
+            skill = main[0]["skill"] if main else None
+            text = text.format(dps="PoB's Full DPS" + (f" (main skill {skill})" if skill else "") if basis == {"full"}
+                               else f"{skill} DPS" if skill else "DPS")
+            if def_only:
+                text += NOTES["gear_def"]
+        elif key == "minion":
+            text = text.format(skills=", ".join((r.get("minions") or {}).get("minionSkills") or []))
+        print(f"- [{key}] {text}")
 
 
 def cmd_checkup(args):
     """What to change on a leveling character, measured on its own build."""
     from . import checkup
-    emit(args, checkup.run(args.build, top=args.top, spirit=not args.no_spirit, verbose=args.verbose, nxt=not args.no_next), render_checkup)
+    emit(args, checkup.run(args.build, top=args.top, spirit=not args.no_spirit, verbose=args.verbose, nxt=not args.no_next,
+                           gear_check=not args.no_gear), render_checkup)
 
 
 def cmd_switch(args):
@@ -1072,6 +1405,7 @@ def main(argv=None):
     p.add_argument("--top", type=int, default=2, help="main skills to examine")
     p.add_argument("--no-spirit", action="store_true", help="skip the Spirit skill sweep (slow)")
     p.add_argument("--no-next", action="store_true", help="skip next passives / next ascendancy trial / mana sustain")
+    p.add_argument("--no-gear", action="store_true", help="skip the affixes-to-look-for sweep per equipment slot")
     p.set_defaults(fn=cmd_checkup)
     p = sub.add_parser("switch", help="switch readiness: when a target skill becomes usable and what gates it")
     p.add_argument("--skill", required=True)

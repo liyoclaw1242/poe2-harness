@@ -399,7 +399,115 @@ end
 -- its effect on the chosen output stats).
 local tradeGen
 local function nn(v) if v == json.null then return nil end return v end
+
+-- Prefix/Suffix item mods by trade hash (data.itemMods.Item), for "can this affix drop on this base".
+local affixesByHash
+local function dropAffixes(hash)
+	if not affixesByHash then
+		affixesByHash = {}
+		for _, mod in pairsSortByKey(data.itemMods.Item) do
+			if mod.type == "Prefix" or mod.type == "Suffix" then
+				for h in pairs(mod.tradeHashes or {}) do
+					local k = tostring(h)
+					affixesByHash[k] = affixesByHash[k] or {}
+					table.insert(affixesByHash[k], mod)
+				end
+			end
+		end
+	end
+	return affixesByHash[hash] or {}
+end
+
+-- Item:GetModSpawnWeight on a bare tag set: the first weight key the base has decides.
+local function spawnWeight(mod, tags)
+	local weight = 0
+	for i, key in ipairs(mod.weightKey or {}) do
+		if tags[key] then weight = mod.weightVal[i] break end
+	end
+	for i, key in ipairs(mod.weightMultiplierKey or {}) do
+		if tags[key] then weight = weight * mod.weightMultiplierVal[i] / 100 break end
+	end
+	return weight
+end
+
+-- Bases an affix is checked against: the equipped item's base, or for an empty slot every base of the trade
+-- category PoB searches that slot with (an empty weapon slot: PoB's one-hand weapon list).
+local ONE_HAND = { ["One Hand Mace"] = true, Wand = true, Sceptre = true, Flail = true, Spear = true }
+local function slotBaseTags(slot, item, category)
+	if item and item.base then return { item.base.tags } end
+	local tradeHelpers = LoadModule("Classes/TradeHelpers")
+	local list = {}
+	for _, base in pairsSortByKey(data.itemBases) do
+		if not base.hidden and base.tags then
+			local _, cat = tradeHelpers.getTradeCategory(slot.slotName, { type = base.type, base = base })
+			if cat == category or (category == "1HWeapon" and ONE_HAND[base.type]) then list[#list + 1] = base.tags end
+		end
+	end
+	return list
+end
+
+-- The affixes the generator measured, as a player would look for them: explicit affixes only (implicit, enchant
+-- and rune ids dropped), only those a Prefix/Suffix with non-zero spawn weight on the slot's base carries (no
+-- Desecrated, Genesis or crafted-only lines), merged by trade text, ordered by meanStatDiff then text.
+local function topAffixes(slot, n)
+	local textById = {}
+	for _, group in pairs(tradeGen.modData or {}) do
+		for _, entry in pairs(group) do
+			if type(entry) == "table" and entry.tradeMod then textById[entry.tradeMod.id] = entry.tradeMod.text end
+		end
+	end
+	local item = slot.selItemId and build.itemsTab.items[slot.selItemId]
+	local tagSets = slotBaseTags(slot, item, tradeGen.calcContext.itemCategory)
+	local function drops(id)
+		for h in id:gsub("^.-stat_", ""):gmatch("%d+") do
+			for _, mod in ipairs(dropAffixes(h)) do
+				for _, tags in ipairs(tagSets) do
+					if spawnWeight(mod, tags) > 0 then return true end
+				end
+			end
+		end
+		return false
+	end
+	local rows = {}
+	for _, w in ipairs(tradeGen.modWeights or {}) do
+		local id = w.tradeModId
+		if id:match("^explicit%.") and textById[id] and drops(id) then
+			rows[#rows + 1] = { id = id, text = textById[id], meanStatDiff = w.meanStatDiff }
+		end
+	end
+	table.sort(rows, function(a, b)
+		if a.meanStatDiff ~= b.meanStatDiff then return a.meanStatDiff > b.meanStatDiff end
+		if a.text ~= b.text then return a.text < b.text end
+		return a.id < b.id
+	end)
+	local out, seen = {}, {}
+	for _, r in ipairs(rows) do
+		if not seen[r.text] and #out < n then
+			seen[r.text] = true
+			out[#out + 1] = r
+		end
+	end
+	return out
+end
+
+local tradeQueryInner
 function commands.trade_query(req)
+	-- the check-up pins its main skill for the call (PoB falls back to the main skill when no skill is in Full DPS)
+	local savedMain = build.mainSocketGroup
+	if req.group then
+		build.mainSocketGroup = req.group
+		recalc()
+	end
+	local ok, res = pcall(tradeQueryInner, req)
+	if req.group then
+		build.mainSocketGroup = savedMain
+		recalc()
+	end
+	if not ok then error(res, 0) end
+	return res
+end
+
+tradeQueryInner = function(req)
 	req.maxPrice, req.maxPriceType, req.maxLevel = nn(req.maxPrice), nn(req.maxPriceType), nn(req.maxLevel)
 	req.league, req.status, req.jewelType = nn(req.league), nn(req.status), nn(req.jewelType)
 	local tradeHelpers = LoadModule("Classes/TradeHelpers")
@@ -470,7 +578,15 @@ function commands.trade_query(req)
 		local league = req.league:gsub("[^%w%-%.%_%~ ]", function(c) return string.format("%%%02X", string.byte(c)) end):gsub(" ", "+")
 		url = "https://www.pathofexile.com/trade2/search/" .. league .. "/" .. tradeHelpers.B64GzipEncode(q)
 	end
-	return { query = captured.query, error = captured.err, weights = weights, url = url }
+	local res = { query = captured.query, error = captured.err, weights = weights, url = url }
+	if req.topMods then
+		res.mods = topAffixes(slot, req.topMods)
+		local bo = tradeGen.calcContext.baseOutput or {}
+		-- the DPS terms PoB's generator weighs: FullDPS when the calculator has it, else the main skill's
+		res.fullDPS = num(bo.FullDPS)
+		res.mainDPS = (num(bo.TotalDPS) or 0) + (num(bo.TotalDotDPS) or 0) + (num(bo.CombinedDPS) or 0)
+	end
+	return res
 end
 
 ---------------------------------------------------------------------------
@@ -2434,6 +2550,37 @@ function commands.checkup_value(req)
 end
 
 -- Persistent / Spirit skills a campaign character could add with its free Spirit.
+-- What the check-up's gear section says about a slot: the equipped base's PoB type and subtype, or for an empty
+-- off-hand whether any off-hand can go there at all (PoB's own IsItemValidForSlot over a representative rare of each
+-- off-hand-capable type: a two-handed main hand blocks them all unless Bow/Quiver, Staff + Instruments of Power,
+-- Talisman + Lord of the Wilds or Giant's Blood opens one).
+local OFFHAND_TYPES = { "Shield", "Focus", "Sceptre", "Quiver", "Buckler", "One Hand Mace", "One Hand Sword", "One Hand Axe",
+	"Wand", "Dagger", "Claw", "Spear", "Flail" }
+function commands.checkup_gear_slot(req)
+	local slot = build.itemsTab.slots[req.slot]
+	if not slot then error("unknown slot " .. tostring(req.slot)) end
+	local item = slot.selItemId and build.itemsTab.items[slot.selItemId]
+	if item then
+		return { type = item.type or (item.base and item.base.type), subType = item.base and item.base.subType }
+	end
+	local out = { empty = true }
+	if req.slot:match("^Weapon 2") then
+		local open = false
+		for _, ty in ipairs(OFFHAND_TYPES) do
+			for name, base in pairsSortByKey(data.itemBases) do
+				if base.type == ty and not base.hidden then
+					local probe = new("Item"):Item("Rarity: RARE\nProbe\n" .. name)
+					if probe.base and build.itemsTab:IsItemValidForSlot(probe, req.slot) then open = true end
+					break
+				end
+			end
+			if open then break end
+		end
+		out.blocked = not open
+	end
+	return out
+end
+
 function commands.checkup_spirit_gems(req)
 	local l, seen = {}, {}
 	for _, gd in pairs(data.gems) do

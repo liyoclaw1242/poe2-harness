@@ -485,16 +485,128 @@ def test_checkup_text_agrees_with_its_numbers(capsys):
     r = {"level": 13, "gem_max": 4, "support_tier": 1, "groups": [g], "main": [g], "minions": {}}
     cli.render_checkup(r)
     out = capsys.readouterr().out
-    assert "Multishot I (x0.60): costs single-target DPS" in out and "Chain I (x1.00): adds nothing" in out
-    assert "Pierce I (x" not in out                       # recommended in this section: no swap line
+    assert "| Spark | Multishot I | x0.60 | costs single-target DPS" in out
+    assert "| Spark | Chain I | x1.00 | no effect on this skill in PoB" in out
+    assert "| Spark | Pierce I |" not in out                # recommended in this section: no dead-support row
     assert "x1.66" in out                                 # boss gain printed on the merged line
-    assert "already the highest" not in out and "above the level-4 cap" in out
+    assert "at cap" not in out and "above cap 4" in out
     # one objective already best, the other recommending a change: no "no better support found"
     g2 = {**g, "support_checks": {"boss": {**g["support_checks"]["boss"]},
                                   "clear": {"best": [], "current": ["Multishot I"], "unscored": True}}}
     cli.render_checkup({**r, "groups": [g2], "main": [g2]})
     out = capsys.readouterr().out
-    assert "no better support found" not in out and "Multishot I (x0.60): costs single-target DPS; swap it" in out
+    assert "no better support found" not in out and "| Spark | Multishot I | x0.60 | costs single-target DPS; swap it" in out
+
+
+def _checkup_dict(level=41, chaos_missing=75):
+    """A synthetic check-up result: one main skill with a x1.20 boss set and a x4.00 clear set, seven passives above
+    the report band, an ascendancy notable, resistances below cap."""
+    sc_boss = {"best": [{"name": "Pierce I"}, {"name": "Minion Pact I", "elsewhere": True}], "current": ["Chain I", "Pierce I"],
+               "mult": 1.2, "own": {"best": [{"name": "Pierce I"}, {"name": "Unleash"}], "mult": 1.05}}
+    sc_clear = {"best": [{"name": "Pierce I"}, {"name": "Multishot II"}], "current": ["Chain I", "Pierce I"],
+                "mult": 4.0, "dpsMult": 0.6}
+    g = {"index": 1, "skill": "Spark", "level": 8, "value": 1436326.0, "source": None,
+         "levels": {"rows": [{"level": 9, "value": 1500000.0, "mult": 1.0443}]},
+         "supports": [{"name": "Chain I", "mult": 1.0}, {"name": "Pierce I", "mult": 1.3}],
+         "support_checks": {"boss": sc_boss, "clear": sc_clear}}
+    passives = [{"name": f"Node {c}", "id": i, "cost": 2, "mult": 1.0 + 0.1 * (7 - i), "life": 0, "es": 0, "res": 0,
+                 "regen": 0} for i, c in enumerate("ABCDEFG")]
+    sustain = {"cost_ps": 40.0, "net": 60.0, "low": 0.35, "state": "sustained", "life_cost_ps": 0}
+    nx = {"noise": 0.001, "passives": passives, "jewels": [], "ascendancyName": "Lich", "ascUsed": 2, "ascMax": 8,
+          "sustain": sustain, "ascendancy": [{"name": "Conduit", "cost": 2, "mult": 1.15, "life": 0, "es": 0,
+                                               "res": 0, "regen": -2.0, "sustain": dict(sustain)}]}
+    th = {"resists": {"Fire": {"value": -29, "missing": 104}, "Cold": {"value": 75, "missing": 0},
+                      "Lightning": {"value": 75, "missing": 0},
+                      "Chaos": {"value": 75 - chaos_missing, "missing": chaos_missing}}}
+    return {"level": level, "gem_max": 10, "support_tier": 3, "groups": [g], "main": [g], "minions": {},
+            "next": nx, "thresholds": th, "tree": {"allocated": level - 1, "nodes": []}}
+
+
+def _section(out, head):
+    return out.split(head, 1)[1].split("\n### ", 1)[0]
+
+
+def test_checkup_do_now_groups_by_measure(capsys):
+    # value rows (supports, gem level, up to 5 passives, ascendancy) are ranked by gain inside their own measure; the
+    # clear-speed row comes after them with its single-target cost, never ranked with them
+    from pob_agent import cli
+    cli.render_checkup(_checkup_dict())
+    out = capsys.readouterr().out
+    rows = [ln for ln in _section(out, "### Do now").splitlines() if ln.startswith("| ") and "measure" not in ln]
+    measures = [ln.split(" | ")[0][2:] for ln in rows]
+    assert measures == ["Spark value"] * 8 + ["Spark clear speed (estimate)"], measures
+    gains = [float(ln.split(" | ")[3][1:]) for ln in rows[:8]]
+    assert gains == sorted(gains, reverse=True)
+    assert sum("passive: " in ln for ln in rows) == 5 and "passive: Node F" not in out.split("### Skills")[0]
+    assert "| Spark value | supports: Chain I -> Minion Pact I* | gem swap | x1.20 | x1.05 without the borrowed support |" in rows
+    assert rows[-1].endswith("| gem swap | x4.00 | single-target x0.60 |")
+    assert "| Spark value | ascendancy: Conduit | next trial, 2 pts | x1.15 | — |" in rows
+    assert "| Spark value | gem level 9 | uncut gem level 9 | x1.04 | — |" in rows
+
+
+def test_checkup_one_multiplier_format_and_notes_once(capsys):
+    import re
+    from pob_agent import cli
+    assert (cli.fx(1.003), cli.fx(0.997), cli.fx(1.0004), cli.fx(None), cli.fx(1.25)) == ("<x1.01", ">x0.99", "x1.00", "—", "x1.25")
+    cli.render_checkup(_checkup_dict())
+    out = capsys.readouterr().out
+    assert all(len(m.split(".")[1]) == 2 for m in re.findall(r"x\d+\.\d+", out))
+    assert "1.44M" in out and "1436326" not in out             # values through fmt()
+    body, notes = out.split("### Notes")
+    keys = re.findall(r"^- \[(\w+)\]", notes, re.M)
+    assert len(keys) == len(set(keys)) and set(re.findall(r"\[(\w+)\]", body)) <= set(keys)
+    width = None
+    for line in body.splitlines():
+        if not line.startswith("|"):
+            width = None
+        elif not line.startswith("|---"):
+            cells = line.strip("|").split(" | ")
+            width = width or len(cells)
+            assert len(cells) == width and all(c.strip() for c in cells), line
+
+
+def test_checkup_next_passives_table_has_five_damage_rows(capsys):
+    from pob_agent import cli
+    cli.render_checkup(_checkup_dict())
+    out = capsys.readouterr().out
+    rows = [ln for ln in _section(out, "### Next passives").splitlines() if ln.startswith("| main skill |")]
+    assert len(rows) == 5 and rows[0] == "| main skill | Node A | 2 | x1.70 | +35.0%/pt | — | — | — | — |"
+
+
+def test_checkup_chaos_resistance_flag_starts_at_65(capsys):
+    # campaign characters (below level 65) are not flagged for chaos resistance; the Sustain row still shows it
+    from pob_agent import cli
+    cli.render_checkup(_checkup_dict(level=64))
+    out = capsys.readouterr().out
+    assert "- Resistances below cap: Fire -29%." in out and "Chaos 0%" in _section(out, "### Sustain and defences")
+    cli.render_checkup(_checkup_dict(level=65))
+    out = capsys.readouterr().out
+    assert "- Resistances below cap: Fire -29%, Chaos 0%." in out
+
+
+def test_trade_query_top_mods_are_droppable_affixes_in_order():
+    # topMods: distinct trade texts, ordered by meanStatDiff then text, explicit affixes only; without topMods the
+    # result has no mods key
+    from pob_agent import trade
+    main = "return build.mainSocketGroup"
+    with Engine() as eng:
+        eng.call("load", **sources.resolve(str(BUILD)))
+        eng.call("checkup_prepare")
+        before = (eng.call("eval", code=main), eng.call("stats"), eng.call("checkup_groups"))
+        plain = eng.call("trade_query", slot="Gloves", statWeights=trade.DEFAULT_WEIGHTS)
+        groups = before[2]["groups"]
+        for g in (groups[-1]["index"], groups[0]["index"]):   # pinned to another group, then to the first: restored
+            q = eng.call("trade_query", slot="Gloves", statWeights=trade.DEFAULT_WEIGHTS, includeRunes=False,
+                         includeCorrupted=False, topMods=8, group=g)
+        after = (eng.call("eval", code=main), eng.call("stats"), eng.call("checkup_groups"))
+    assert before == after
+    assert "mods" not in plain
+    mods = q["mods"]
+    assert len(mods) >= 5 and len({m["text"] for m in mods}) == len(mods)
+    for a, b in zip(mods, mods[1:]):
+        assert a["meanStatDiff"] > b["meanStatDiff"] or (a["meanStatDiff"] == b["meanStatDiff"] and a["text"] <= b["text"])
+    assert all(m["id"].startswith("explicit.") for m in mods)
+    assert not any(m["id"].startswith(("implicit.", "rune.", "enchant.")) for m in mods)
 
 
 def test_checkup_keeps_the_skill_behind_a_meta_gem():
@@ -714,3 +826,39 @@ def test_checkup_next_lists_empty_jewel_sockets():
         eng.call("eval", code="build.itemsTab.sockets[req.sock].selItemId = 0 build.buildFlag = true recalc() return true",
                  sock=filled[0])
         assert [j["id"] for j in eng.call("checkup_next", group=gi)["jewels"]] == [filled[0]]
+
+
+def test_checkup_gear_blocks_the_offhand_behind_a_two_hander():
+    # an empty off-hand behind a two-handed mace takes no item by PoB's own slot rule: reported blocked, not measured
+    # with one-hand affixes; the equipped slot is labelled with its base type
+    from pob_agent import checkup
+    with Engine() as eng:
+        eng.call("new", level=30)
+        mace = eng.call("eval", code="local t = {} for n, b in pairs(data.itemBases) do if b.type == 'Two Hand Mace' "
+                                     "and not b.hidden then t[#t + 1] = n end end table.sort(t) return t[1]")
+        eng.call("add_item", raw=f"Rarity: RARE\nTest\n{mace}")
+        rows = {r["slot"]: r for r in checkup.gear(eng, None)}
+    assert rows["Weapon 2"]["blocked"] and rows["Weapon 2"]["mods"] == []
+    assert rows["Weapon 1"]["type"] == "Two Hand Mace" and rows["Weapon 1"]["mods"]
+
+
+def test_checkup_gear_basis_and_errors():
+    # PoB's generator weighs FullDPS whenever the calculator reports it (0 included: then no DPS term), else the main
+    # skill; engine errors lose their Lua source position, so no local path reaches the report
+    from pob_agent import checkup, cli
+    assert checkup.dps_basis(None, 120.0) == ("main", 120.0)
+    assert checkup.dps_basis(0, 120.0) == ("main", 0.0)
+    assert checkup.dps_basis(5000.0, 120.0) == ("full", 5000.0)
+    assert checkup.clean_error("trade_query failed: /home/u/pob/harness/lua/rpc.lua:415: unknown slot X") == "unknown slot X"
+    r = _checkup_dict()
+    r["minions"] = {"assumedOne": True, "minionSkills": ["Skeletal Warrior Minion"]}
+    r["gear"] = [{"slot": "Weapon 1", "type": "Wand", "mods": [{"text": "# to Strength", "meanStatDiff": 3.0}]},
+                 {"slot": "Weapon 2", "empty": True, "blocked": True, "mods": []}]
+    import io, contextlib
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        cli.render_checkup(r)
+    out = buf.getvalue()
+    assert "| Weapon 1 (Wand) | # to Strength (few affixes on this base move Spark DPS or EHP;" in out
+    assert "| Weapon 2 (empty) | blocked by the two-handed main hand |" in out
+    assert "One minion assumed [minion]." in out

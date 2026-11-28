@@ -11,14 +11,18 @@ model):
   - gem levels: the main skills at the levels uncut gems reach by the character's level.
   - Spirit: free Spirit, and the persistent skill that adds most to the main skill with it.
   - passives: allocated points against level - 1, and nodes that add nothing to the main skill.
+  - gear: per equipment slot, the affixes PoB's trade generator ranks highest for the build (see gear()).
 Gem and support availability come from the drop tables in `switch` (area level ~ character level).
 """
 from __future__ import annotations
 
+import re
+
 from . import switch
-from .engine import Engine
+from .engine import Engine, EngineError
 from . import sources
 from . import leveling
+from . import trade
 
 
 def support_checks(eng, group: int, sup_tier: int, spreader: int | None = None) -> dict:
@@ -90,7 +94,74 @@ def max_level_for(level: int, table) -> int:
     return best
 
 
-def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nxt: bool = True) -> dict:
+GEAR_TOP = 5
+
+
+def dps_basis(full_dps, main_dps) -> tuple[str, float]:
+    """Which DPS PoB's trade generator weighs, and its base value. The generator uses FullDPS whenever the calculator
+    reports it (a Lua number, so 0 counts too) and the main skill's DPS otherwise. A FullDPS of 0 is named as the main
+    skill but its base is 0: the generator gives such a slot no DPS term, so it is defence only."""
+    if isinstance(full_dps, (int, float)) and full_dps > 0:
+        return "full", float(full_dps)
+    if isinstance(full_dps, (int, float)):
+        return "main", 0.0
+    return "main", float(main_dps or 0)
+
+
+def clean_error(msg: str) -> str:
+    """First line of an engine error without the Lua source position (no local paths in text or JSON)."""
+    msg = msg.splitlines()[0] if msg else ""
+    if re.search(r"(?:[A-Za-z]:)?[/\\][^\s:]*:\d+:", msg):
+        msg = msg.rsplit(": ", 1)[-1]
+    return re.sub(r"(?:[A-Za-z]:)?[/\\]\S+", "<path>", msg)
+
+
+def gear(eng, group: int | None) -> list[dict]:
+    """Affixes to look for per active equipment slot: PoB's TradeQueryGenerator tests each affix at a mid roll on a
+    blank item of the slot's base (the current item removed) and ranks by the gain in DPS + half-weighted EHP (the
+    trade-query weights); trade_query topMods keeps affixes that can drop on that base, merged by trade text. The
+    main skill is pinned for the calls (PoB uses it when no skill is in Full DPS). An empty off-hand that no
+    off-hand can fill (a two-handed main hand, by PoB's own slot rule) is reported as blocked, not measured."""
+    ir = eng.call("items")
+    items = {i["slot"]: i for i in ir["items"]}
+    out = []
+    for slot in trade.active_slots(ir):
+        it = items.get(slot)
+        row = {"slot": slot, "mods": []}
+        try:
+            info = eng.call("checkup_gear_slot", slot=slot)
+        except EngineError as exc:
+            row["error"] = clean_error(str(exc))
+            out.append(row)
+            continue
+        if not it:
+            row["empty"] = True
+            if info.get("blocked"):
+                row["blocked"] = True
+                out.append(row)
+                continue
+        else:
+            row["type"], row["subType"] = info.get("type"), info.get("subType")
+            if (it.get("rarity") or "").upper() == "UNIQUE":
+                row["unique"] = it["name"]
+        kw = {"group": group} if group is not None else {}
+        try:
+            q = eng.call("trade_query", slot=slot, statWeights=trade.DEFAULT_WEIGHTS, includeRunes=False,
+                         includeCorrupted=False, topMods=GEAR_TOP, **kw)
+        except EngineError as exc:
+            row["error"] = clean_error(str(exc))
+            out.append(row)
+            continue
+        row["mods"] = [{"text": m["text"], "meanStatDiff": m["meanStatDiff"]} for m in q.get("mods") or []]
+        row["dpsBasis"], base = dps_basis(q.get("fullDPS"), q.get("mainDPS"))
+        if not base:
+            row["defenceOnly"] = True
+        out.append(row)
+    return out
+
+
+def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nxt: bool = True,
+        gear_check: bool = True) -> dict:
     with Engine(verbose) as eng:
         info = eng.call("load", **sources.resolve(build))
         prep = eng.call("checkup_prepare")
@@ -113,6 +184,7 @@ def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nx
         th = eng.call("thresholds")
         spirit_gems = (eng.call("checkup_spirit_gems", maxTier=gem_max, spirit=val.get("spiritUnreserved") or 0)["gems"]
                        if spirit else [])
+        gear_rows = gear(eng, main[0]["index"] if main else None) if gear_check else None
     out = {"minions": prep, "level": level, "gem_max": gem_max, "support_tier": sup_tier, "groups": groups, "main": main,
            "tree": tree, "spirit_free": val.get("spiritUnreserved"), "thresholds": th, "spirit_options": [],
            "spirit_checked": bool(spirit), "next": nexts}
@@ -130,4 +202,6 @@ def run(build: str, top: int = 2, spirit: bool = True, verbose: bool = False, nx
             if (r.get("spiritUnreserved") or 0) >= 0 and r["value"] > base * 1.01:
                 out["spirit_options"].append({**gem, "mult": r["value"] / base, "spirit_left": r["spiritUnreserved"]})
         out["spirit_options"].sort(key=lambda x: -x["mult"])
+    if gear_rows is not None:
+        out["gear"] = gear_rows
     return out
